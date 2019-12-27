@@ -1,0 +1,25 @@
+<!--
+  <!- - Added in toolbar - ->
+<div class="sidebar node-palette" jsplumb-palette selector="li" surfaceId="callbackFlowchartSurface" [typeExtractor]="typeExtractor" [dataGenerator]="dataGenerator">
+  <ul>
+      <li *ngFor="let nodeType of nodeTypes" [attr.jtk-node-type]="nodeType.type" title="Drag to add new" [attr.jtk-width]="nodeType.w" [attr.jtk-height]="nodeType.h">{{nodeType.label}}</li>
+  </ul>
+</div>
+-->
+<jsplumb-surface [surfaceId]="surfaceId" [toolkitId]="toolkitId" [view]="view" [renderParams]="renderParams" [nodeResolver]="resolveNode"></jsplumb-surface>
+<jsplumb-miniview [surfaceId]="surfaceId"></jsplumb-miniview>
+<jsplumb-controls [surfaceId]="surfaceId"></jsplumb-controls>
+
+
+<!--TODO: Move this dialog to parent.-->
+<p-dialog [(visible)]="showApiDialog">
+  <p-header *ngIf="currentActionApi">{{currentActionApi.label}}</p-header>
+  <app-callback-actionapi-dialog (actionApiSubmit)="handleActionApiAdded($event)" [api]="currentActionApi"></app-callback-actionapi-dialog>
+</p-dialog>
+
+<p-dialog [(visible)]="showConditionDialog">
+  <p-header>Condition</p-header>
+  <app-callback-action-condition-dialog (conditionAdded)="handleConditionAdded($event)"></app-callback-action-condition-dialog>
+</p-dialog>
+
+

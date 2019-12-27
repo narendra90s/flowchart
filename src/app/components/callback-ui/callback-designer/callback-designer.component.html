@@ -1,0 +1,25 @@
+<button type="button" (click)="addCallback()" pButton label="Add Callback"></button>
+
+<!--Control Sidebar-->
+<!--TODO: Button to collapse/expand-->
+<div class="ui-g">
+  <div class="ui-g-2">
+    <app-callback-sidebar-menu [selectedTabIndex]="activeTabIndex" (loaded)="sidebarLoaded=true">
+    </app-callback-sidebar-menu>
+  </div>
+
+  <div class="ui-g-10">
+
+    <p-tabView ([activeIndex])="activeTabIndex" (onChange)="activeTabIndex = $event.index">
+      <p-tabPanel header="State Diagram">
+        <app-callback-sd (actionAdded)="actionAdded($event)" [callback]="callback"></app-callback-sd>
+      </p-tabPanel>
+      <p-tabPanel  *ngIf="sidebarLoaded === true" header="Action Flowchart">
+        <app-callback-flowchart [action]="currentAction" [callback]="callback"></app-callback-flowchart>
+      </p-tabPanel>
+      <p-tabPanel header="Source Code">
+        <p>Source Code</p>
+      </p-tabPanel>
+    </p-tabView>
+  </div>
+</div>

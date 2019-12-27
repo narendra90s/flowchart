@@ -1,0 +1,58 @@
+<p-accordion [multiple]="true">
+  <p-accordionTab [selected]="true">
+    <p-header>Data Point</p-header>
+    <button mat-button style="width: 100%" color="primary">Define Data Point</button>
+    <mat-divider></mat-divider>
+    <div>
+      <!--List of defined Data points-->
+    </div>
+
+  </p-accordionTab>
+
+  <p-accordionTab [selected]="true" header="Variable">
+    <p-header>Variable</p-header>
+    <!--List of Local Variable-->
+  </p-accordionTab>
+
+  <p-accordionTab [selected]="true" header="Tooolbar">
+    <p-header>Toolbar</p-header>
+    <!--Control for State diagram-->
+    <div class="p-1" [style.display]="selectedTabIndex === 0?'block':'none'" jsplumb-palette selector=".drag" surfaceId="callbackSDSurface" [typeExtractor]="typeExtractor" [dataGenerator]="dataGenerator"  style="width: 104%; max-height: 35vh; font-size: 1.5rem;overflow-y: auto">
+      <p-tree [value]="sdToolbarTreeData">
+        <ng-template let-node pTemplate="default">
+          <span class="drag" [attr.jtk-node-type]="node.data.type"  title="Drag to add action api" [attr.jtk-width]="node.data.w" [attr.jtk-height]="node.data.h">{{node.label}}</span><br>
+        </ng-template>
+      </p-tree>
+    </div>
+
+    <!--Controls for Flow chart-->
+    <!--jsplumb-palette selector="li" surfaceId="callbackSDSurface" These attributes are for jsplumb drag/drop.-->
+    <!--For padding of 1.5rem-->
+    <div [style.display]="selectedTabIndex === 1?'block':'none'" class="p-1" jsplumb-palette selector=".drag" surfaceId="callbackFlowchartSurface" [typeExtractor]="typeExtractor" [dataGenerator]="dataGenerator"  style="width: 104%; max-height: 35vh; font-size: 1.5rem;overflow-y: auto">
+      <!--
+      <div *ngFor="let item of actionApiList | keyvalue">
+        <span class="action-category">{{item.key}}</span><br>
+          <div *ngFor="let api of item.value" class="list">
+            <!- - [attr.jtk-node-type]="nodeType.type" title="Drag to add new" [attr.jtk-width]="nodeType.w" - ->
+            <!- -jtk attributes are added to drag/drop apis- ->
+            <!- -
+              <span class="action-api" [id]="api.id" draggable='true' (dragstart)="onDrag(api)" >{{api.label}}</span><br>
+            - ->
+            <span class="action-api" [id]="api.id" [attr.jtk-node-type]="'action'" title="Drag to add action api" [attr.jtk-width]="120" [attr.jtk-height]="70">{{api.label}}</span><br>
+          </div>
+      </div>
+      -->
+
+      <!--Render api using tree. -->
+      <p-tree [value]="fpToolbarTreeData" [filter]="true">
+        <ng-template let-node pTemplate="default">
+          <span *ngIf="node.data.type === 'question'" class="drag" [attr.jtk-node-type]="'question'"  title="Drag to add action api" [attr.jtk-width]="180" [attr.jtk-height]="70">{{node.label}}</span>
+          <span *ngIf="node.data.type === 'folder'">{{node.label}}</span>
+          <span *ngIf="node.data.api" class="action-api drag" [attr.api]="node.data.id" [attr.jtk-node-type]="'action'"  title="Drag to add action api" [attr.jtk-width]="180" [attr.jtk-height]="70">{{node.label}}</span>          
+        </ng-template>
+      </p-tree>
+
+    </div>
+  </p-accordionTab>
+</p-accordion>
+

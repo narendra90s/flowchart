@@ -1,0 +1,52 @@
+
+<p-fieldset>
+  <form (ngSubmit)="onSubmit()" [formGroup]="form">
+    <!--LHS-->
+    <div class="ui-g"> 
+      <div class="ui-g-4" style="float: left">
+        <span>LHS</span>
+      </div>
+      <div class="ui-g-4" style="float: left">
+        <p-dropdown [group]="true" [filter]="true" [options]="groupedVariableList" [showClear]="true" [formControlName]="'lhs'" placeholder="Select LHS">
+          <ng-template let-group pTemplate="group">
+            <i [class]="group.value" style="width:20px;vertical-align:middle"></i>
+            <span style="margin-left:.25em">{{group.label}}</span>
+          </ng-template>
+        </p-dropdown>
+      </div>
+    </div>
+
+    <!--Operator-->
+    <div class="ui-g">
+      <div class="ui-g-4" style="float: left">
+        <span>Operator</span>
+      </div>
+      <div class="ui-g-4" style="float: left">
+        <p-dropdown  [options]="operatorList" [formControlName]="'operator'" [showClear]="true" optionLabel="name" placeholder="Operator"></p-dropdown>
+      </div>
+    </div>
+
+    <!--RHS -->
+    <div class="ui-g">
+      <div class="ui-g-4">
+        <span>RHS</span>
+      </div>
+      <div class="ui-g-4">
+        <p-dropdown [group]="true" [filter]="true" [options]="groupedVariableList" [showClear]="true" [formControlName]="'rhs'" editable="true" placeholder="Select RHS">
+          <ng-template let-group pTemplate="group">
+            <i [class]="group.value" style="width:20px;vertical-align:middle"></i>
+            <span style="margin-left:.25em">{{group.label}}</span>
+          </ng-template>
+        </p-dropdown>
+      </div>
+    </div>
+
+    <!--submit button-->
+    <div class="ui-g">
+    <div class="ui-g-7 ui-g-offset-5">
+      <button type="submit" pButton label="Submit" [disabled]="!form.valid" [style]="{float: 'left'}"></button>  
+    </div>
+  </div>
+
+  </form>
+</p-fieldset>

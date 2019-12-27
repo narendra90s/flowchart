@@ -1,0 +1,28 @@
+
+<p-fieldset>
+  <form *ngIf="api && form" (ngSubmit)="onSubmit()" [formGroup]="form">
+    <div *ngFor="let item of api.arguments" class="ui-g">
+      <div class="ui-g-4 label">
+        <label [attr.for]="item.label">{{item.label}}</label>
+      </div>
+      <div class="ui-g-8 field">
+        <p-dropdown [options]="groupedVariableList" [formControlName]="item.name" [placeholder]="'Select' + item.label"
+          [group]="true" [showClear]="true" editable="true" filter="true">
+          <ng-template let-group pTemplate="group">
+            <i [class]="group.value" style="width:20px;vertical-align:middle"></i>
+            <span style="margin-left:.25em">{{group.label}}</span>
+          </ng-template>
+        </p-dropdown>
+        <!--<input pInputText type="text" size="20" disabled="disabled" [(ngModel)]="stateName"/>-->
+      </div>
+    </div>
+
+    <!--submit button-->
+    <div class="ui-g">
+    <div class="ui-g-7 ui-g-offset-5">
+      <button type="submit" pButton label="Add" [disabled]="!form.valid" [style]="{float: 'left'}"></button>  
+    </div>
+  </div>
+
+  </form>
+</p-fieldset>
