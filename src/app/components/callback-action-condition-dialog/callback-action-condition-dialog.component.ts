@@ -46,6 +46,8 @@ export class CallbackActionConditionDialogComponent implements OnInit, OnChanges
    }
 
   ngOnInit() {
+
+    console.log("GIT PUSH Works");
   }
 
   ngOnChanges(){
