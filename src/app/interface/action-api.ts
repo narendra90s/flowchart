@@ -8,21 +8,21 @@ export class Operator {
     // TODO: update the list.
     // TODO: should be range property to tell what all type of operand are supported.
     static operatorList: any = [{
-        name: 'is equal to', value: 'IS_EQUAL', range: 0x3
+        name: '=', value: 'IS_EQUAL', range: 0x3
     }, {
-        name: 'is not equal to', value: 'IS_NOT_EQUAL', range: 0x3
+        name: '!=', value: 'IS_NOT_EQUAL', range: 0x3
     }, {
         name: 'contains the string', value: 'CONTAIN_STRING', range: 0x1
     }, {
         name: 'contains the string(exact case)', value: 'CONTAIN_STRING_CASE', range: 0x1
     }, {
-        name: 'is less than', value: 'LESS_THAN', range: 0x2
+        name: '<', value: 'LESS_THAN', range: 0x2
     }, {
-        name: 'is less than equal to', value: 'LESS_THAN_EQUAL', range: 0x2
+        name: '<=', value: 'LESS_THAN_EQUAL', range: 0x2
     }, {
-        name: 'is greater than', value: 'GREATER_THAN', range: 0x2
+        name: '>', value: 'GREATER_THAN', range: 0x2
     }, {
-        name: 'is greater than equal to', value: 'GREATER_THAN_EQUAL', range: 0x2
+        name: '>=', value: 'GREATER_THAN_EQUAL', range: 0x2
     }];
 
     getOperatorList(operandType: number): any {

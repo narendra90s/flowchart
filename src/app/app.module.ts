@@ -10,6 +10,7 @@ import { ROUTING } from './app.routing';
 import { DatasetComponent } from "./dataset";
 import { ControlsComponent } from "./controls";
 import { TreeModule } from 'primeng/tree';
+import {ListboxModule} from 'primeng/listbox';
 
 import { FlowchartComponent, QuestionNodeComponent, ActionNodeComponent, StartNodeComponent, OutputNodeComponent, EndNodeComponent, StateNodeComponent } from './flowchart';
 import { StateDiagramComponent } from './state-diagram/state-diagram.component';
@@ -34,7 +35,7 @@ import { CallbackActionConditionDialogComponent } from './components/callback-ac
 @NgModule({
     imports:[ BrowserModule, CommonModule, BrowserAnimationsModule, jsPlumbToolkitModule, ROUTING, FormsModule, ReactiveFormsModule ,
         InputTextModule, DropdownModule, FieldsetModule, DialogModule, ButtonModule, TabViewModule, SidebarModule,
-        MatDividerModule, MatButtonModule, AccordionModule, TreeModule],
+        MatDividerModule, MatButtonModule, AccordionModule, TreeModule ,ListboxModule],
     declarations: [ AppComponent, QuestionNodeComponent, ActionNodeComponent, StartNodeComponent, OutputNodeComponent,
         DatasetComponent, ControlsComponent, FlowchartComponent, StateDiagramComponent, CallbackSdComponent,
         SdAddtriggerdialogComponent, CallbackDesignerComponent, EndNodeComponent, StateNodeComponent,

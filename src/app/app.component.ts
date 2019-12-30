@@ -9,27 +9,9 @@ import { jsPlumbService } from "jsplumbtoolkit-angular";
     selector: 'jsplumb-demo',
     template:`
         <nav>
-           
-            <a routerLink="/home" style="cursor:pointer;" routerLinkActive="active">Flowchart</a>           
-            <a routerLink="/data" style="cursor:pointer;" routerLinkActive="active">Dataset</a>
-           
-            <a routerLink="/sd" style="cursor:pointer;" routerLinkActive="active">State Diagram</a>
             <a routerLink="/callback" style="cursor:pointer;" routerLinkActive="active">Callback</a>
         </nav>
         <router-outlet></router-outlet>       
-        <div class="description">
-          <p>
-            This sample application is a copy of the Flowchart Builder application, using the Toolkit's
-            Angular 4 integration components and Angular CLI.
-          </p>
-          <ul>
-            <li>Drag new nodes from the palette on the left onto the workspace to add nodes</li>
-            <li>Drag from the grey border of any node to any other node to establish a link, then provide a description for the link's label</li>
-            <li>Click a link to edit its label.</li>
-            <li>Click the 'Pencil' icon to enter 'select' mode, then select several nodes. Click the canvas to exit.</li>
-            <li>Click the 'Home' icon to zoom out and see all the nodes.</li>
-          </ul>
-        </div>
     `
 })
 export class AppComponent {

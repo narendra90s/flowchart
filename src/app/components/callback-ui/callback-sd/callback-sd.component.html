@@ -10,9 +10,9 @@
 <jsplumb-miniview [surfaceId]="surfaceId"></jsplumb-miniview>
 <jsplumb-controls [surfaceId]="surfaceId"></jsplumb-controls>
 
-
-<div style="display: block">
-<button type="button" (click)="openDialog()" pButton label="Open Dialog"></button>  
+<!-- Trigger Dialog -->
+<div>
+<!-- <button type="button" (click)="openDialog()" pButton label="Open Dialog"></button>   -->
 <p-dialog header="Add Trigger" [(visible)]="showTriggerDialog" [modal]="true" [responsive]="true" [style]="{width: '500px', minWidth: '250px'}" [minY]="70" [maximizable]="false" [baseZIndex]="10000">
   <app-sd-addtriggerdialog *ngIf="newTriggerName" [states]="callback.states" [triggerName]="newTriggerName" (success)="addTriggerNode($event)"></app-sd-addtriggerdialog>
 </p-dialog>

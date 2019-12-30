@@ -1,26 +1,56 @@
 <p-accordion [multiple]="true">
   <p-accordionTab [selected]="true">
     <p-header>Data Point</p-header>
-    <button mat-button style="width: 100%" color="primary">Define Data Point</button>
     <mat-divider></mat-divider>
-    <div>
-      <!--List of defined Data points-->
+    <button mat-button style="width: 100%" (click)="showDialogDataPoint()" color="primary">Define Data Point</button>
+    <mat-divider></mat-divider>
+    <!--List of defined Data points-->
+    <div *ngIf="dataPointList.length > 0" style="margin-top: 5px;">
+      <p-listbox [options]="dataPointList" [style]="{'width': '100%','max-height': '89px','overflow': 'auto'}"
+        [(ngModel)]="selectedDataPoint">
+        <ng-template let-data pTemplate="item" let i="index">
+          {{data.label}}<span style="float:right" (click)="deleteRecordDP(i);selectedDataPoint=null"><i title="remove"
+              class="fa fa-trash"></i></span>
+        </ng-template>
+      </p-listbox>
     </div>
-
   </p-accordionTab>
 
   <p-accordionTab [selected]="true" header="Variable">
+    <!-- <mat-divider></mat-divider> -->
     <p-header>Variable</p-header>
+    <!-- <mat-divider></mat-divider> -->
+    <div style="text-align: center">
+      <span style="padding: 0.5rem">Variable</span>
+      <input type="text" style="width:95px " pInputText [(ngModel)]='localVar'>
+      <i class="fa fa-plus" style="padding: 0px 0px 0px 5px" (click)="addLocalVariable()" title="Add Variable"></i>
+      <!-- <button mat-icon-button color="primary" (click)="addLocalVariable()">
+        <mat-icon color="primary">add</mat-icon>
+      </button> -->
+    </div> 
+    <!-- <mat-divider></mat-divider> -->
+    <!-- <p-listbox [options]="cities1" [(ngModel)]="selectedCities"></p-listbox> -->
+    <div *ngIf="varList.length > 0" style="margin-top: 5px;">
+      <p-listbox [options]="varList" [style]="{'width': '100%','max-height': '89px','overflow': 'auto'}"
+        [(ngModel)]="selectedVar">
+        <ng-template let-data pTemplate="item" let i="index">
+          {{data.label}}<span style="float:right" (click)="deleteRecord(i);selectedVar=null"><i title="remove" class="fa fa-trash"></i></span>
+        </ng-template>
+      </p-listbox>
+    </div>
     <!--List of Local Variable-->
   </p-accordionTab>
 
   <p-accordionTab [selected]="true" header="Tooolbar">
     <p-header>Toolbar</p-header>
     <!--Control for State diagram-->
-    <div class="p-1" [style.display]="selectedTabIndex === 0?'block':'none'" jsplumb-palette selector=".drag" surfaceId="callbackSDSurface" [typeExtractor]="typeExtractor" [dataGenerator]="dataGenerator"  style="width: 104%; max-height: 35vh; font-size: 1.5rem;overflow-y: auto">
+    <div class="p-1" [style.display]="selectedTabIndex === 0?'block':'none'" jsplumb-palette selector=".drag"
+      surfaceId="callbackSDSurface" [typeExtractor]="typeExtractor" [dataGenerator]="dataGenerator"
+      style="width: 104%; max-height: 35vh; font-size: 1.5rem;overflow-y: auto">
       <p-tree [value]="sdToolbarTreeData">
         <ng-template let-node pTemplate="default">
-          <span class="drag" [attr.jtk-node-type]="node.data.type"  title="Drag to add action api" [attr.jtk-width]="node.data.w" [attr.jtk-height]="node.data.h">{{node.label}}</span><br>
+          <span class="drag" [attr.jtk-node-type]="node.data.type" title="Drag to add action api"
+            [attr.jtk-width]="node.data.w" [attr.jtk-height]="node.data.h">{{node.label}}</span><br>
         </ng-template>
       </p-tree>
     </div>
@@ -28,7 +58,9 @@
     <!--Controls for Flow chart-->
     <!--jsplumb-palette selector="li" surfaceId="callbackSDSurface" These attributes are for jsplumb drag/drop.-->
     <!--For padding of 1.5rem-->
-    <div [style.display]="selectedTabIndex === 1?'block':'none'" class="p-1" jsplumb-palette selector=".drag" surfaceId="callbackFlowchartSurface" [typeExtractor]="typeExtractor" [dataGenerator]="dataGenerator"  style="width: 104%; max-height: 35vh; font-size: 1.5rem;overflow-y: auto">
+    <div [style.display]="selectedTabIndex === 1?'block':'none'" class="p-1" jsplumb-palette selector=".drag"
+      surfaceId="callbackFlowchartSurface" [typeExtractor]="typeExtractor" [dataGenerator]="dataGenerator"
+      style="width: 104%; max-height: 35vh; font-size: 1.5rem;overflow-y: auto">
       <!--
       <div *ngFor="let item of actionApiList | keyvalue">
         <span class="action-category">{{item.key}}</span><br>
@@ -46,9 +78,11 @@
       <!--Render api using tree. -->
       <p-tree [value]="fpToolbarTreeData" [filter]="true">
         <ng-template let-node pTemplate="default">
-          <span *ngIf="node.data.type === 'question'" class="drag" [attr.jtk-node-type]="'question'"  title="Drag to add action api" [attr.jtk-width]="180" [attr.jtk-height]="70">{{node.label}}</span>
+          <span *ngIf="node.data.type === 'question'" class="drag" [attr.jtk-node-type]="'question'"
+            title="Drag to add action api" [attr.jtk-width]="180" [attr.jtk-height]="70">{{node.label}}</span>
           <span *ngIf="node.data.type === 'folder'">{{node.label}}</span>
-          <span *ngIf="node.data.api" class="action-api drag" [attr.api]="node.data.id" [attr.jtk-node-type]="'action'"  title="Drag to add action api" [attr.jtk-width]="180" [attr.jtk-height]="70">{{node.label}}</span>          
+          <span *ngIf="node.data.api" class="action-api drag" [attr.api]="node.data.id" [attr.jtk-node-type]="'action'"
+            title="Drag to add action api" [attr.jtk-width]="180" [attr.jtk-height]="70">{{node.label}}</span>
         </ng-template>
       </p-tree>
 
@@ -56,3 +90,104 @@
   </p-accordionTab>
 </p-accordion>
 
+
+<!-- Data Point popup -->
+
+<p-dialog header="Define Data Point" appendTo="body" [contentStyle]="{'overflow':'visible'}" [modal]="true"
+  [(visible)]="dataPointDisplay" [style]="{width: '350px', minWidth: '250px'}">
+  <!-- <p-fieldset> -->
+  <div class="ui-g" style="padding: 0.5rem">
+    <div class="ui-g-4">
+      <span>Name</span>
+    </div>
+    <div class="ui-g-6">
+      <input type="text" pInputText [(ngModel)]='name'>
+    </div>
+  </div>
+  <div class="ui-g" style="padding: 0.5rem">
+    <div class="ui-g-4">
+      <span>Type</span>
+    </div>
+    <div class="ui-g-6">
+      <p-dropdown placeholder="Select Type" appendTo="body" [style]="{'width': '150px'}" [options]="dataType"
+        [(ngModel)]="type"></p-dropdown>
+    </div>
+  </div>
+  <div class="ui-g" style="padding: 0.5rem">
+    <div class="ui-g-4">
+      <span>Source</span>
+    </div>
+    <div class="ui-g-6">
+      <p-dropdown placeholder='Select Data Source' appendTo="body" [style]="{'width': '150px'}" [options]="dataSource"
+        [(ngModel)]="source">
+      </p-dropdown>
+    </div>
+  </div>
+  <div class="ui-g" style="padding: 0.5rem" *ngIf='source == "ele"'>
+    <div class="ui-g-4">
+      <span>CSS Selector</span>
+    </div>
+    <div class="ui-g-6">
+      <input type="text" pInputText [(ngModel)]='cssSelector'>
+    </div>
+  </div>
+  <div class="ui-g" style="padding: 0.5rem" *ngIf='source == "ele"'>
+    <div class="ui-g-4">
+      <span>Element Property</span>
+    </div>
+    <div class="ui-g-6">
+      <p-dropdown placeholder='Select Property' appendTo="body" [style]="{'width': '150px'}" [options]="eleProperty"
+        [(ngModel)]="Property">
+      </p-dropdown>
+    </div>
+  </div>
+  <div class="ui-g" style="padding: 0.5rem" *ngIf='source == "ele" && Property == "attribute"'>
+    <div class="ui-g-4">
+      <span>Attribute Name</span>
+    </div>
+    <div class="ui-g-6">
+      <input type="text" pInputText [(ngModel)]='attributeName'>
+    </div>
+  </div>
+  <div class="ui-g" style="padding: 0.5rem" *ngIf='source == "ele" && Property == "style"'>
+    <div class="ui-g-4">
+      <span>Style Properties</span>
+    </div>
+    <div class="ui-g-6">
+      <p-dropdown placeholder='Select Style Property' appendTo="body" [style]="{'width': '150px'}" [options]="eleStyle"
+        [(ngModel)]="elementStyle">
+      </p-dropdown>
+    </div>
+  </div>
+  <div class="ui-g" style="padding: 0.5rem" *ngIf='source == "url"'>
+    <div class="ui-g-4">
+      <span>Url Properties</span>
+    </div>
+    <div class="ui-g-6">
+      <p-dropdown placeholder='Select Url Property' appendTo="body" [style]="{'width': '150px'}"
+        [options]="urlProperties" [(ngModel)]="urlProperty">
+      </p-dropdown>
+    </div>
+  </div>
+  <div class="ui-g" style="padding: 0.5rem" *ngIf='source == "cookie"'>
+    <div class="ui-g-4">
+      <span>Cookie Name</span>
+    </div>
+    <div class="ui-g-6">
+      <input type="text" pInputText [(ngModel)]='cookieName'>
+    </div>
+  </div>
+  <div class="ui-g" style="padding: 0.5rem" *ngIf='source == "code"'>
+    <div class="ui-g-4">
+      <span>code snippet</span>
+    </div>
+    <div class="ui-g-6">
+      open editor ... <span style="float:right;font-size: 16px;cursor:pointer;" (click)="openEditor = true">
+        <i class="fa fa-pencil-square-o" title="open Editor"></i></span>
+    </div>
+  </div>
+  <p-footer>
+    <button type="button" pButton (click)="dataPointDisplay=false ; addDataPoint()" label="Save"></button>
+  </p-footer>
+  <!-- </p-fieldset> -->
+</p-dialog>

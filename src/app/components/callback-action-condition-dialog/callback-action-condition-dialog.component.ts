@@ -15,7 +15,7 @@ export class CallbackActionConditionDialogComponent implements OnInit, OnChanges
   // TODO: it has to pass by parent component or some other service.
   groupedVariableList: any = [{
     label: 'Data points',
-    value: 'fab fa-accusoft',
+    value: 'fa fa-mixcloud',
     items: [{
       label: 'dataPoint1', value: 'DP::dataPoint1',
     }, {

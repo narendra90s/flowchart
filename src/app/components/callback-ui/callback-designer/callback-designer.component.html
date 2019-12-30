@@ -14,7 +14,7 @@
       <p-tabPanel header="State Diagram">
         <app-callback-sd (actionAdded)="actionAdded($event)" [callback]="callback"></app-callback-sd>
       </p-tabPanel>
-      <p-tabPanel  *ngIf="sidebarLoaded === true" header="Action Flowchart">
+      <p-tabPanel *ngIf="sidebarLoaded === true" header="Action Flowchart">
         <app-callback-flowchart [action]="currentAction" [callback]="callback"></app-callback-flowchart>
       </p-tabPanel>
       <p-tabPanel header="Source Code">

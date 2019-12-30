@@ -23,6 +23,23 @@ export class CallbackSidebarMenuComponent implements OnInit {
   sdToolbarTreeData: TreeNode[] = [];
   apiCount = 0;
   timer: any = null;
+  dataPointDisplay: boolean = false;
+  name: string;
+  source: any;
+  type: any;
+  dataType: any;
+  dataSource: any;
+  eleProperty: any;
+  eleStyle: any;
+  cssSelector: any;
+  Property: any;
+  urlProperties: any;
+  varList: any = [];
+  dataPointList : any = [];
+  attributeName: any;
+  elementStyle: any;
+  urlProperty: any;
+  cookieName: any;
 
   constructor() {
     this.actionApiList = ActionApiList.apiList;
@@ -67,6 +84,49 @@ export class CallbackSidebarMenuComponent implements OnInit {
       },
       icon: 'fa fa-file'
     }];
+
+
+    this.dataType = [
+      { label: 'Scaler', value: 'scaler' },
+      { label: 'Vector', value: 'vector' }
+    ];
+    this.type = "scaler";
+
+    this.dataSource = [
+      { label: 'Select Source', value: null },
+      { label: 'Element', value: 'ele' },
+      { label: 'Url', value: 'url' },
+      { label: 'Cookie', value: 'cookie' },
+      { label: 'Code snippet', value: 'code' }
+    ];
+
+    this.eleProperty = [
+      { label: 'Select Property', value: null },
+      { label: 'Self', value: 'self' },
+      { label: 'Text', value: 'text' },
+      { label: 'Class', value: 'clsss' },
+      { label: 'Attribute', value: 'attribute' },
+      { label: 'Style', value: 'style' }
+    ];
+    this.eleStyle = [
+      { label: 'Select Style', value: null },
+      { label: 'Display', value: 'display' },
+      { label: 'Height', value: 'height' },
+      { label: 'Width', value: 'width' },
+      { label: 'Position', value: 'position' },
+      { label: 'Custom', value: 'custom' }
+    ];
+
+    this.urlProperties = [
+      { label: 'Select Url Properties', value: null },
+      { label: 'Host', value: 'host' },
+      { label: 'Hostname', value: 'hostname' },
+      { label: 'Origin', value: 'origin' },
+      { label: 'Path', value: 'path' },
+      { label: 'Href', value: 'href' },
+      { label: 'Search', value: 'search' },
+      { label: 'Protocol', value: 'protocol' }
+    ]
   }
 
   ngOnInit() {
@@ -141,4 +201,53 @@ export class CallbackSidebarMenuComponent implements OnInit {
     return apis;
   }
 
+
+  showDialogDataPoint() {
+    this.dataPointDisplay = true;
+  }
+  addDataPoint() {
+    //TODO : Store the dataPoint OBJ.
+    console.log("data",this.name , this.type ,this.source ,this.cssSelector , this.Property ,this.attributeName ,this.elementStyle , this.urlProperty ,this.cookieName );
+    let jsob = {
+      label : this.name,
+      type : this.type,
+      source : this.source,
+      cssSelector : this.cssSelector,
+      Property : this.Property,
+      attributeName : this.attributeName,
+      elementStyle : this.elementStyle,
+      urlProperty : this.urlProperty,
+      cookieName : this.cookieName 
+    };   
+    this.dataPointList.push(jsob);
+    console.log("objdata",this.dataPointList);
+    this.name = "";
+    this.type = "";
+    this.source = "";
+    this.cssSelector = "";
+    this.Property = "";
+    this.attributeName = "";
+    this.elementStyle = "";
+    this.urlProperty = "";
+    this.cookieName = "";
+  }
+
+  deleteRecordDP(ind) {
+    console.log("deleterec", ind);
+    this.dataPointList.splice(ind, 1);
+  }
+
+  localVar: any;
+  addLocalVariable() {
+    let locVar = { label: this.localVar, value: this.localVar };
+    if (this.localVar != null || this.localVar != undefined)
+      this.varList.push(locVar);
+    console.log("varList", this.varList, "\n", locVar);
+    this.localVar = "";
+  }
+
+  deleteRecord(ind) {
+    console.log("deleterec", ind);
+    this.varList.splice(ind, 1);
+  }
 }
