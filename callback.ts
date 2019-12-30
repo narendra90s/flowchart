@@ -1,14 +1,24 @@
+import { ActionApi } from 'src/app/interface/action-api';
+
 export enum StateType {
     Start = 1,
     End,
     NORMAL
 }
 
+// It is just to remove node position and height/width.
+export class JtkNodeParam {
+    h: number;
+    w: number;
+    top: number;
+    left: number;
+}
 
 export class State {
     name: string;
     id: string;
     type: number;
+    jData: JtkNodeParam;
 
     constructor(name: string, type: number) {
         this.name = name;
@@ -20,6 +30,7 @@ export class Trigger {
     state: string;
     stateId: string;
     name: string;
+    jData: JtkNodeParam;
     // Unique id for each trigger. It can be same as triggerName
     id: string;
     type: string;
@@ -27,9 +38,50 @@ export class Trigger {
     urlSelector: string;
 }
 
+export class ConditionData {
+    lhs: string;
+    rhs: string;
+    operator: string;
+}
+
+export class ConditionNode {
+    data: ConditionData
+    id: string;
+    text: string;
+}
+
+export class ActionApiData {
+    // It will be actual api eg. CAVNV.utils.setCookie.
+    // TODO: it is better to provide uniq id to each api and use it here. 
+    api: string;
+    arguments: Map<string, string>
+}
+
+export class ActionApiCallingNodes {
+    id: string;
+    text: string;
+    data: ActionApiData; 
+}
+
+export class ActionEdge {
+    source: string;
+    target: string;
+    data: Map<string, string>;
+}
+
+export class ActionData { 
+    // Condition node.  
+    cNodes: ConditionNode[];
+    // Action api node.
+    aNOdes: ActionApiCallingNodes[];
+    edges: ActionEdge[];
+}
+
 export class Action {
     id: string;
     name: string;
+    data: ActionData;
+    jData: JtkNodeParam;
 
     constructor(name: string) {
         this.name = name;
@@ -45,12 +97,18 @@ export class DataPoint {
     patternIndex: number;
 }
 
+export class LocalVariable {
+    name: string;
+    type: number;
+}
+
 export class Callback {
     states: State[] = [];
     triggers: Trigger[] = [];
     actions: Action[] = [];
     actionMap: Map<string, Map<string, string>> = new Map();
     dataPoints: DataPoint[] = [];
+    localVariables: LocalVariable[] = [];
 
     constructor() {
         // Add start and end state.
