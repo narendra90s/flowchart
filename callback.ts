@@ -60,7 +60,7 @@ export class ActionApiData {
 export class ActionApiCallingNodes {
     id: string;
     text: string;
-    data: ActionApiData; 
+    data: ActionApiData;
 }
 
 export class ActionEdge {
@@ -69,7 +69,7 @@ export class ActionEdge {
     data: Map<string, string>;
 }
 
-export class ActionData { 
+export class ActionData {
     // Condition node.  
     cNodes: ConditionNode[];
     // Action api node.
@@ -100,6 +100,27 @@ export class DataPoint {
 export class LocalVariable {
     name: string;
     type: number;
+}
+
+/**This class is for storing callback's */
+export class CallBackData {
+    name: string;
+    description: string;
+    onTrigger: any;
+    value: any;
+    pages: number;
+    channel: number;
+    jsondata: any;
+    group: any;
+    constructor(name, onTrigger, description, value, pages, channel, jsondata) {
+        this.name = name;
+        this.group = description;
+        this.onTrigger = onTrigger;
+        this.value = value;
+        this.pages = pages;
+        this.channel = channel;
+        this.jsondata = jsondata;
+    }
 }
 
 export class Callback {

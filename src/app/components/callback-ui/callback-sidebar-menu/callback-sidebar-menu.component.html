@@ -2,7 +2,8 @@
   <p-accordionTab [selected]="true">
     <p-header>Data Point</p-header>
     <mat-divider></mat-divider>
-    <button mat-button style="width: 100%" (click)="showDialogDataPoint()" color="primary">Define Data Point</button>
+    <button mat-button style="width: 100%" (click)="showDialogDataPoint()" color="primary">Define Data
+      Point</button>
     <mat-divider></mat-divider>
     <!--List of defined Data points-->
     <div *ngIf="dataPointList.length > 0" style="margin-top: 5px;">
@@ -27,14 +28,15 @@
       <!-- <button mat-icon-button color="primary" (click)="addLocalVariable()">
         <mat-icon color="primary">add</mat-icon>
       </button> -->
-    </div> 
+    </div>
     <!-- <mat-divider></mat-divider> -->
     <!-- <p-listbox [options]="cities1" [(ngModel)]="selectedCities"></p-listbox> -->
     <div *ngIf="varList.length > 0" style="margin-top: 5px;">
       <p-listbox [options]="varList" [style]="{'width': '100%','max-height': '89px','overflow': 'auto'}"
         [(ngModel)]="selectedVar">
         <ng-template let-data pTemplate="item" let i="index">
-          {{data.label}}<span style="float:right" (click)="deleteRecord(i);selectedVar=null"><i title="remove" class="fa fa-trash"></i></span>
+          {{data.label}}<span style="float:right" (click)="deleteRecord(i);selectedVar=null"><i title="remove"
+              class="fa fa-trash"></i></span>
         </ng-template>
       </p-listbox>
     </div>
@@ -89,7 +91,6 @@
     </div>
   </p-accordionTab>
 </p-accordion>
-
 
 <!-- Data Point popup -->
 

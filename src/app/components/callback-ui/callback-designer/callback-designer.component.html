@@ -1,25 +1,103 @@
-<button type="button" (click)="addCallback()" pButton label="Add Callback"></button>
+<!-- <button type="button" (click)="addCallback()" pButton label="Add Callback"></button> -->
 
 <!--Control Sidebar-->
 <!--TODO: Button to collapse/expand-->
-<div class="ui-g">
-  <div class="ui-g-2">
-    <app-callback-sidebar-menu [selectedTabIndex]="activeTabIndex" (loaded)="sidebarLoaded=true">
-    </app-callback-sidebar-menu>
-  </div>
+<!-- <div class="ui-g"> -->
+<mat-sidenav-container class="side-container">
+  <mat-sidenav style="background: rgb(255, 255, 255);width: calc(100vw - 85vw);" #sidenav mode="side"
+    [(opened)]="opened" (opened)="events.push('open!')" (closed)="events.push('close!')">
+    <div class="text-center">
+      <!-- (click)="showDialog()" -->
+      <button mat-button style="width: 100% ; padding-top: 7px" color="primary" (click)="addCallback()" ><i
+          class="fa fa-plus-circle"></i>&nbsp;Add
+        Callback</button>
+    </div>
+    <mat-divider></mat-divider>
+    <ul style="padding: 5px;">
+      <li class="callbackList" *ngFor='let data of callbackList' style='cursor:pointer;'>
+        <span>{{data.name}}</span>
+      </li>
+    </ul>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <i *ngIf="opened" (click)="sidenav.toggle()" title="callback toggel" style="position: absolute;z-index: 9999;padding: 13px 4px;"
+      class="material-icons">chevron_left</i>
+    <i *ngIf="!opened" title="callback toggel" style="position: absolute;z-index: 9999;padding: 13px 4px;" (click)="sidenav.toggle()"
+      class="material-icons">chevron_right</i>
+    <div class="ui-g" style="padding: 0.2rem;">
+      <div class="ui-g-2" style="margin-top: 42px ; padding: 0;">
+        <app-callback-sidebar-menu [selectedTabIndex]="activeTabIndex" (loaded)="sidebarLoaded=true">
+        </app-callback-sidebar-menu>
+      </div>
 
-  <div class="ui-g-10">
+      <div class="ui-g-10" style="padding: 0">
+        <p-tabView ([activeIndex])="activeTabIndex" (onChange)="activeTabIndex = $event.index">
+          <p-tabPanel header="State Diagram">
+            <app-callback-sd (actionAdded)="actionAdded($event)" [callback]="callback"></app-callback-sd>
+          </p-tabPanel>
+          <p-tabPanel *ngIf="sidebarLoaded === true" header="Action Flowchart">
+            <app-callback-flowchart [action]="currentAction" [callback]="callback"></app-callback-flowchart>
+          </p-tabPanel>
+          <p-tabPanel header="Source Code">
+            <p>Source Code</p>
+          </p-tabPanel>
+        </p-tabView>
+      </div>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>
+<!-- </div> -->
 
-    <p-tabView ([activeIndex])="activeTabIndex" (onChange)="activeTabIndex = $event.index">
-      <p-tabPanel header="State Diagram">
-        <app-callback-sd (actionAdded)="actionAdded($event)" [callback]="callback"></app-callback-sd>
-      </p-tabPanel>
-      <p-tabPanel *ngIf="sidebarLoaded === true" header="Action Flowchart">
-        <app-callback-flowchart [action]="currentAction" [callback]="callback"></app-callback-flowchart>
-      </p-tabPanel>
-      <p-tabPanel header="Source Code">
-        <p>Source Code</p>
-      </p-tabPanel>
-    </p-tabView>
+
+<!-- AddCallback Popup -->
+<p-dialog header="Add Callback" [modal]="true" appendTo="body" [contentStyle]="{'overflow':'visible'}"
+  [(visible)]="AddCallbackDialog" [style]="{width: '470px', minWidth: '370px' , minHeight: 'fit-content'}">
+  <div class="ui-g">
+    <div class="ui-g-4">
+      <span>Name</span>
+    </div>
+    <div class="ui-g-6">
+      <input type="text" pInputText [(ngModel)]='name'>
+    </div>
   </div>
-</div>
+  <div class="ui-g">
+    <div class="ui-g-4">
+      <span>Description</span>
+    </div>
+    <div class="ui-g-6">
+      <input type="text" pInputText [(ngModel)]='description'>
+    </div>
+  </div>
+  <div class="ui-g">
+    <div class="ui-g-4">
+      <span>Execute On</span>
+    </div>
+    <div class="ui-g-6">
+      <p-dropdown placeholder='Select OnTrigger' [style]="{'width': '150px'}" appendTo="body"
+        [options]="onTriggerEvents" [(ngModel)]="onTrigger">
+      </p-dropdown>
+    </div>
+  </div>
+  <div class="ui-g">
+    <div class="ui-g-4">
+      <span>Pages</span>
+    </div>
+    <div class="ui-g-6">
+      <p-multiSelect defaultLabel='Select Page' [style]="{'width': '150px'}" appendTo="body"
+        [options]="page" [(ngModel)]="pageid"></p-multiSelect>
+    </div>
+  </div>
+  <div class="ui-g">
+    <div class="ui-g-4">
+      <span>Channel</span>
+    </div>
+    <div class="ui-g-6">
+      <p-dropdown placeholder='Select Channel' [style]="{'width': '150px'}" appendTo="body" [options]="channels"
+        [(ngModel)]="channel">
+      </p-dropdown>
+    </div>
+  </div>
+  <p-footer>
+    <button type="button" pButton (click)="AddCallbackDialog=false; addCallbackData()" label="Save"></button>
+  </p-footer>
+</p-dialog>

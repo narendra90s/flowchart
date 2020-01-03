@@ -1,0 +1,10 @@
+.callbackList {
+    width: 100%;
+    background: #c7d8eb;
+    line-height: 22px;
+    font-size: 13px;
+    padding: 5px;
+    font-family: Roboto,"Trebuchet MS",Arial,Helvetica,sans-serif;
+    border: solid 1px white;
+    border-radius : 3px;
+  } 
