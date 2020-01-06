@@ -13,14 +13,14 @@
 <!-- Trigger Dialog -->
 <div>
 <!-- <button type="button" (click)="openDialog()" pButton label="Open Dialog"></button>   -->
-<p-dialog header="Add Trigger" [(visible)]="showTriggerDialog" [modal]="true" [responsive]="true" [style]="{width: '500px', minWidth: '250px'}" [minY]="70" [maximizable]="false" [baseZIndex]="10000">
+<p-dialog header="Add Trigger" [(visible)]="showTriggerDialog" appendTo="body" [contentStyle]="{'overflow':'visible'}" [modal]="true" [responsive]="true" [style]="{width: '500px', minWidth: '250px'}" [minY]="70" [maximizable]="false" [baseZIndex]="10000">
   <app-sd-addtriggerdialog *ngIf="newTriggerName" [states]="callback.states" [triggerName]="newTriggerName" (success)="addTriggerNode($event)"></app-sd-addtriggerdialog>
 </p-dialog>
 </div>
 
 
 <div>
-<p-dialog header="Add Action" [(visible)]="showActionDialog" [modal]="true" [responsive]="true" [style]="{width: '500px', minWidth: '250px'}" [minY]="70" [maximizable]="false" [baseZIndex]="10000">
+<p-dialog header="Add Action" [(visible)]="showActionDialog" appendTo="body" [contentStyle]="{'overflow':'visible'}" [modal]="true" [responsive]="true" [style]="{width: '500px', minWidth: '250px'}" [minY]="70" [maximizable]="false" [baseZIndex]="10000">
   <p-fieldset *ngIf="newActionName">
     <!-- Trigger Input-->
     <div class="ui-g">

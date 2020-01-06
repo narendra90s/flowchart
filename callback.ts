@@ -18,16 +18,26 @@ export class JtkNodeParam {
     top: number;
     left: number;
 }
-
+/**
+ *  type : state , w , h , left , top , text , id
+    type: string = "state";
+    w: number;
+    h: number;
+    left: number;
+    top: number;
+    text: string;
+    id: string;
+ */
 export class State {
-    name: string;
+    text: string;
     id: string;
     type: number;
     jData: JtkNodeParam;
 
-    constructor(name: string, type: number) {
-        this.name = name;
+    constructor(text: string, type: number ,jData) {
+        this.text = text;
         this.type = type;
+        this.jData = jData;
     }
 }
 
@@ -75,7 +85,7 @@ export class ActionEdge {
     data: Map<string, string>;
 }
 
-export class ActionData { 
+export class ActionData {
     // Condition node.  
     cNodes: ConditionNode[];
     // Action api node.
@@ -108,6 +118,27 @@ export class LocalVariable {
     type: number;
 }
 
+/**This class is for storing callback's */
+export class CallBackData {
+    name: string;
+    description: string;
+    onTrigger: any;
+    value: any;
+    pages: number;
+    channel: number;
+    jsondata: any;
+    group: any;
+    constructor(name, onTrigger, description, value, pages, channel, jsondata) {
+        this.name = name;
+        this.group = description;
+        this.onTrigger = onTrigger;
+        this.value = value;
+        this.pages = pages;
+        this.channel = channel;
+        this.jsondata = jsondata;
+    }
+}
+
 export class Callback {
     states: State[] = [];
     triggers: Trigger[] = [];
@@ -118,8 +149,8 @@ export class Callback {
 
     constructor() {
         // Add start and end state.
-        const startState = new State('start', StateType.Start);
-        const endState = new State('end', StateType.End);
+        const startState = new State('start', StateType.Start ,JtkNodeParam);
+        const endState = new State('end', StateType.End ,JtkNodeParam);
 
         startState.id = 'start';
         this.states.push(startState);

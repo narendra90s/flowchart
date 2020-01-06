@@ -2,6 +2,7 @@ import { Component, OnInit, EventEmitter, Output, AfterViewInit, AfterContentIni
 import { ActionApi, ActionApiList } from 'src/app/interface/action-api';
 import { TreeNode } from 'primeng/api/public_api';
 import { trigger } from '@angular/animations';
+import { CallbackDataServiceService } from 'src/app/service/callback-data-service.service';
 
 
 @Component({
@@ -24,24 +25,24 @@ export class CallbackSidebarMenuComponent implements OnInit {
   apiCount = 0;
   timer: any = null;
   dataPointDisplay: boolean = false;
-  name: string;
-  source: any;
-  type: any;
-  dataType: any;
-  dataSource: any;
-  eleProperty: any;
-  eleStyle: any;
-  cssSelector: any;
-  Property: any;
-  urlProperties: any;
+  name: string = null;
+  source: any = null;
+  type: any = null;
+  dataType: any = null;
+  dataSource: any = null;
+  eleProperty: any = null;
+  eleStyle: any = null;
+  cssSelector: any = null;
+  Property: any = null;
+  urlProperties: any = null;
   varList: any = [];
   dataPointList : any = [];
-  attributeName: any;
-  elementStyle: any;
-  urlProperty: any;
-  cookieName: any;
+  attributeName: any = null;
+  elementStyle: any = null;
+  urlProperty: any = null;
+  cookieName: any = null;
 
-  constructor() {
+  constructor(private cbData: CallbackDataServiceService) {
     this.actionApiList = ActionApiList.apiList;
 
     this.apiTreeData = this.apiToTreeData();
@@ -129,6 +130,8 @@ export class CallbackSidebarMenuComponent implements OnInit {
     ]
   }
 
+  DataPoint : any;
+  LocalVar : any;
   ngOnInit() {
     // set a timeinterval to check if api list is rendered or not.
     this.timer = setInterval(() => {
@@ -140,6 +143,8 @@ export class CallbackSidebarMenuComponent implements OnInit {
         clearInterval(this.timer);
       }
     }, 100);
+    this.cbData.currentCbData.subscribe(DataPoint => this.DataPoint = DataPoint);
+    this.cbData.currentLocalData.subscribe(LocalVar => this.LocalVar = LocalVar);
   }
 
 
@@ -220,34 +225,48 @@ export class CallbackSidebarMenuComponent implements OnInit {
       cookieName : this.cookieName 
     };   
     this.dataPointList.push(jsob);
-    console.log("objdata",this.dataPointList);
-    this.name = "";
-    this.type = "";
-    this.source = "";
-    this.cssSelector = "";
-    this.Property = "";
-    this.attributeName = "";
-    this.elementStyle = "";
-    this.urlProperty = "";
-    this.cookieName = "";
+    /**TODO : Send this.dataPointList to action-apidialog groupedVariableList : items <Through service> */
+    this.newDataPointList();
+    // console.log("Comming objdata",this.dataPointList , this.cbData);
+    this.name = null;
+    this.type = null;
+    this.source = null;
+    this.cssSelector = null;
+    this.Property = null;
+    this.attributeName = null;
+    this.elementStyle = null;
+    this.urlProperty = null;
+    this.cookieName = null;
+  }
+
+  newDataPointList() {
+    console.log("calling newMessage");
+    this.cbData.ChangeDataPoint(this.dataPointList);
+  }
+
+  newLocalVarList(){
+    this.cbData.ChangeLocalVariable(this.varList);
   }
 
   deleteRecordDP(ind) {
     console.log("deleterec", ind);
     this.dataPointList.splice(ind, 1);
+    this.newDataPointList();
   }
 
-  localVar: any;
+  localVar: any = null;
   addLocalVariable() {
     let locVar = { label: this.localVar, value: this.localVar };
     if (this.localVar != null || this.localVar != undefined)
       this.varList.push(locVar);
+    this.newLocalVarList();
     console.log("varList", this.varList, "\n", locVar);
-    this.localVar = "";
+    this.localVar = null;
   }
 
   deleteRecord(ind) {
     console.log("deleterec", ind);
     this.varList.splice(ind, 1);
+    this.newLocalVarList();
   }
 }
