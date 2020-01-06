@@ -6,6 +6,11 @@ export enum StateType {
     NORMAL
 }
 
+export enum FCNodeType {
+    CONDITION = 0,
+    ACTIONAPI
+}
+
 // It is just to remove node position and height/width.
 export class JtkNodeParam {
     h: number;
@@ -45,6 +50,7 @@ export class ConditionData {
 }
 
 export class ConditionNode {
+    type: number;
     data: ConditionData
     id: string;
     text: string;
@@ -60,7 +66,7 @@ export class ActionApiData {
 export class ActionApiCallingNodes {
     id: string;
     text: string;
-    data: ActionApiData; 
+    data: ActionApiData;
 }
 
 export class ActionEdge {
