@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, Input, OnChanges } from '@angular/core';
 import { jsPlumbSurfaceComponent, jsPlumbService } from 'jsplumbtoolkit-angular';
 import { jsPlumbToolkit, Surface, Dialogs, DrawingTools, jsPlumbToolkitUtil } from 'jsplumbtoolkit';
 import { QuestionNodeComponent, ActionNodeComponent, StartNodeComponent, OutputNodeComponent } from 'src/app/flowchart';
-import { Callback, Action } from 'callback';
+import { Callback, Action, ActionData } from 'callback';
 import { ActionApi, ActionApiList } from 'src/app/interface/action-api';
 
 @Component({
@@ -70,6 +70,7 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
       // update flowchart.
       this.toolkit.load({data: this.flowChartData});
     }
+    
   }
 
   ngOnInit() {
@@ -319,6 +320,9 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
     this.pendingApiJTKCallback = null;
     this.pendingApiJTKData = null;
     this.showApiDialog = false;
+
+    let AData = ActionData;
+    console.log("actual flowchart data",this.flowChartData , $event , AData );
   }
 
   handleConditionAdded($event) {
@@ -332,6 +336,6 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
     this.pendingConditionJTKCallback = null;
     this.pendingConditionJTKData = null;
     this.showConditionDialog = false; 
-    console.log('handleConditionAdded completed');
+    console.log('handleConditionAdded completed',this.flowChartData ,$event);
   }
 }

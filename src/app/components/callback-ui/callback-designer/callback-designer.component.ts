@@ -1,6 +1,7 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Inject } from '@angular/core';
 import { Callback, Action, CallBackData } from 'callback';
 import { FlowcharthttpserviceService } from 'src/app/service/flowcharthttpservice.service';
+import { CallbackDataServiceService } from 'src/app/service/callback-data-service.service';
 
 
 @Component({
@@ -31,7 +32,8 @@ export class CallbackDesignerComponent implements OnInit {
   page : any;
 
 
-  constructor( private httpService: FlowcharthttpserviceService) { 
+  constructor( private httpService: FlowcharthttpserviceService ,@Inject(CallbackDataServiceService) public CallbackDataServiceService) { 
+    console.log("CallbackDataServiceService callbackObj data",this.CallbackDataServiceService.callbackObj);
     this.onTriggerEvents = [
       { label: 'Page Ready', value: '1' },
       { label: 'After Beacon', value: '2' },
@@ -103,22 +105,40 @@ export class CallbackDesignerComponent implements OnInit {
     // this.callbackService.broadcast('change', this.callbackService.callbackObj);
   }
 
-
   addCallbackData(){
-    console.log("Add callback called",this.name);
-    let callBackData = new CallBackData(this.name , this.onTrigger ,this.description ,"",this.pageid,this.channel,"");
+    // let callback = new CallBack();
+    console.log("Add callback called",this.name , this.callback );
+    let callBackData = new CallBackData(this.name , this.onTrigger ,this.description ,"",this.pageid,this.channel,this.callback);
     console.log("callback data ---",this.name ,"\n",this.onTrigger,"\n",this.description,"\n",this.pageid ,"\n",this.channel)
     this.httpService.addCallbacks(callBackData).subscribe((response: any) => {
+      console.log("CBDATA",callBackData);
       callBackData = response;
       if(response){
        this.getCallback();
       }
-    });    
+    }); 
+    
+    
+    // this.CallbackDataServiceService.callbackObj = callBackData;
+    // this.CallbackDataServiceService.callbacks.push(callBackData);
+    // this.CallbackDataServiceService.broadcast('change',this.CallbackDataServiceService.callbackObj);
+    // this.selectedCallback(callBackData);
+
+
     this.name = null;
     this.pageid = null;
     this.description = null;
     this.channel = null;
     this.onTrigger = null;
+  }
+
+  selectedCallback(callback){
+    console.log("select Called",callback);
+    this.callback = callback;
+
+    // this.CallbackDataServiceService.callbackObj = callback;
+    // this.CallbackDataServiceService.broadcast('change',this.CallbackDataServiceService.callbackObj);
+    // this.CallbackDataServiceService.broadcast('selected',this.CallbackDataServiceService.callbackObj);
   }
 
 }

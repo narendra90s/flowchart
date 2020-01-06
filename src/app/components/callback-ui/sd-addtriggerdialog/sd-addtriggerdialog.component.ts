@@ -52,7 +52,7 @@ export class SdAddtriggerdialogComponent implements OnInit {
     // If states are given then set the state option.
     this.states.forEach(state => {
       if (state.type != StateType.End)
-        this.stateList.push({name: state.name, value: state.id});
+        this.stateList.push({name: state.text, value: state.id});
     });
   }
 

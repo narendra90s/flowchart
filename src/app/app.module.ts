@@ -34,6 +34,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatButtonModule } from '@angular/material/button';
 import { CallbackActionapiDialogComponent } from './components/callback-ui/callback-actionapi-dialog/callback-actionapi-dialog.component';
 import { CallbackActionConditionDialogComponent } from './components/callback-action-condition-dialog/callback-action-condition-dialog.component';
+import { CallbackDataServiceService } from './service/callback-data-service.service';
 
 @NgModule({
     imports: [BrowserModule, HttpClientModule , CommonModule, BrowserAnimationsModule, jsPlumbToolkitModule, ROUTING, FormsModule, ReactiveFormsModule,
@@ -47,6 +48,7 @@ import { CallbackActionConditionDialogComponent } from './components/callback-ac
         CallbackActionapiDialogComponent,
         CallbackActionConditionDialogComponent],
     bootstrap: [AppComponent],
+    providers:[CallbackDataServiceService],
     entryComponents: [QuestionNodeComponent, ActionNodeComponent, StartNodeComponent, OutputNodeComponent, EndNodeComponent, StateNodeComponent],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
