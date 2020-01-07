@@ -52,15 +52,30 @@ export class CallbackActionConditionDialogComponent implements OnInit, OnChanges
 
   ngOnInit() {
     console.log("GIT PUSH Works");
+    this.groupedVariableList[1].items = [];
+    this.groupedVariableList[0].items = [];
+    this.dpData.currentCbData.subscribe((DataPoint) => {
+      if (DataPoint && DataPoint.length) {
+        this.DataPoint = DataPoint;
+      } else {
+        this.DataPoint = [];
+      }
+      this.getGroupedVarData();
+    });
+    this.dpData.currentLocalData.subscribe(LocalVar => {
+      if (LocalVar && LocalVar.length) {
+        this.LocalVar = LocalVar;
+      } else {
+        this.LocalVar = [];
+      }
+      this.getGroupedVarData();
+    });
+    this.getGroupedVarData(); 
   }
 
   ngOnChanges(){
     console.log('ngOnChanges - called',this.DataPoint , "\n" ,this.LocalVar);
-    this.groupedVariableList[1].items = [];
-    this.groupedVariableList[0].items = [];
-    this.dpData.currentCbData.subscribe(DataPoint => this.DataPoint = DataPoint);
-    this.dpData.currentLocalData.subscribe(LocalVar => this.LocalVar = LocalVar);
-    this.getGroupedVarData(); 
+
   }
 
   onSubmit() {

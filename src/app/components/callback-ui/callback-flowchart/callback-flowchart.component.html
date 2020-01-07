@@ -14,7 +14,7 @@
 <!--TODO: Move this dialog to parent.-->
 <p-dialog [(visible)]="showApiDialog" appendTo="body" [contentStyle]="{'overflow':'visible'}">
   <p-header *ngIf="currentActionApi">{{currentActionApi.label}}</p-header>
-  <app-callback-actionapi-dialog (actionApiSubmit)="handleActionApiAdded($event)" [api]="currentActionApi"></app-callback-actionapi-dialog>
+  <app-callback-actionapi-dialog (actionApiSubmit)="handleActionApiAdded($event)" [callback]="callback" [api]="currentActionApi"></app-callback-actionapi-dialog>
 </p-dialog>
 
 <p-dialog [(visible)]="showConditionDialog" appendTo="body" [contentStyle]="{'overflow':'visible'}">

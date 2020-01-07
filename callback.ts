@@ -32,7 +32,7 @@ export class State {
     text: string;
     id: string;
     type: number;
-    jData: JtkNodeParam;
+    jData: JtkNodeParam = new JtkNodeParam();
 
     constructor(text: string, type: number ,jData) {
         this.text = text;
@@ -45,7 +45,7 @@ export class Trigger {
     state: string;
     stateId: string;
     name: string;
-    jData: JtkNodeParam;
+    jData: JtkNodeParam = new JtkNodeParam();
     // Unique id for each trigger. It can be same as triggerName
     id: string;
     type: string;
@@ -97,7 +97,7 @@ export class Action {
     id: string;
     name: string;
     data: ActionData;
-    jData: JtkNodeParam;
+    jData: JtkNodeParam = new JtkNodeParam();
 
     constructor(name: string) {
         this.name = name;

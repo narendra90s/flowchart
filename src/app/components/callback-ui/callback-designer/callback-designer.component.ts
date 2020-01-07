@@ -32,8 +32,8 @@ export class CallbackDesignerComponent implements OnInit {
   page : any;
 
 
-  constructor( private httpService: FlowcharthttpserviceService ,@Inject(CallbackDataServiceService) public CallbackDataServiceService) { 
-    console.log("CallbackDataServiceService callbackObj data",this.CallbackDataServiceService.callbackObj);
+  constructor( private httpService: FlowcharthttpserviceService , private cbService: CallbackDataServiceService) { 
+
     this.onTriggerEvents = [
       { label: 'Page Ready', value: '1' },
       { label: 'After Beacon', value: '2' },
@@ -79,9 +79,52 @@ export class CallbackDesignerComponent implements OnInit {
     */
   }
   @Input() callback: Callback;
-  callbackList: any;
+  callbackList: any[];
+  callbackEntry: any = null;
   ngOnInit() {
-    this.getCallback();
+    this.getCallback(null);
+
+    // register editAction.
+    this.cbService.on('editAction').subscribe(data => this.editAction(data));
+
+
+    // register for change in localvariable and global variable
+    this.cbService.currentCbData.subscribe(dataPoints => {
+      if (this.callback) {
+        this.callback.dataPoints = dataPoints;
+      }
+    });
+    this.cbService.currentLocalData.subscribe(localVariables => {
+      if (this.callback) {
+        this.callback.localVariables = localVariables;
+      }
+    });
+  }
+
+  editAction(obj) {
+    let actionId = obj.id;
+    console.log('editAction called for action id', actionId);
+
+    if (this.callback === null) {
+      alert('No Callback selected');
+      return;
+    }
+
+    let match = this.callback.actions.some((action) => {
+      if(action.id === actionId) {
+        console.log('Edit action, matched action - ', action);
+        this.currentAction = action;
+        this.activeTabIndex = CallbackDesignerComponent.FLOW_CHART_TAB;
+        // switch the tab.
+        return true;
+      }
+      return false;
+    });
+
+    if (match === false) {
+      alert('No Action matched for id - '+ actionId);
+      return;
+    }
   }
 
   addCallback() {
@@ -98,14 +141,40 @@ export class CallbackDesignerComponent implements OnInit {
     }
   }
 
-  getCallback(){
+  getCallback(name){
     this.httpService.getCallbacks().subscribe((response: any) => {
       this.callbackList = response;
+
+      if (this.callbackList.length === 0) {
+        return;
+      }
+
+      // select current callback.
+      if (name === null) {
+        this.callbackEntry = this.callbackEntry[0];
+        this.callback = this.callbackEntry.jsondata;
+        return;
+      } else {
+        this.callbackList.some(cb => {
+          if (cb.name === name) {
+            this.callbackEntry  = cb;
+            this.callback = cb.jsondata;
+            this.deserializeActionMap(this.callback);
+            return true;
+          } 
+          return false;
+        });
+      }
+
+      // broadcast changed global and local variable list. 
+      this.cbService.ChangeDataPoint(this.callback.dataPoints);
+
+      this.cbService.ChangeLocalVariable(this.callback.localVariables);
     });
     // this.callbackService.broadcast('change', this.callbackService.callbackObj);
   }
 
-  addCallbackData(){
+  addCallbackData() {
     // let callback = new CallBack();
     console.log("Add callback called",this.name , this.callback );
     let callBackData = new CallBackData(this.name , this.onTrigger ,this.description ,"",this.pageid,this.channel,this.callback);
@@ -114,7 +183,7 @@ export class CallbackDesignerComponent implements OnInit {
       console.log("CBDATA",callBackData);
       callBackData = response;
       if(response){
-       this.getCallback();
+       this.getCallback(this.name);
       }
     }); 
     
@@ -132,13 +201,48 @@ export class CallbackDesignerComponent implements OnInit {
     this.onTrigger = null;
   }
 
-  selectedCallback(callback){
-    console.log("select Called",callback);
-    this.callback = callback;
+  deserializeActionMap(callback) {
+    let obj = callback.actionMap;
+    let map:Map<string, Map<string, string>> = new Map();
+    for (let key in obj) {
+      let valueMap: Map<string, string> = new Map();
+      for (let k in obj[key]) {
+        valueMap.set(k, obj[key][k]);
+      }
+      map.set(key, valueMap);
+    }
+
+    console.log('actionMap after deserialise ', map);
+    callback.actionMap = map;
+  }
+
+  selectedCallback(callbackEntry) {
+    console.log('select Called', callbackEntry);
+    this.callbackEntry = callbackEntry;
+
+    if (typeof callbackEntry.jsondata === 'string') {
+      this.callback = JSON.parse(callbackEntry.jsondata);
+    } else {
+      this.callback = callbackEntry.jsondata;
+    }
+
+    this.deserializeActionMap(this.callback);
+
+    // broadcast changed global and local variable list. 
+    this.cbService.ChangeDataPoint(this.callback.dataPoints);
+
+    this.cbService.ChangeLocalVariable(this.callback.localVariables);
 
     // this.CallbackDataServiceService.callbackObj = callback;
     // this.CallbackDataServiceService.broadcast('change',this.CallbackDataServiceService.callbackObj);
     // this.CallbackDataServiceService.broadcast('selected',this.CallbackDataServiceService.callbackObj);
+  }
+
+  // TODO: acknowledge by message that successfully saved.
+  saveCallback() {
+    if (this.callbackEntry) {
+      this.httpService.updateCallback(this.callbackEntry);
+    }
   }
 
 }

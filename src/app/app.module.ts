@@ -14,7 +14,7 @@ import { TreeModule } from 'primeng/tree';
 import { ListboxModule } from 'primeng/listbox';
 import { MultiSelectModule } from 'primeng/multiselect';
 
-import { FlowchartComponent, QuestionNodeComponent, ActionNodeComponent, StartNodeComponent, OutputNodeComponent, EndNodeComponent, StateNodeComponent } from './flowchart';
+import { FlowchartComponent, QuestionNodeComponent, ActionNodeComponent, StartNodeComponent, OutputNodeComponent, EndNodeComponent, StateNodeComponent, SDActionNodeComponent } from './flowchart';
 import { StateDiagramComponent } from './state-diagram/state-diagram.component';
 import { CallbackSdComponent } from './components/callback-ui/callback-sd/callback-sd.component';
 import { SdAddtriggerdialogComponent } from './components/callback-ui/sd-addtriggerdialog/sd-addtriggerdialog.component';
@@ -46,10 +46,11 @@ import { CallbackDataServiceService } from './service/callback-data-service.serv
         CallbackFlowchartComponent,
         CallbackSidebarMenuComponent,
         CallbackActionapiDialogComponent,
-        CallbackActionConditionDialogComponent],
+        CallbackActionConditionDialogComponent, 
+        SDActionNodeComponent],
     bootstrap: [AppComponent],
     providers:[CallbackDataServiceService],
-    entryComponents: [QuestionNodeComponent, ActionNodeComponent, StartNodeComponent, OutputNodeComponent, EndNodeComponent, StateNodeComponent],
+    entryComponents: [QuestionNodeComponent, ActionNodeComponent, StartNodeComponent, OutputNodeComponent, EndNodeComponent, StateNodeComponent, SDActionNodeComponent],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class AppModule {

@@ -1,10 +1,11 @@
 import { Component, OnInit, ViewChild, Input, OnChanges, Output, EventEmitter } from '@angular/core';
 import { jsPlumbSurfaceComponent, jsPlumbService } from 'jsplumbtoolkit-angular';
 import { jsPlumbToolkit, Surface, Dialogs, jsPlumbToolkitUtil, DrawingTools } from 'jsplumbtoolkit';
-import { QuestionNodeComponent, ActionNodeComponent, StartNodeComponent, OutputNodeComponent, EndNodeComponent, StateNodeComponent } from 'src/app/flowchart';
+import { QuestionNodeComponent, ActionNodeComponent, StartNodeComponent, OutputNodeComponent, EndNodeComponent, StateNodeComponent, SDActionNodeComponent } from 'src/app/flowchart';
 import { DialogModule } from 'primeng/dialog';
 import { Callback, StateType, State, Trigger, Action, JtkNodeParam } from 'callback';
 import { startTimeRange } from '@angular/core/src/profile/wtf_impl';
+import { CallbackDataServiceService } from 'src/app/service/callback-data-service.service';
 
 @Component({
   selector: 'app-callback-sd',
@@ -88,6 +89,9 @@ export class CallbackSdComponent implements OnInit, OnChanges {
       if (node.type === 'state' || node.type === 'start' || node.type === 'end') {
         this.callback.states.some(state => {
           if (node.id === state.id) {
+            if (state.jData === undefined) {
+              state.jData = new JtkNodeParam();
+            }
             return this.copyJData(node, state.jData);
           }
           return false;
@@ -95,6 +99,9 @@ export class CallbackSdComponent implements OnInit, OnChanges {
       } else if (node.type === 'trigger') {
         this.callback.triggers.some(trigger => {
           if (node.id === trigger.id) {
+            if (trigger.jData === undefined) {
+              trigger.jData = new JtkNodeParam();
+            }
             return this.copyJData(node, trigger.jData);
           }
           return false;
@@ -102,6 +109,9 @@ export class CallbackSdComponent implements OnInit, OnChanges {
       } else if (node.type === 'action') {
         this.callback.actions.some(action => {
           if (node.id === action.id) {
+            if (action.jData === undefined) {
+              action.jData = new JtkNodeParam();
+            }
             return this.copyJData(node, action.jData);
           }
           return false;
@@ -113,7 +123,7 @@ export class CallbackSdComponent implements OnInit, OnChanges {
   dataUpdateListener() {
     console.log('JSPlumb data updated - ', this.toolkit.exportData());
     // TODO: update jsplumb data.
-    let tempToolkitData = Object(this.toolkit.exportData().nodes);
+    let tempToolkitData = Object(this.toolkit.exportData());
 
     this.updateBTInfo(tempToolkitData);
     
@@ -162,12 +172,12 @@ export class CallbackSdComponent implements OnInit, OnChanges {
             "type": "state",
             "text": state.text,
           });
-
-          this.copyJData(state, sdData.nodes[sdData.nodes.length - 1]);
       }
+      
+      this.copyJData(state.jData, sdData.nodes[sdData.nodes.length - 1]);
     });
 
-    //Iterate triggers. 
+    // Iterate triggers. 
     this.callback.triggers.forEach(trigger => {
       sdData.nodes.push({
         "id": trigger.id,
@@ -175,7 +185,7 @@ export class CallbackSdComponent implements OnInit, OnChanges {
         "text": trigger.name
       })
 
-      this.copyJData(trigger, sdData.nodes[sdData.nodes.length - 1]);
+      this.copyJData(trigger.jData, sdData.nodes[sdData.nodes.length - 1]);
 
       //Add edge for this trigger. 
       sdData.edges.push({
@@ -191,7 +201,7 @@ export class CallbackSdComponent implements OnInit, OnChanges {
         "type": "action",
         "text": action.name
       });
-      this.copyJData(action, sdData.nodes[sdData.nodes.length - 1]);
+      this.copyJData(action.jData, sdData.nodes[sdData.nodes.length - 1]);
     });
 
     //make edge for trigger to action.
@@ -298,7 +308,7 @@ export class CallbackSdComponent implements OnInit, OnChanges {
   resolveNode(typeId: string) {
     return ({
       "QuestionNode": QuestionNodeComponent,
-      "ActionNode": ActionNodeComponent,
+      "ActionNode": SDActionNodeComponent,
       "StartNode": StartNodeComponent,
       "EndNode": EndNodeComponent,
       "OutputNode": OutputNodeComponent,

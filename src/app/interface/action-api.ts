@@ -1,7 +1,8 @@
 
 export enum ApiArgumentType {
     STRING = 1,
-    NUMBER = 2
+    NUMBER = 2,
+    STATE = 3
 }
 
 export class Operator {
@@ -111,6 +112,21 @@ export class ActionApiList {
                     type: ApiArgumentType.STRING,
                     required: true
                 }]
+            }
+        ],
+        State: [
+            {
+                category: 'Start',
+                label: 'Goto State',
+                id: 'gotoState',
+                api: 'CAVNV.sb.gotoState',
+                arguments: [{
+                    label: 'State Name',
+                    name: 'stateName',
+                    type: ApiArgumentType.STATE,
+                    required: true
+                }]
+
             }
         ]
     };

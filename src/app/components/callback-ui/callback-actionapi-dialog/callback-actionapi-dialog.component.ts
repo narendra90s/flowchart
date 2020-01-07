@@ -3,6 +3,7 @@ import { ActionApi, ApiArgument } from 'src/app/interface/action-api';
 import { SelectItem, SelectItemGroup } from 'primeng/api';
 import { FormControl, Validators, FormGroup } from '@angular/forms';
 import { CallbackDataServiceService } from 'src/app/service/callback-data-service.service';
+import { Callback } from 'callback';
 
 
 @Component({
@@ -13,6 +14,8 @@ import { CallbackDataServiceService } from 'src/app/service/callback-data-servic
 export class CallbackActionapiDialogComponent implements OnInit, OnChanges {
 
   @Input() api: ActionApi;
+  // It is needed to show state in state Api.
+  @Input() callback: Callback;
   @Output() actionApiSubmit: EventEmitter<any> = new EventEmitter();
 
   form: FormGroup;
@@ -20,6 +23,7 @@ export class CallbackActionapiDialogComponent implements OnInit, OnChanges {
   groupedVariableList: any;
   DataPoint: any = null;
   LocalVar: any = null;
+  stateList: any[] = [];
   constructor(private dpData: CallbackDataServiceService) {
     this.groupedVariableList = [{
       label: 'Data points',
@@ -33,21 +37,42 @@ export class CallbackActionapiDialogComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
-    
+    this.groupedVariableList[1].items = [];
+    this.groupedVariableList[0].items = [];
+
+    this.dpData.currentCbData.subscribe((DataPoint) => {
+      if (DataPoint && DataPoint.length) {
+        this.DataPoint = DataPoint;
+      } else {
+        this.DataPoint = [];
+      }
+      this.getGroupedVarData();
+    });
+    this.dpData.currentLocalData.subscribe(LocalVar => {
+      if (LocalVar && LocalVar.length) {
+        this.LocalVar = LocalVar;
+      } else {
+        this.LocalVar = [];
+      }
+      this.getGroupedVarData();
+    });
+    this.getGroupedVarData();
    }
 
   ngOnChanges() {
-    this.groupedVariableList[1].items = [];
-    this.groupedVariableList[0].items = [];
-    this.dpData.currentCbData.subscribe(DataPoint => this.DataPoint = DataPoint);
-    this.dpData.currentLocalData.subscribe(LocalVar => this.LocalVar = LocalVar);
     // console.log('ngOnChanges called', this.DataPoint, "\n", this.groupedVariableList);
     // TODO: Check if input will be available in constructor. if so then move this code in constructor.
     // create form group for api fields.
-    if (this.api)
+    if (this.api) {
       this.form = this.toFormGroup(this.api.arguments);
+    }
+
+    // Check if gotoState api then set stateList too.
+    this.stateList = [];
+    this.callback.states.forEach(state => {
+      this.stateList.push({label: state.text, value: state.id});
+    });
     console.log('form group initialized');
-    this.getGroupedVarData();
   }
 
   toFormGroup(args: ApiArgument[]) {
@@ -65,6 +90,7 @@ export class CallbackActionapiDialogComponent implements OnInit, OnChanges {
     console.log('Form submitted successfully. value - ', this.form.value);
     this.actionApiSubmit.emit({ api: this.api, argument: this.form.value });
   }
+
 
   getGroupedVarData() {
     if (this.DataPoint != undefined) {   

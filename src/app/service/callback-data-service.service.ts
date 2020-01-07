@@ -13,7 +13,6 @@ interface CallBackServiceEvent {
   data?: any;
 }
 @Injectable()
-
 export class CallbackDataServiceService {
 
   callbackObj : Callback;
@@ -40,6 +39,7 @@ export class CallbackDataServiceService {
     console.log("calling service localvar ngOn",LocalVar);
     this.localvarData.next(LocalVar);
   }
+
 
   broadcast(key: any, data?: any) {
     console.log("BroadCast called");

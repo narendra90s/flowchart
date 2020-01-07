@@ -8,15 +8,18 @@
     [(opened)]="opened" (opened)="events.push('open!')" (closed)="events.push('close!')">
     <div class="text-center">
       <!-- (click)="showDialog()" -->
-      <button mat-button style="width: 100% ; padding-top: 7px" color="primary" (click)="addCallback()"><i
+        <button mat-button style="width: 100% ; padding-top: 7px" color="primary" (click)="addCallback()"><i
           class="fa fa-plus-circle"></i>&nbsp;Add
         Callback</button>
+
+        <button *ngIf="callbackEntry !== null" mat-button style="width: 100% ; padding-top: 7px" color="primary" (click)="saveCallback()"><i
+          class="fa fa-save"></i>Save</button>
     </div>
     <mat-divider></mat-divider>
     <ul style="padding: 5px;">
-      <li class="callbackList" *ngFor='let callback of callbackList' (click)='selectedCallback(callback)'
+      <li class="callbackList" *ngFor='let callbackEntry of callbackList' (click)='selectedCallback(callbackEntry)'
         style='cursor:pointer;'>
-        <span>{{callback.name}}</span>
+        <span>{{callbackEntry.name}}</span>
       </li>
     </ul>
 
@@ -34,13 +37,13 @@
 
       <div class="ui-g-10" style="padding: 0">
         <p-tabView ([activeIndex])="activeTabIndex" (onChange)="activeTabIndex = $event.index">
-          <p-tabPanel header="State Diagram">
+          <p-tabPanel header="State Diagram" [selected]="activeTabIndex === 0">
             <app-callback-sd (actionAdded)="actionAdded($event)" [callback]="callback"></app-callback-sd>
           </p-tabPanel>
-          <p-tabPanel *ngIf="sidebarLoaded === true" header="Action Flowchart">
+          <p-tabPanel *ngIf="sidebarLoaded === true" header="Action Flowchart" [selected]="activeTabIndex === 1">
             <app-callback-flowchart [action]="currentAction" [callback]="callback"></app-callback-flowchart>
           </p-tabPanel>
-          <p-tabPanel header="Source Code">
+          <p-tabPanel header="Source Code"  [selected]="activeTabIndex === 2">
             <p>Source Code</p>
           </p-tabPanel>
         </p-tabView>

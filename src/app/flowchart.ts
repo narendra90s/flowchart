@@ -3,6 +3,7 @@ import {Component, ViewChild} from '@angular/core';
 import { Dialogs, DrawingTools, Node, Port, Edge, Group, jsPlumbToolkit, Surface } from "jsplumbtoolkit";
 
 import { jsPlumbSurfaceComponent, BaseNodeComponent } from "jsplumbtoolkit-angular";
+import { CallbackDataServiceService } from './service/callback-data-service.service';
 
 function isNode(obj:Node|Port|Edge|Group):obj is Node {
   return obj.objectType === "Node";
@@ -58,6 +59,20 @@ export class QuestionNodeComponent extends BaseEditableNodeComponent { }
 
 @Component({ templateUrl:"templates/action.html" })
 export class ActionNodeComponent extends BaseEditableNodeComponent  { }
+
+@Component({ templateUrl:"templates/SDAction.html" })
+export class SDActionNodeComponent extends BaseEditableNodeComponent  { 
+  constructor(private cbService: CallbackDataServiceService) {
+    super();
+  }
+
+  editActionNode(data) {
+    console.log('Edit Action node ', data);
+
+    this.cbService.broadcast('editAction', data);
+  }
+}
+
 
 // ----------------- start node -------------------------------
 

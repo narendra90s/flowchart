@@ -143,8 +143,20 @@ export class CallbackSidebarMenuComponent implements OnInit {
         clearInterval(this.timer);
       }
     }, 100);
-    this.cbData.currentCbData.subscribe(DataPoint => this.DataPoint = DataPoint);
-    this.cbData.currentLocalData.subscribe(LocalVar => this.LocalVar = LocalVar);
+    this.cbData.currentCbData.subscribe(DataPoint => {
+      if (DataPoint && DataPoint.length) {
+        this.dataPointList = DataPoint;
+      } else {
+        this.dataPointList = [];
+      }
+    });
+    this.cbData.currentLocalData.subscribe(LocalVar => {
+      if (LocalVar && LocalVar.length) {
+        this.varList = LocalVar;
+      } else {
+        this.varList = [];
+      }
+    });
   }
 
 
@@ -211,6 +223,7 @@ export class CallbackSidebarMenuComponent implements OnInit {
     this.dataPointDisplay = true;
   }
   addDataPoint() {
+    // FIXME: clean this code.
     //TODO : Store the dataPoint OBJ.
     console.log("data",this.name , this.type ,this.source ,this.cssSelector , this.Property ,this.attributeName ,this.elementStyle , this.urlProperty ,this.cookieName );
     let jsob = {
