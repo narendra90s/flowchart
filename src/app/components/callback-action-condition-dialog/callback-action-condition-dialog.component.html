@@ -1,16 +1,20 @@
-
 <p-fieldset>
   <form (ngSubmit)="onSubmit()" [formGroup]="form">
     <!--LHS-->
-    <div class="ui-g"> 
+    <div class="ui-g">
       <div class="ui-g-4" style="float: left">
         <span>LHS</span>
       </div>
-      <div class="ui-g-4" style="float: left">
-        <p-dropdown [group]="true" [filter]="true" [options]="groupedVariableList" [showClear]="true" [formControlName]="'lhs'" placeholder="Select LHS">
+      <div class="ui-g-8" style="float: left">
+        <p-dropdown [group]="true" [filter]="true" [options]="groupedVariableList" [showClear]="true"
+          [formControlName]="'lhs'" placeholder="Select LHS">
           <ng-template let-group pTemplate="group">
             <i [class]="group.value" style="width:20px;vertical-align:middle"></i>
             <span style="margin-left:.25em">{{group.label}}</span>
+            <i *ngIf="group.label == 'Data points'" class="fa fa-plus" style="float: right" title="Extract Data"
+              (click)="openExtractDialog()"></i>
+            <i *ngIf="group.label == 'Local variables'" class="fa fa-plus" style="float: right"
+              title="Add Local Variable" (click)="showLocalVarDialog = true"></i>
           </ng-template>
         </p-dropdown>
       </div>
@@ -21,8 +25,9 @@
       <div class="ui-g-4" style="float: left">
         <span>Operator</span>
       </div>
-      <div class="ui-g-4" style="float: left">
-        <p-dropdown  [options]="operatorList" [formControlName]="'operator'" [showClear]="true" optionLabel="name" placeholder="Operator"></p-dropdown>
+      <div class="ui-g-8" style="float: left">
+        <p-dropdown [options]="operatorList" [formControlName]="'operator'" [showClear]="true" optionLabel="name"
+          placeholder="Operator"></p-dropdown>
       </div>
     </div>
 
@@ -31,11 +36,16 @@
       <div class="ui-g-4">
         <span>RHS</span>
       </div>
-      <div class="ui-g-4">
-        <p-dropdown [group]="true" [filter]="true" [options]="groupedVariableList" [showClear]="true" [formControlName]="'rhs'" editable="true" placeholder="Select RHS">
+      <div class="ui-g-8">
+        <p-dropdown [group]="true" [filter]="true" [options]="groupedVariableList" [showClear]="true"
+          [formControlName]="'rhs'" editable="true" placeholder="Select RHS" [style]="{'width':'173px'}">
           <ng-template let-group pTemplate="group">
             <i [class]="group.value" style="width:20px;vertical-align:middle"></i>
             <span style="margin-left:.25em">{{group.label}}</span>
+            <i *ngIf="group.label == 'Data points'" class="fa fa-plus" style="float: right" title="Add Extract Data"
+              (click)="openExtractDialog()"></i>
+            <i *ngIf="group.label == 'Local variables'" class="fa fa-plus" style="float: right" title="Local Variable"
+              (click)="showLocalVarDialog = true"></i>
           </ng-template>
         </p-dropdown>
       </div>
@@ -43,10 +53,32 @@
 
     <!--submit button-->
     <div class="ui-g">
-    <div class="ui-g-7 ui-g-offset-5">
-      <button type="submit" pButton label="Submit" [disabled]="!form.valid" [style]="{float: 'left'}"></button>  
+      <div class="ui-g-7 ui-g-offset-5">
+        <button type="submit" pButton label="Submit" [disabled]="!form.valid" [style]="{float: 'left'}"></button>
+      </div>
     </div>
-  </div>
 
   </form>
 </p-fieldset>
+
+<p-dialog [(visible)]="showLocalVarDialog" appendTo="body">
+  <p-header>Local Variable</p-header>
+  <p-fieldset>
+    <div class="ui-g">
+      <div class="ui-g-7">
+        <input type="text" style="width: 75px" pInputText [(ngModel)]="localVar">
+      </div>
+      <div class="ui-g-5">
+        <i class="fa fa-plus" style="float: right ; padding: 9px 4px;" title="Add Local Variable"
+          (click)="addLocalVar()"></i>
+      </div>
+    </div>
+  </p-fieldset>
+</p-dialog>
+
+
+<p-dialog [(visible)]="showExtractDialog" appendTo="body" [style]="{'min-width':'350px' , 'left':' 492px'}"
+  [contentStyle]="{'overflow':'visible'}">
+  <p-header>Extract Data</p-header>
+  <app-extractdata (extractedData)="ectractedDataPoint($event)"></app-extractdata>
+</p-dialog>

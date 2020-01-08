@@ -31,15 +31,17 @@ import { CallbackDesignerComponent } from './components/callback-ui/callback-des
 import { CallbackFlowchartComponent } from './components/callback-ui/callback-flowchart/callback-flowchart.component';
 import { CallbackSidebarMenuComponent } from './components/callback-ui/callback-sidebar-menu/callback-sidebar-menu.component';
 import { MatDividerModule } from '@angular/material/divider';
-import { MatButtonModule } from '@angular/material/button';
+import { MatButtonModule ,MatDialogModule } from '@angular/material';
 import { CallbackActionapiDialogComponent } from './components/callback-ui/callback-actionapi-dialog/callback-actionapi-dialog.component';
 import { CallbackActionConditionDialogComponent } from './components/callback-action-condition-dialog/callback-action-condition-dialog.component';
 import { CallbackDataServiceService } from './service/callback-data-service.service';
+import { ExtractdataComponent } from './components/callback-ui/extractdata/extractdata.component';
+
 
 @NgModule({
     imports: [BrowserModule, HttpClientModule , CommonModule, BrowserAnimationsModule, jsPlumbToolkitModule, ROUTING, FormsModule, ReactiveFormsModule,
         InputTextModule, DropdownModule, FieldsetModule, DialogModule, ButtonModule, TabViewModule, SidebarModule,
-        MatDividerModule, MatButtonModule, AccordionModule, TreeModule, ListboxModule, MatSidenavModule, MultiSelectModule],
+        MatDividerModule, MatButtonModule, AccordionModule, TreeModule, ListboxModule, MatSidenavModule, MultiSelectModule ,MatDialogModule],
     declarations: [AppComponent, QuestionNodeComponent, ActionNodeComponent, StartNodeComponent, OutputNodeComponent,
         DatasetComponent, ControlsComponent, FlowchartComponent, StateDiagramComponent, CallbackSdComponent,
         SdAddtriggerdialogComponent, CallbackDesignerComponent, EndNodeComponent, StateNodeComponent,
@@ -47,10 +49,10 @@ import { CallbackDataServiceService } from './service/callback-data-service.serv
         CallbackSidebarMenuComponent,
         CallbackActionapiDialogComponent,
         CallbackActionConditionDialogComponent, 
-        SDActionNodeComponent],
+        SDActionNodeComponent, ExtractdataComponent],
     bootstrap: [AppComponent],
     providers:[CallbackDataServiceService],
-    entryComponents: [QuestionNodeComponent, ActionNodeComponent, StartNodeComponent, OutputNodeComponent, EndNodeComponent, StateNodeComponent, SDActionNodeComponent],
+    entryComponents: [QuestionNodeComponent, ActionNodeComponent, StartNodeComponent, OutputNodeComponent, EndNodeComponent, StateNodeComponent, SDActionNodeComponent ,ExtractdataComponent],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class AppModule {

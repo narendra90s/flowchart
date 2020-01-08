@@ -94,11 +94,11 @@ export class CallbackDesignerComponent implements OnInit {
         this.callback.dataPoints = dataPoints;
       }
     });
-    this.cbService.currentLocalData.subscribe(localVariables => {
-      if (this.callback) {
-        this.callback.localVariables = localVariables;
-      }
-    });
+    // this.cbService.currentLocalData.subscribe(localVariables => {
+    //   if (this.callback) {
+    //     this.callback.localVariables = localVariables;
+    //   }
+    // });
   }
 
   editAction(obj) {
@@ -169,7 +169,7 @@ export class CallbackDesignerComponent implements OnInit {
       // broadcast changed global and local variable list. 
       this.cbService.ChangeDataPoint(this.callback.dataPoints);
 
-      this.cbService.ChangeLocalVariable(this.callback.localVariables);
+      // this.cbService.ChangeLocalVariable(this.callback.localVariables);
     });
     // this.callbackService.broadcast('change', this.callbackService.callbackObj);
   }
@@ -231,7 +231,7 @@ export class CallbackDesignerComponent implements OnInit {
     // broadcast changed global and local variable list. 
     this.cbService.ChangeDataPoint(this.callback.dataPoints);
 
-    this.cbService.ChangeLocalVariable(this.callback.localVariables);
+    // this.cbService.ChangeLocalVariable(this.callback.localVariables);
 
     // this.CallbackDataServiceService.callbackObj = callback;
     // this.CallbackDataServiceService.broadcast('change',this.CallbackDataServiceService.callbackObj);

@@ -4,6 +4,8 @@ import { SelectItem, SelectItemGroup } from 'primeng/api';
 import { FormControl, Validators, FormGroup } from '@angular/forms';
 import { CallbackDataServiceService } from 'src/app/service/callback-data-service.service';
 import { Callback } from 'callback';
+import { MatDialog } from '@angular/material';
+import { ExtractdataComponent } from '../extractdata/extractdata.component';
 
 
 @Component({
@@ -21,10 +23,11 @@ export class CallbackActionapiDialogComponent implements OnInit, OnChanges {
   form: FormGroup;
 
   groupedVariableList: any;
-  DataPoint: any = null;
-  LocalVar: any = null;
+  extractedData: any = null;
+  // LocalVar: any = null;
+  localVar : any ;
   stateList: any[] = [];
-  constructor(private dpData: CallbackDataServiceService) {
+  constructor(private dpData: CallbackDataServiceService , public dialog: MatDialog) {
     this.groupedVariableList = [{
       label: 'Data points',
       value: 'fa fa-mixcloud',
@@ -40,19 +43,11 @@ export class CallbackActionapiDialogComponent implements OnInit, OnChanges {
     this.groupedVariableList[1].items = [];
     this.groupedVariableList[0].items = [];
 
-    this.dpData.currentCbData.subscribe((DataPoint) => {
-      if (DataPoint && DataPoint.length) {
-        this.DataPoint = DataPoint;
+    this.dpData.currentCbData.subscribe((extractedData) => {
+      if (extractedData && extractedData.length) {
+        this.extractedData = extractedData;
       } else {
-        this.DataPoint = [];
-      }
-      this.getGroupedVarData();
-    });
-    this.dpData.currentLocalData.subscribe(LocalVar => {
-      if (LocalVar && LocalVar.length) {
-        this.LocalVar = LocalVar;
-      } else {
-        this.LocalVar = [];
+        this.extractedData = [];
       }
       this.getGroupedVarData();
     });
@@ -60,7 +55,7 @@ export class CallbackActionapiDialogComponent implements OnInit, OnChanges {
    }
 
   ngOnChanges() {
-    // console.log('ngOnChanges called', this.DataPoint, "\n", this.groupedVariableList);
+    // console.log('ngOnChanges called', this.extracteddata, "\n", this.groupedVariableList);
     // TODO: Check if input will be available in constructor. if so then move this code in constructor.
     // create form group for api fields.
     if (this.api) {
@@ -93,21 +88,30 @@ export class CallbackActionapiDialogComponent implements OnInit, OnChanges {
 
 
   getGroupedVarData() {
-    if (this.DataPoint != undefined) {   
-      // this.groupedVariableList[0].items = [];   
-      for (let i = 0; i < this.DataPoint.length; i++) {
-        let temp = {label : this.DataPoint[i].label , value : this.DataPoint[i].label };
-        console.log("items og DataPoints", this.DataPoint[i]);
+    if (this.extractedData != undefined) {      
+      for (let i = 0; i < this.extractedData.length; i++) {
+        let temp = {label : this.extractedData[i].name , value : this.extractedData[i].name };
+        console.log("items og DataPoints", this.groupedVariableList[0].items[i]);
         this.groupedVariableList[0].items[i] = temp;
       }
     }
-    if (this.LocalVar != undefined) {
-      for (let i = 0; i < this.LocalVar.length; i++) {
-        // this.groupedVariableList[1].items = [];
-        console.log("items of localVar", this.LocalVar[i]); 
-        this.groupedVariableList[1].items[i] = this.LocalVar[i];
-      }
-    }
+  }
+
+  showExtractDialog : any = false;
+  openExtractDialog(){
+    this.showExtractDialog = true;
+  }
+
+  ectractedDataPoint(event){
+    console.log("event on submit datapoint",event);
+    this.showExtractDialog = false;
+  }
+
+  showLocalVarDialog : boolean = false;
+  addLocalVar(){    
+    let TempLocalVar = {label : this.localVar , value : this.localVar};
+    this.groupedVariableList[1].items.push(TempLocalVar);
+    this.showLocalVarDialog = false;
   }
 
 }

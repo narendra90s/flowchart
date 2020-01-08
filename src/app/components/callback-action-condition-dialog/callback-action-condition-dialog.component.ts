@@ -16,9 +16,10 @@ export class CallbackActionConditionDialogComponent implements OnInit, OnChanges
   
   // TODO: operator list has to be generated dynamically on the basis of operand type.
   operatorList: any;
-  DataPoint: any = null;
+  extractedData: any = null;
   LocalVar: any = null;
   groupedVariableList: any = null;
+  localVar : any ;
 
   constructor(private dpData: CallbackDataServiceService) {
     this.operatorList = Operator.operatorList;
@@ -33,19 +34,11 @@ export class CallbackActionConditionDialogComponent implements OnInit, OnChanges
     this.groupedVariableList = [{
       label: 'Data points',
       value: 'fa fa-mixcloud',
-      items: [{
-        label: 'dataPoint1', value: 'DP::dataPoint1',
-      }, {
-        label: 'dataPoint2', value: 'DP::dataPoint2'
-      }]
+      items: []
     }, {
       label: 'Local variables',
       value: 'fa fa-cubes',
-      items: [{
-        label: 'localVar1', value: 'Local::localVar1',
-      }, {
-        label: 'localVar2', value: 'Local::localVar2'
-      }]
+      items: []
   
     }];
    }
@@ -54,19 +47,11 @@ export class CallbackActionConditionDialogComponent implements OnInit, OnChanges
     console.log("GIT PUSH Works");
     this.groupedVariableList[1].items = [];
     this.groupedVariableList[0].items = [];
-    this.dpData.currentCbData.subscribe((DataPoint) => {
-      if (DataPoint && DataPoint.length) {
-        this.DataPoint = DataPoint;
+    this.dpData.currentCbData.subscribe((extractedData) => {
+      if (extractedData && extractedData.length) {
+        this.extractedData = extractedData;
       } else {
-        this.DataPoint = [];
-      }
-      this.getGroupedVarData();
-    });
-    this.dpData.currentLocalData.subscribe(LocalVar => {
-      if (LocalVar && LocalVar.length) {
-        this.LocalVar = LocalVar;
-      } else {
-        this.LocalVar = [];
+        this.extractedData = [];
       }
       this.getGroupedVarData();
     });
@@ -74,7 +59,7 @@ export class CallbackActionConditionDialogComponent implements OnInit, OnChanges
   }
 
   ngOnChanges(){
-    console.log('ngOnChanges - called',this.DataPoint , "\n" ,this.LocalVar);
+    console.log('ngOnChanges - called',this.extractedData , "\n" ,this.LocalVar);
 
   }
 
@@ -84,11 +69,11 @@ export class CallbackActionConditionDialogComponent implements OnInit, OnChanges
   }
 
   getGroupedVarData() {
-    if (this.DataPoint != undefined) {   
+    if (this.extractedData != undefined) {   
       // this.groupedVariableList[0].items = [];   
-      for (let i = 0; i < this.DataPoint.length; i++) {
-        let temp = {label : this.DataPoint[i].label , value : this.DataPoint[i].label };
-        console.log("items og DataPoints", this.DataPoint[i]);
+      for (let i = 0; i < this.extractedData.length; i++) {
+        let temp = {label : this.extractedData[i].name , value : this.extractedData[i].name };
+        console.log("items og extractedDatas", this.extractedData[i]);
         this.groupedVariableList[0].items[i] = temp;
       }
     }
@@ -99,5 +84,22 @@ export class CallbackActionConditionDialogComponent implements OnInit, OnChanges
         this.groupedVariableList[1].items[i] = this.LocalVar[i];
       }
     }
+  }
+
+  showExtractDialog : any = false;
+  openExtractDialog(){
+    this.showExtractDialog = true;
+  }
+
+  ectractedDataPoint(event){
+    console.log("event on submit extractedData",event);
+    this.showExtractDialog = false;
+  }
+
+  showLocalVarDialog : boolean = false;
+  addLocalVar(){    
+    let TempLocalVar = {label : this.localVar , value : this.localVar};
+    this.groupedVariableList[1].items.push(TempLocalVar);
+    this.showLocalVarDialog = false;
   }
 }

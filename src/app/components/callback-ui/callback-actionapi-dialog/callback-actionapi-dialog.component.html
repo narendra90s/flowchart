@@ -1,4 +1,3 @@
-
 <p-fieldset>
   <form *ngIf="api && form" (ngSubmit)="onSubmit()" [formGroup]="form">
     <div *ngFor="let item of api.arguments" class="ui-g">
@@ -11,22 +10,45 @@
           <ng-template let-group pTemplate="group">
             <i [class]="group.value" style="width:20px;vertical-align:middle"></i>
             <span style="margin-left:.25em">{{group.label}}</span>
+            <i *ngIf="group.label == 'Data points'" class="fa fa-plus" style="float: right" title="Extract Data"
+              (click)="openExtractDialog()"></i>
+            <i *ngIf="group.label == 'Local variables'" class="fa fa-plus" style="float: right"
+              title="Add Local Variable" (click)="showLocalVarDialog = true"></i>
           </ng-template>
         </p-dropdown>
-        <!--<input pInputText type="text" size="20" disabled="disabled" [(ngModel)]="stateName"/>-->
       </div>
-      <div *ngIf="api.id === 'gotoState'">
+      <div *ngIf="api.id === 'gotoState'" class="ui-g-8 field">
         <p-dropdown [options]="stateList" [formControlName]="'stateName'" [placeholder]="'Select State'"></p-dropdown>
       </div>
-
     </div>
 
     <!--submit button-->
     <div class="ui-g">
-    <div class="ui-g-7 ui-g-offset-5">
-      <button type="submit" pButton label="Add" [disabled]="!form.valid" [style]="{float: 'left'}"></button>  
+      <div class="ui-g-7 ui-g-offset-5">
+        <button type="submit" pButton label="Add" [disabled]="!form.valid" [style]="{float: 'left'}"></button>
+      </div>
     </div>
-  </div>
 
   </form>
 </p-fieldset>
+
+<p-dialog [(visible)]="showLocalVarDialog" appendTo="body">
+  <p-header>Local Variable</p-header>
+  <p-fieldset>
+    <div class="ui-g">
+      <div class="ui-g-7">
+        <input type="text" style="width: 75px" pInputText [(ngModel)]="localVar">
+      </div>
+      <div class="ui-g-5">
+        <i class="fa fa-plus" style="float: right ; padding: 9px 4px;" title="Add Local Variable"
+          (click)="addLocalVar()"></i>
+      </div>
+    </div>
+  </p-fieldset>
+</p-dialog>
+
+<p-dialog [(visible)]="showExtractDialog" appendTo="body" [style]="{'min-width':'350px' , 'left':' 492px'}"
+  [contentStyle]="{'overflow':'visible'}">
+  <p-header>Extract Data</p-header>
+  <app-extractdata (extractedData)="ectractedDataPoint($event)"></app-extractdata>
+</p-dialog>
