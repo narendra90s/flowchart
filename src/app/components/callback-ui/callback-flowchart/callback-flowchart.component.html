@@ -17,7 +17,7 @@
   <app-callback-actionapi-dialog (actionApiSubmit)="handleActionApiAdded($event)" [callback]="callback" [api]="currentActionApi"></app-callback-actionapi-dialog>
 </p-dialog>
 
-<p-dialog [(visible)]="showConditionDialog" appendTo="body" [contentStyle]="{'overflow':'visible'}">
+<p-dialog [(visible)]="showConditionDialog" appendTo="body" [style]="{'min-width' : '392px'}" [contentStyle]="{'overflow':'visible'}">
   <p-header>Condition</p-header>
   <app-callback-action-condition-dialog (conditionAdded)="handleConditionAdded($event)"></app-callback-action-condition-dialog>
 </p-dialog>

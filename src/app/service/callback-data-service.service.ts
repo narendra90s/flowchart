@@ -23,22 +23,24 @@ export class CallbackDataServiceService {
   cbDataSource = new BehaviorSubject<any>(null);
   currentCbData = this.cbDataSource.asObservable();
 
-  localvarData = new BehaviorSubject<any>(null);
-  currentLocalData = this.localvarData.asObservable();
+  // localvarData = new BehaviorSubject<any>(null);
+  // currentLocalData = this.localvarData.asObservable();
   
   constructor() {
     this.callbackObj = new Callback();
    }
 
-  ChangeDataPoint(DataPoint: any) {
-    console.log("calling service datapoint",DataPoint);
-    this.cbDataSource.next(DataPoint);
+  ChangeDataPoint(extractedData: any) {
+    console.log("calling service extractedData",extractedData);
+    this.cbDataSource.next(extractedData);
   }
 
-  ChangeLocalVariable(LocalVar : any){
-    console.log("calling service localvar ngOn",LocalVar);
-    this.localvarData.next(LocalVar);
-  }
+  //TODO : Handling should be taken care of
+  // ChangeLocalVariable(LocalVar : any){
+  //   console.log("calling service localvar ngOn",LocalVar);
+  //   this.localvarData.next(LocalVar);
+  // }
+
 
 
   broadcast(key: any, data?: any) {
