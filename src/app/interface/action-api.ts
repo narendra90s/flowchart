@@ -2,7 +2,8 @@
 export enum ApiArgumentType {
     STRING = 1,
     NUMBER = 2,
-    STATE = 3
+    STATE = 3,
+    
 }
 
 export class Operator {
@@ -82,7 +83,55 @@ export class ActionApiList {
                     type: ApiArgumentType.STRING,
                     required: true
                 }]
-            }
+            } , {
+                category: 'SPA',
+                label: 'Transaction Start',
+                id: 'cav_nv_ajax_start',
+                api: 'cav_nv_ajax_start',
+                arguments: [{
+                    label: 'Txn Name',
+                    name: 'txn_name',
+                    type: ApiArgumentType.STRING,
+                    required: true
+                }, {
+                    label: 'Data',
+                    name: 'data',
+                    type: ApiArgumentType.STRING,
+                    required: true
+                }]
+            } , {
+                category: 'SPA',
+                label: 'Transaction Report',
+                id: 'cav_nv_ajax_report',
+                api: 'cav_nv_ajax_report',
+                arguments: [{
+                    label: 'Txn Name',
+                    name: 'txn_name',
+                    type: ApiArgumentType.STRING,
+                    required: true
+                }, {
+                    label: 'Data',
+                    name: 'data',
+                    type: ApiArgumentType.STRING,
+                    required: true
+                }]
+            } , {
+                category: 'SPA',
+                label: 'Transaction End',
+                id: 'cav_nv_ajax_end',
+                api: 'cav_nv_ajax_end',
+                arguments: [{
+                    label: 'Txn Name',
+                    name: 'txn_name',
+                    type: ApiArgumentType.STRING,
+                    required: true
+                }, {
+                    label: 'Data',
+                    name: 'data',
+                    type: ApiArgumentType.STRING,
+                    required: true
+                }]
+            }  
         ],
         Cookie: [
             {
@@ -128,7 +177,73 @@ export class ActionApiList {
                 }]
 
             }
-        ]
+        ],
+        Session_Data : [
+            {
+                category: 'Session_Data',
+                label: 'Set Session Data',
+                id: 'setSessionData',
+                api: 'CAVNV.utils.setSessionData',
+                arguments: [{
+                    label: 'Key',
+                    name: 'key',
+                    type: ApiArgumentType.STRING,
+                    required: true
+                }, {
+                    label: 'Data',
+                    name: 'data',
+                    type: ApiArgumentType.STRING,
+                    required: true
+                }]
+            },
+        ],
+        LoginId : [
+            {
+                category: 'LoginId',
+                label: 'Set LoginId',
+                id: 'setLoginId',
+                api: 'CAVNV.utils.setLoginId',
+                arguments: [{
+                    label: 'LoginId',
+                    name: 'loginid',
+                    type: ApiArgumentType.STRING,
+                    required: true
+                }]
+            },
+        ],
+        SessionId : [
+            {
+                category: 'SessionId',
+                label: 'Set SessionId',
+                id: 'setSessionId',
+                api: 'CAVNV.utils.setSessionId',
+                arguments: [{
+                    label: 'SessionId',
+                    name: 'SessionId',
+                    type: ApiArgumentType.NUMBER,
+                    required: true
+                }]
+            },
+        ],
+        LogEvent : [
+            {
+                category: 'LogEvent',
+                label: 'Log Event',
+                id: 'eventName',
+                api: 'CAVNV.utils.eventName',
+                arguments: [{
+                    label: 'Event Name',
+                    name: 'eventName',
+                    type: ApiArgumentType.STRING,
+                    required: true
+                }, {
+                    label: 'Data',
+                    name: 'data',
+                    type: ApiArgumentType.STRING,
+                    required: true
+                }]
+            },
+        ],
     };
 
     static apiMap: Map<string, ActionApi> = null;

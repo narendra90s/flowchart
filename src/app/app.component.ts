@@ -13,7 +13,7 @@ import { jsPlumbService } from "jsplumbtoolkit-angular";
         </nav>
         <router-outlet></router-outlet>       
     `
-})
+})  
 export class AppComponent {
 
   @ViewChild(FlowchartComponent) flowchart:FlowchartComponent;
