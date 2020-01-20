@@ -1,7 +1,8 @@
-import { Component, OnInit, Input, Inject } from '@angular/core';
-import { Callback, Action, CallBackData } from 'callback';
+import { Component, OnInit, Input, Inject, OnChanges } from '@angular/core';
+import { Callback, Action, CallBackData, State } from 'callback';
 import { FlowcharthttpserviceService } from 'src/app/service/flowcharthttpservice.service';
 import { CallbackDataServiceService } from 'src/app/service/callback-data-service.service';
+import { state } from '@angular/animations';
 
 
 @Component({
@@ -17,9 +18,14 @@ export class CallbackDesignerComponent implements OnInit {
   static STATE_DIAGRAM_TAB = 0;
   static FLOW_CHART_TAB = 1;
   static SOURCE_CODE_TAB = 2;
+  static TriggerActionSideBar = 3;
+  static TRUE = true;
+  static FALSE = false;
 
   activeTabIndex: number = CallbackDesignerComponent.STATE_DIAGRAM_TAB;
+  openFlag: boolean = false;
   currentAction: Action = null;
+  currentState : State = null;
   sidebarLoaded = false;
   AddCallbackDialog : boolean = false;
   onTriggerEvents: any;
@@ -87,6 +93,8 @@ export class CallbackDesignerComponent implements OnInit {
     // register editAction.
     this.cbService.on('editAction').subscribe(data => this.editAction(data));
 
+    this.cbService.on('editState').subscribe(data => this.editState(data));
+
 
     // register for change in localvariable and global variable
     this.cbService.currentCbData.subscribe(dataPoints => {
@@ -100,6 +108,10 @@ export class CallbackDesignerComponent implements OnInit {
     //   }
     // });
   }
+
+  // ngOnChanges(){
+  //   this.activeTabIndex = CallbackDesignerComponent.TriggerActionSideBar;
+  // }
 
   editAction(obj) {
     let actionId = obj.id;
@@ -127,6 +139,41 @@ export class CallbackDesignerComponent implements OnInit {
     }
   }
 
+  openFlagChanged($event)
+  {
+    this.openFlag = $event;
+  }
+
+  editState(obj){
+    let stateId = obj.id;
+
+    console.log('editState called for state id and flag', this.openFlag, stateId ,this.activeTabIndex);
+
+    if (this.callback === null) {
+      alert('No Callback selected');
+      return;
+    }
+
+    let match = this.callback.states.some((state) => {
+      if(state.id === stateId) {
+        console.log('Edit state, matched state - ', state , this.openFlag);
+        this.currentState = state;
+        this.openFlag = CallbackDesignerComponent.TRUE;
+        console.log('Edit state, matched state -2 ', state , this.openFlag);
+        //insted of tab we need to show right pannel
+        this.activeTabIndex = CallbackDesignerComponent.TriggerActionSideBar;
+        return true;
+      }
+      return false;
+    });
+
+    if (match === false) {
+      alert('No State matched for id - '+ stateId);
+      return;
+    }
+
+  }
+
   addCallback() {
     this.AddCallbackDialog = true;
     // this.addCallbackData();
@@ -138,6 +185,13 @@ export class CallbackDesignerComponent implements OnInit {
     console.log('Event actionAdded called', $event);
     if (this.callback && this.callback.actions.length > 0) {
       this.currentAction = this.callback.actions[0];
+    }
+  }
+
+  stateAdded($event){
+    console.log("event on state emit",$event);
+    if(this.callback && this.callback.states.length > 0){
+      this.currentState = this.callback.states[0];
     }
   }
 
@@ -244,5 +298,20 @@ export class CallbackDesignerComponent implements OnInit {
       this.httpService.updateCallback(this.callbackEntry);
     }
   }
+
+
+  newTriggerName: string = null;
+  visibleSidebar : boolean;
+  closeSideBar(){
+    this.activeTabIndex = CallbackDesignerComponent.STATE_DIAGRAM_TAB;
+    this.visibleSidebar = false;
+  }
+
+  AddTriggerDialog : boolean = false;
+  addTrigger(){
+    console.log("callback data --- ",this.callback);
+    this.AddTriggerDialog = true;
+  }
+
 
 }

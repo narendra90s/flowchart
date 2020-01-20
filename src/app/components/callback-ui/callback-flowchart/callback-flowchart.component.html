@@ -6,20 +6,27 @@
   </ul>
 </div>
 -->
-<jsplumb-surface [surfaceId]="surfaceId" [toolkitId]="toolkitId" [view]="view" [renderParams]="renderParams" [nodeResolver]="resolveNode"></jsplumb-surface>
-<jsplumb-miniview [surfaceId]="surfaceId"></jsplumb-miniview>
-<jsplumb-controls [surfaceId]="surfaceId"></jsplumb-controls>
+<!-- <div style="padding: 0px 24px 0 0px;">
+  <p-fieldset> -->
+    <jsplumb-surface [surfaceId]="surfaceId" [toolkitId]="toolkitId" [view]="view" [renderParams]="renderParams"
+      [nodeResolver]="resolveNode"></jsplumb-surface>
+    <jsplumb-miniview [surfaceId]="surfaceId"></jsplumb-miniview>
+    <jsplumb-controls [surfaceId]="surfaceId"></jsplumb-controls>
+  <!-- </p-fieldset>
+</div> -->
+
 
 
 <!--TODO: Move this dialog to parent.-->
 <p-dialog [(visible)]="showApiDialog" appendTo="body" [contentStyle]="{'overflow':'visible'}">
   <p-header *ngIf="currentActionApi">{{currentActionApi.label}}</p-header>
-  <app-callback-actionapi-dialog (actionApiSubmit)="handleActionApiAdded($event)" [callback]="callback" [api]="currentActionApi"></app-callback-actionapi-dialog>
+  <app-callback-actionapi-dialog (actionApiSubmit)="handleActionApiAdded($event)" [callback]="callback"
+    [api]="currentActionApi"></app-callback-actionapi-dialog>
 </p-dialog>
 
-<p-dialog [(visible)]="showConditionDialog" appendTo="body" [style]="{'min-width' : '392px'}" [contentStyle]="{'overflow':'visible'}">
+<p-dialog [(visible)]="showConditionDialog" appendTo="body" [style]="{'min-width' : '392px'}"
+  [contentStyle]="{'overflow':'visible'}">
   <p-header>Condition</p-header>
-  <app-callback-action-condition-dialog (conditionAdded)="handleConditionAdded($event)"></app-callback-action-condition-dialog>
+  <app-callback-action-condition-dialog (conditionAdded)="handleConditionAdded($event)">
+  </app-callback-action-condition-dialog>
 </p-dialog>
-
-

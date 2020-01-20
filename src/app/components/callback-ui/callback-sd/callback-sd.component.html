@@ -6,53 +6,156 @@
   </ul>
 </div>
 -->
-<jsplumb-surface [surfaceId]="surfaceId" [toolkitId]="toolkitId" [view]="view" [renderParams]="renderParams" [nodeResolver]="resolveNode"></jsplumb-surface>
+<!-- <jsplumb-surface [surfaceId]="surfaceId" [toolkitId]="toolkitId" [view]="view" [renderParams]="renderParams"
+  [nodeResolver]="resolveNode"></jsplumb-surface>
 <jsplumb-miniview [surfaceId]="surfaceId"></jsplumb-miniview>
-<jsplumb-controls [surfaceId]="surfaceId"></jsplumb-controls>
+<jsplumb-controls [surfaceId]="surfaceId"></jsplumb-controls> -->
+
+
+<mat-sidenav-container style="width: 100%">
+  <mat-sidenav #drawer2 position="end" mode="side" [hasBackdrop]="false">
+    <div [style.display]="sideNav !== 1 || sideNav === 3 ?'block':'none'" class="ui-g"
+      style=" background: #c0d3d6;height: 25px;border-radius: 4px;padding: 4px">
+      <div class="ui-g-11" style="padding: 0px">
+        <label>Trigger And Action</label>
+      </div>
+      <div class="ui-g-1" style="padding: 0px">
+        <i (click)="closeDrawer()" style="float: right" title="close pannel" class="fa fa-times"></i>
+      </div>
+    </div>
+    <div [style.display]="sideNav !== 1 || sideNav === 3 ?'block':'none'"
+      style="padding: 0 ; width: calc(100vw - 65vw)">
+      <app-callback-sd-trigger-action [currentState]="currentState" (currentAction)="currentActionGet($event)" (flowChartFlag)="flowChartFlag($event)"
+        [callback]="callback">
+      </app-callback-sd-trigger-action>
+    </div>
+    <div [style.display]="sideNav === 1 ?'block':'none'" class="ui-g"
+      style=" background: #c0d3d6;height: 25px;border-radius: 4px;padding: 4px">
+      <div class="ui-g-11" style="padding: 0px">
+        <label>FlowChart Diagram</label>
+      </div>
+      <div class="ui-g-1" style="padding: 0px">
+          <button *ngIf="ApiMenu === false" mat-button title="Open Api List" style="min-width: 0px;line-height: 0;padding: 0px 8px;top: -3px;"><i class="fa fa-cog"
+            (click)="openApiMenu()"></i></button>
+        <button *ngIf="ApiMenu === true" mat-button title="Close Api List" style="min-width: 0px;line-height: 0;padding: 0px 8px;top: -3px;"><i class="fa fa-cog"
+            (click)="closeApiMenu()"></i></button>
+        <i (click)="closeDrawerFlowchart()" style="float: right" title="close pannel" class="fa fa-times"></i>
+      </div>
+    </div>
+    <div [style.display]="sideNav === 1 && ApiMenu === true?'block':'none'" style="width: 289px;position: fixed;
+    margin: -123px -291px;">
+      <app-callback-sidebar-menu [selectedTabIndex]="1" (loaded)="sidebarLoaded=true">
+      </app-callback-sidebar-menu>
+    </div>
+    <div [style.display]="sideNav === 1 ?'block':'none'" style="padding: 0 ; width: calc(100vw - 65vw)">
+      <p-fieldset>
+        <app-callback-flowchart [action]="currentAction" [callback]="callback"></app-callback-flowchart>
+      </p-fieldset>
+    </div>
+  </mat-sidenav>
+
+  <!-- <mat-sidenav #drawer3 position="end" mode="side" [hasBackdrop]="false">
+    <div class="ui-g" style=" background: #c0d3d6;height: 25px;border-radius: 4px;padding: 4px">
+      <div class="ui-g-11" style="padding: 0px">
+        <label>flowchart Data</label>
+      </div>
+      <div class="ui-g-1" style="padding: 0px">
+        <i (click)="closeDrawerFlowchart()" style="float: right" title="close pannel" class="fa fa-times"></i>
+      </div>
+    </div>
+    <div style="padding: 0 ; width: calc(100vw - 60vw)">
+      <p-fieldset>
+        <app-callback-flowchart [action]="currentAction" [callback]="callback"></app-callback-flowchart>
+      </p-fieldset>
+    </div>
+  </mat-sidenav> -->
+
+  <mat-sidenav-content style="overflow: hidden;">
+    <div style="background: #c0d3d6;height: 25px;padding: 2px 32px;border-radius: 3px;">
+      <label>State Diagram</label>
+    </div>
+    <div style="position: absolute;margin: 23px 0px 0px 23px;z-index:2000">
+      <!-- <button mat-raised-button (click)="drawer2.open()">Toggle</button> -->
+      <div class="p-1" jsplumb-palette selector=".drag" surfaceId="callbackSDSurface" [typeExtractor]="typeExtractor"
+        [dataGenerator]="dataGenerator" style="font-size: 13px;height: 24px;margin: 6px; border: #dddddd solid 3px;background: #3e7e9c;padding: 0px 5px;
+        border-radius: 8px; color: white;">
+        <span class="drag" [attr.jtk-node-type]="sdToolbarTreeData[0].data.type" title="Drag to add action api"
+          [attr.jtk-width]="sdToolbarTreeData[0].data.w" [attr.jtk-height]="sdToolbarTreeData[0].data.h">state</span>
+      </div>
+    </div>
+    <jsplumb-surface [surfaceId]="surfaceId" [toolkitId]="toolkitId" [view]="view" [renderParams]="renderParams"
+      [nodeResolver]="resolveNode"></jsplumb-surface>
+    <jsplumb-miniview [surfaceId]="surfaceId"></jsplumb-miniview>
+    <jsplumb-controls [surfaceId]="surfaceId"></jsplumb-controls>
+
+  </mat-sidenav-content>
+
+  <!-- <mat-drawer-content>
+    <button mat-raised-button (click)="drawer2.toggle()">Toggle drawer</button>
+  </mat-drawer-content> -->
+</mat-sidenav-container>
+
+
+
+<!-- <p-sidebar [visible]="activeTabIndex === 3" [modal]="false" [showCloseIcon]="false" position="right"
+  [baseZIndex]="10000" [style]="{'width': '590px', 'height': 'auto', 'top': 'auto'}">
+  <div class="ui-g">
+    <div class="ui-g-11">
+      <span>Trigger And Action</span>
+    </div>
+    <div class="ui-g-1">
+      <i (click)="closeSideBar()" style="float: right" title="close pannel" class="fa fa-times"></i>
+    </div>
+  </div>
+  <div style="padding: 0 ; width: 590px">
+    <app-callback-sd-trigger-action [currentState]="currentState" [callback]="callback">
+    </app-callback-sd-trigger-action>
+  </div>
+</p-sidebar> -->
 
 <!-- Trigger Dialog -->
 <div>
-<!-- <button type="button" (click)="openDialog()" pButton label="Open Dialog"></button>   -->
-<p-dialog header="Add Trigger" [(visible)]="showTriggerDialog" appendTo="body" [contentStyle]="{'overflow':'visible'}" [modal]="true" [responsive]="true" [style]="{width: '500px', minWidth: '250px'}" [minY]="70" [maximizable]="false" [baseZIndex]="10000">
-  <app-sd-addtriggerdialog *ngIf="newTriggerName" [states]="callback.states" [triggerName]="newTriggerName" (success)="addTriggerNode($event)"></app-sd-addtriggerdialog>
-</p-dialog>
+  <!-- <button type="button" (click)="openDialog()" pButton label="Open Dialog"></button>   -->
+  <p-dialog header="Add Trigger" [(visible)]="showTriggerDialog" appendTo="body" [contentStyle]="{'overflow':'visible'}"
+    [modal]="true" [responsive]="true" [style]="{width: '500px', minWidth: '250px'}" [minY]="70" [maximizable]="false"
+    [baseZIndex]="10000">
+    <app-sd-addtriggerdialog *ngIf="newTriggerName" [states]="callback.states" [triggerName]="newTriggerName"
+      (success)="addTriggerNode($event)"></app-sd-addtriggerdialog>
+  </p-dialog>
 </div>
 
 
 <div>
-<p-dialog header="Add Action" [(visible)]="showActionDialog" appendTo="body" [contentStyle]="{'overflow':'visible'}" [modal]="true" [responsive]="true" [style]="{width: '500px', minWidth: '250px'}" [minY]="70" [maximizable]="false" [baseZIndex]="10000">
-  <p-fieldset *ngIf="newActionName">
-    <!-- Trigger Input-->
-    <div class="ui-g">
-      <div class="ui-g-4 label" >
-        <label for="State Name">Trigger</label>
+  <p-dialog header="Add Action" [(visible)]="showActionDialog" appendTo="body" [contentStyle]="{'overflow':'visible'}"
+    [modal]="true" [responsive]="true" [style]="{width: '500px', minWidth: '250px'}" [minY]="70" [maximizable]="false"
+    [baseZIndex]="10000">
+    <p-fieldset *ngIf="newActionName">
+      <!-- Trigger Input-->
+      <div class="ui-g">
+        <div class="ui-g-4 label">
+          <label for="State Name">Trigger</label>
+        </div>
+        <div class="ui-g-8 field">
+          <p-dropdown [options]="callback.triggers" [(ngModel)]="selectedTriggerForAction" placeholder="Select Trigger"
+            optionLabel="name" [showClear]="true"></p-dropdown>
+          <!--<input pInputText type="text" size="20" disabled="disabled" [(ngModel)]="stateName"/>-->
+        </div>
       </div>
-      <div class="ui-g-8 field">
-        <p-dropdown [options]="callback.triggers" [(ngModel)]="selectedTriggerForAction" placeholder="Select Trigger" optionLabel="name" [showClear]="true"></p-dropdown>
-        <!--<input pInputText type="text" size="20" disabled="disabled" [(ngModel)]="stateName"/>-->
-      </div>    
-    </div>
-
-    <!--Action Name-->
-    <div class="ui-g">
-      <div class="ui-g-4 label">
-        <label>Action Name</label>
+      <!--Action Name-->
+      <div class="ui-g">
+        <div class="ui-g-4 label">
+          <label>Action Name</label>
+        </div>
+        <div class="ui-g-8 field">
+          <input pInputText type="text" size="20" disabled="disabled" [(ngModel)]="newActionName" />
+        </div>
       </div>
-      <div class="ui-g-8 field">
-        <input pInputText type="text" size="20" disabled="disabled" [(ngModel)]="newActionName"/>
+      <!--Button to add -->
+      <div class="ui-g">
+        <div class="ui-g-7 ui-g-offset-5">
+          <button type="button" (click)="submitAddAction()" pButton label="Add" [style]="{float: 'left'}"></button>
+        </div>
       </div>
-    </div>
-
-
-    <!--Button to add -->
-    <div class="ui-g">
-      <div class="ui-g-7 ui-g-offset-5">
-        <button type="button" (click)="submitAddAction()" pButton label="Add" [style]="{float: 'left'}"></button>  
-      </div>
-    </div>
     </p-fieldset>
-</p-dialog>
+  </p-dialog>
 </div>
-
-
-

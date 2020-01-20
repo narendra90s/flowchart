@@ -18,8 +18,8 @@ export class SdAddtriggerdialogComponent implements OnInit {
   @Output() success: EventEmitter<any> = new EventEmitter();
   @Output() close: EventEmitter<any> = new EventEmitter();
   triggerType: any;
-  domSelector: string;
-  urlPattern: string;
+  domSelector: string = null;
+  urlPattern: string = null;
   // First argument mapping.
   firstArgument: any ;
   dirty = false;
@@ -60,11 +60,11 @@ export class SdAddtriggerdialogComponent implements OnInit {
     console.log(' triggerType - ', this.triggerType);
   }
 
-  reset() {
-    this.triggerType = null;
-    this.domSelector = '';
-    this.urlPattern = '';
-  }
+  // reset() {
+  //   this.triggerType = null;
+  //   this.domSelector = '';
+  //   this.urlPattern = '';
+  // }
 
   submit() {
     const type = this.triggerType ? this.triggerType.code: null; 
@@ -87,5 +87,8 @@ export class SdAddtriggerdialogComponent implements OnInit {
       this.success.emit(trigger);
       console.log('Trigger Dialog Success');
     }
+    this.triggerType = null;
+    this.domSelector = null;
+    this.urlPattern = null;
   }
 }

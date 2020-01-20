@@ -14,7 +14,7 @@ export class CallbackSidebarMenuComponent implements OnInit {
 
   @Output() loaded: EventEmitter<any> = new EventEmitter();
   @Input() selectedTabIndex: number;
-  actionApiList: {[key: string]: ActionApi[]} = null;
+  actionApiList: { [key: string]: ActionApi[] } = null;
   showApiDialog = false;
   currentActionApi: ActionApi = null;
   apiTreeData: TreeNode[] = [];
@@ -32,42 +32,45 @@ export class CallbackSidebarMenuComponent implements OnInit {
 
     this.fpToolbarTreeData = [{
       label: 'Condition',
-      data: { type: 'question'},
+      data: { type: 'question' },
       icon: 'fa fa-file'
     }, {
       label: 'Action Apis',
-      data: {id: 'action_api', type: 'folder'},
+      data: { id: 'action_api', type: 'folder' },
       expandedIcon: 'fa fa-folder-open',
       collapsedIcon: 'fa fa-folder',
       expanded: true,
       children: this.apiTreeData
     }];
 
-    this.sdToolbarTreeData = [{
-      label: 'State',
-      data: {
-        type: 'state',
-        w: 120,
-        h: 70
-      },
-      icon: 'fa fa-file'
-    }, {
-      label: 'Trigger',
-      data: {
-        type: 'trigger',
-        w: 120,
-        h: 70
-      },
-      icon: 'fa fa-file'
-    }, {
-      label: 'Action',
-      data: {
-        type: 'action',
-        w: 120,
-        h: 70
-      },
-      icon: 'fa fa-file'
-    }];
+    this.sdToolbarTreeData = [
+      {
+        label: 'State',
+        data: {
+          type: 'state',
+          w: 120,
+          h: 70
+        },
+        icon: 'fa fa-file'
+      }
+      // {
+      //   label: 'Trigger',
+      //   data: {
+      //     type: 'trigger',
+      //     w: 120,
+      //     h: 70
+      //   },
+      //   icon: 'fa fa-file'
+      // }, {
+      //   label: 'Action',
+      //   data: {
+      //     type: 'action',
+      //     w: 120,
+      //     h: 70
+      //   },
+      //   icon: 'fa fa-file'
+      // }
+    ];
   }
 
   ngOnInit() {
@@ -95,11 +98,11 @@ export class CallbackSidebarMenuComponent implements OnInit {
     return el.getAttribute('jtk-node-type');
   }
 
-  dataGenerator(type:string, el:Element) {
-    let data =  {
-      type:el.getAttribute('jtk-node-type'),
-      w:parseInt(el.getAttribute('jtk-width'), 10),
-      h:parseInt(el.getAttribute('jtk-height'), 10),
+  dataGenerator(type: string, el: Element) {
+    let data = {
+      type: el.getAttribute('jtk-node-type'),
+      w: parseInt(el.getAttribute('jtk-width'), 10),
+      h: parseInt(el.getAttribute('jtk-height'), 10),
     };
 
     // check if this is action-api then return api data too.
@@ -118,7 +121,7 @@ export class CallbackSidebarMenuComponent implements OnInit {
     for (const key in this.actionApiList) {
       const node: TreeNode = {};
       node.label = key;
-      node.data = {type: 'folder', id: key};
+      node.data = { type: 'folder', id: key };
       node.expandedIcon = 'fa fa-folder-open';
       node.collapsedIcon = 'fa fa-folder';
       // Note: we are keeping node expanded otherwise it will not be rendered on onload and that is why,

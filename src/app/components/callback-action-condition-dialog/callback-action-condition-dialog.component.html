@@ -14,7 +14,8 @@
             <i *ngIf="group.label == 'Data points'" class="fa fa-plus" style="float: right" title="Extract Data"
               (click)="openExtractDialog()"></i>
             <i *ngIf="group.label == 'Local variables'" class="fa fa-plus" style="float: right"
-              title="Add Local Variable" (click)="showLocalVarDialog = true"></i>
+              title="Add Local Variable" (click)="addLocal()"></i>
+            <!-- <input *ngIf="showLocalVarDialog && group.label == 'Local variables'" pInputText [formControlName]="'localVar'" type="text"> -->
           </ng-template>
         </p-dropdown>
       </div>
@@ -65,10 +66,13 @@
   <p-header>Local Variable</p-header>
   <p-fieldset>
     <div class="ui-g">
-      <div class="ui-g-7">
-        <input type="text" style="width: 75px" pInputText [(ngModel)]="localVar">
+      <div class="ui-g-6">
+        <label>Local Variable</label>
       </div>
       <div class="ui-g-5">
+        <input type="text" style="width: 75px" pInputText [(ngModel)]="localVar">
+      </div>
+      <div class="ui-g-1">
         <i class="fa fa-plus" style="float: right ; padding: 9px 4px;" title="Add Local Variable"
           (click)="addLocalVar()"></i>
       </div>

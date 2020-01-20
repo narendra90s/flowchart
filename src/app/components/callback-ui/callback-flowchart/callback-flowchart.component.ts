@@ -70,6 +70,8 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
       // update flowchart.
       this.toolkit.load({data: this.flowChartData});
     }
+
+    console.log("Flowchart-component",this.action);
     
   }
 
@@ -132,7 +134,7 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
       "QuestionNode":QuestionNodeComponent,
       "ActionNode":ActionNodeComponent,
       "StartNode":StartNodeComponent,
-      "OutputNode":OutputNodeComponent
+      "OutputNode":OutputNodeComponent,
     })[typeId]
   }
 

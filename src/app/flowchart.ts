@@ -77,7 +77,18 @@ export class SDActionNodeComponent extends BaseEditableNodeComponent  {
 // ----------------- start node -------------------------------
 
 @Component({ templateUrl:"templates/start.html" })
-export class StartNodeComponent extends BaseEditableNodeComponent  { }
+export class StartNodeComponent extends BaseEditableNodeComponent  { 
+  @ViewChild('drawer2') public drawer2;
+  constructor(private cbService: CallbackDataServiceService) {
+    super();
+  }
+
+  editStateNode(data) {
+    console.log('Edit State node ', data);
+    
+    this.cbService.broadcast('editState', data);
+  }
+}
 
 // ----------- end node ---------------------------------------
 @Component({templateUrl: "templates/end.html"})
@@ -85,7 +96,17 @@ export class EndNodeComponent extends BaseEditableNodeComponent {}
 
 // ----------------- state node --------------------------------
 @Component ({templateUrl: 'templates/state.html'})
-export class StateNodeComponent extends BaseEditableNodeComponent {}
+export class StateNodeComponent extends BaseEditableNodeComponent {
+  constructor(private cbService: CallbackDataServiceService) {
+    super();
+  }
+
+  editStateNode(data) {
+    console.log('Edit State node ', data);
+
+    this.cbService.broadcast('editState', data);
+  }
+}
 
 // ----------------- output node -------------------------------
 

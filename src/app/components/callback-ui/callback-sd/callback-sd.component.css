@@ -1,0 +1,18 @@
+mat-sidenav-content {
+    margin-left: 0 !important;
+    flex: 1 1 auto;
+}
+
+mat-sidenav {
+    flex: 0 1 auto;
+}
+
+:host>>>.jtk-miniview{
+    position: absolute;
+    top: 47px;
+}
+
+:host>>>.controls{
+    margin: -50px 88px 52px -151px;
+    position: relative;
+}

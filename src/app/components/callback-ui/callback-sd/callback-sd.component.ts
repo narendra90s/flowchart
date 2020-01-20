@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, Input, OnChanges, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, ViewChild, Input, OnChanges, Output, EventEmitter, ElementRef, SimpleChange, SimpleChanges } from '@angular/core';
 import { jsPlumbSurfaceComponent, jsPlumbService } from 'jsplumbtoolkit-angular';
 import { jsPlumbToolkit, Surface, Dialogs, jsPlumbToolkitUtil, DrawingTools } from 'jsplumbtoolkit';
 import { QuestionNodeComponent, ActionNodeComponent, StartNodeComponent, OutputNodeComponent, EndNodeComponent, StateNodeComponent, SDActionNodeComponent } from 'src/app/flowchart';
@@ -6,6 +6,9 @@ import { DialogModule } from 'primeng/dialog';
 import { Callback, StateType, State, Trigger, Action, JtkNodeParam } from 'callback';
 import { startTimeRange } from '@angular/core/src/profile/wtf_impl';
 import { CallbackDataServiceService } from 'src/app/service/callback-data-service.service';
+import { CallbackDesignerComponent } from '../callback-designer/callback-designer.component';
+import { InvokeFunctionExpr } from '@angular/compiler';
+import { TreeNode } from 'primeng/api/public_api';
 
 @Component({
   selector: 'app-callback-sd',
@@ -15,13 +18,25 @@ import { CallbackDataServiceService } from 'src/app/service/callback-data-servic
 export class CallbackSdComponent implements OnInit, OnChanges {
 
 
+  @ViewChild('drawer2') drawer: any;
+  @ViewChild('drawer3') drawer3: any;
+  @ViewChild('api') api : any;
   @ViewChild(jsPlumbSurfaceComponent) surfaceComponent: jsPlumbSurfaceComponent;
 
   @Output() actionAdded: EventEmitter<any> = new EventEmitter();
-  @Input() callback: Callback;
+  @Output() stateAdded: EventEmitter<any> = new EventEmitter();
+  @Input() callback: Callback = null;
+  @Input() activeTabIndex: any = null;
+  @Output() activeTabIndexChange: EventEmitter<any> = new EventEmitter();
+  @Input() currentState: State = null;
+  @Input() openFlag: boolean = false;
+  @Output() openFlagChanged: EventEmitter<any> = new EventEmitter();
+  @Input() action: Action;
   toolkit: jsPlumbToolkit;
   surface: Surface;
   showTriggerDialog: boolean = false;
+  sidebarLoaded = false;
+  currentAction: Action = null;
 
   private stateDiagramData: any;
 
@@ -55,15 +70,47 @@ export class CallbackSdComponent implements OnInit, OnChanges {
       selector: ".dlg"
     });
 
+    this.sdToolbarTreeData = [
+      {
+        label: 'State',
+        data: {
+          type: 'state',
+          w: 120,
+          h: 70
+        },
+        icon: 'fa fa-file'
+      }];
+
+
   }
   ngOnInit() {
+
+    console.log("Calling sd OnInit", this.callback);
     // get the toolkit instance
     this.toolkit = this.$jsplumb.getToolkit(this.toolkitId, this.toolkitParams);
 
     this.toolkit.bind("dataUpdated", this.dataUpdateListener.bind(this));
   }
 
-  jtkNodeData : JtkNodeParam;
+  sdToolbarTreeData: TreeNode[] = [];
+
+  // dataGenerator(type: string, el: Element) {
+  //   let data = {
+  //     type: el.getAttribute('jtk-node-type'),
+  //     w: parseInt(el.getAttribute('jtk-width'), 10),
+  //     h: parseInt(el.getAttribute('jtk-height'), 10),
+  //   };
+
+  //   // check if this is action-api then return api data too.
+  //   console.log('dataGenerator on element - ', el);
+  //   if (el.getAttribute('api') !== null) {
+  //     data['api'] = el.getAttribute('api');
+  //   }
+
+  //   return data;
+  // }
+
+  jtkNodeData: JtkNodeParam;
   newJData = {
     w: null,
     h: null,
@@ -74,7 +121,7 @@ export class CallbackSdComponent implements OnInit, OnChanges {
   copyJData(input: any, out: any) {
     const keys = ["w", "h", "top", "left"];
     keys.forEach(key => {
-      if (input[key] !== undefined)  {
+      if (input[key] !== undefined) {
         out[key] = input[key];
       }
     });
@@ -92,6 +139,7 @@ export class CallbackSdComponent implements OnInit, OnChanges {
             if (state.jData === undefined) {
               state.jData = new JtkNodeParam();
             }
+            state.jData;
             return this.copyJData(node, state.jData);
           }
           return false;
@@ -126,17 +174,44 @@ export class CallbackSdComponent implements OnInit, OnChanges {
     let tempToolkitData = Object(this.toolkit.exportData());
 
     this.updateBTInfo(tempToolkitData);
-    
-    console.log("State Data on callback", this.callback , tempToolkitData);
+
+    console.log("State Data on callback", this.callback, tempToolkitData);
   }
 
+  closeDrawer() {
+    this.openFlag = false;
+    this.sideNav = CallbackDesignerComponent.STATE_DIAGRAM_TAB;
+    this.openFlagChanged.emit(this.openFlag);
+    this.drawer.close();
+  }
+
+  // FIXME: Currently it is loading stateDiagramData all the time. It should do only if callback is changed. 
   ngOnChanges() {
+    // for (let change in changes) {
+
+    //   if (changes[change].firstChange || (changes[change].previousValue != changes[change].currentValue)) {
+    //     if (change === 'callback') {
+
+    //     } else if (change === 'openFlag') {
+    //       this.openFlag == true && this.drawer && 
+    //     }
+    //   }
+    // }
+
+    if (this.openFlag == true && this.drawer) {
+      this.drawer.open();
+      this.sideNav = CallbackDesignerComponent.TriggerActionSideBar;
+      this.openFlag = false;
+    }
+
     // Callback is changed. So reset the stateDiagramData.
-    console.log("callback in sd",this.callback);
+    // this.activeTabIndex = CallbackDesignerComponent.TriggerActionSideBar;
+    console.log("callback and ActivetabIndex in sd", this.openFlag, this.callback, this.activeTabIndex, this.currentState);
     this.stateDiagramData = this.getStateDiagramData(this.callback);
 
     // reload jsplumb.
     this.toolkit.load({ data: this.stateDiagramData });
+    // this.openSideBar();
   }
 
   getStateDiagramData(callback: Callback) {
@@ -173,36 +248,36 @@ export class CallbackSdComponent implements OnInit, OnChanges {
             "text": state.text,
           });
       }
-      
+
       this.copyJData(state.jData, sdData.nodes[sdData.nodes.length - 1]);
     });
 
     // Iterate triggers. 
-    this.callback.triggers.forEach(trigger => {
-      sdData.nodes.push({
-        "id": trigger.id,
-        "type": "trigger",
-        "text": trigger.name
-      })
+    // this.callback.triggers.forEach(trigger => {
+    //   sdData.nodes.push({
+    //     "id": trigger.id,
+    //     "type": "trigger",
+    //     "text": trigger.name
+    //   })
 
-      this.copyJData(trigger.jData, sdData.nodes[sdData.nodes.length - 1]);
+      // this.copyJData(trigger.jData, sdData.nodes[sdData.nodes.length - 1]);
 
       //Add edge for this trigger. 
-      sdData.edges.push({
-        id: sdData.edges.length,
-        source: trigger.stateId,
-        target: trigger.id
-      });
-    });
+    //   sdData.edges.push({
+    //     id: sdData.edges.length,
+    //     source: trigger.stateId,
+    //     target: trigger.id
+    //   });
+    // });
 
-    this.callback.actions.forEach(action => {
-      sdData.nodes.push({
-        "id": action.id,
-        "type": "action",
-        "text": action.name
-      });
-      this.copyJData(action.jData, sdData.nodes[sdData.nodes.length - 1]);
-    });
+    // this.callback.actions.forEach(action => {
+    //   sdData.nodes.push({
+    //     "id": action.id,
+    //     "type": "action",
+    //     "text": action.name
+    //   });
+      // this.copyJData(action.jData, sdData.nodes[sdData.nodes.length - 1]);
+    // });
 
     //make edge for trigger to action.
     for (let actionId in this.callback.actionMap) {
@@ -218,6 +293,7 @@ export class CallbackSdComponent implements OnInit, OnChanges {
     return sdData;
   }
 
+  Jdata: any;
   toolkitParams = {
     nodeFactory: (type: string, data: any, callback: Function) => {
       if (this.callback == null) {
@@ -228,9 +304,14 @@ export class CallbackSdComponent implements OnInit, OnChanges {
       switch (type) {
         case 'state':
           // add a state.
-          let state = new State('State_' + this.callback.states.length, StateType.NORMAL , "jData");
+          let Jdata = { w: 100, h: 70 };
+          let state = new State('State_' + this.callback.states.length, StateType.NORMAL, Jdata);
           state.id = 'state_' + this.callback.states.length;
           this.callback.states.push(state);
+          console.log('Emitting stateAdded event with data - this.Jdata ', state);
+          // this.activeTabIndex = CallbackDesignerComponent.TriggerActionSideBar;
+          console.log("activeTab - ", this.activeTabIndex);
+          this.stateAdded.emit(state);
 
           // add node. 
           data.text = state.text;
@@ -257,6 +338,25 @@ export class CallbackSdComponent implements OnInit, OnChanges {
       return { label: "..." };
     }
   }
+
+  closeSideBar() {
+    this.activeTabIndex = CallbackDesignerComponent.STATE_DIAGRAM_TAB;
+    this.sideNav = CallbackDesignerComponent.STATE_DIAGRAM_TAB;
+    this.activeTabIndexChange.emit(this.activeTabIndex);
+  }
+
+
+  sideNav : any;
+  flowChartFlag($event){
+    console.log("flowchart -- ",$event);
+    // this.drawer3.open();
+    this.sideNav = CallbackDesignerComponent.FLOW_CHART_TAB;
+  }
+
+  closeDrawerFlowchart(){
+   this.sideNav = CallbackDesignerComponent.TriggerActionSideBar;
+  }
+ 
   /*
     (type:string, data:any, callback:Function) => {
       Dialogs.show({
@@ -280,6 +380,7 @@ export class CallbackSdComponent implements OnInit, OnChanges {
         }
       });
     }*/
+
 
   addTriggerNode($event: any) {
     console.log('Trigger Added Successfully, event - ', $event);
@@ -343,7 +444,8 @@ export class CallbackSdComponent implements OnInit, OnChanges {
   view = {
     nodes: {
       "start": {
-        template: "StartNode"
+        template: "StartNode",
+        parent: "selectable"
       },
       "end": {
         template: "EndNode"
@@ -517,5 +619,17 @@ export class CallbackSdComponent implements OnInit, OnChanges {
       console.log('Emitting actionAdded event with data - ', action);
       this.actionAdded.emit(action);
     }
+  }
+  ApiMenu : boolean = false;
+  openApiMenu(){
+    this.ApiMenu = true;
+  }
+  closeApiMenu(){
+    this.ApiMenu = false;
+  }
+
+  currentActionGet($event){
+    console.log("On CurrentAction",$event);
+    this.currentAction = $event;
   }
 }

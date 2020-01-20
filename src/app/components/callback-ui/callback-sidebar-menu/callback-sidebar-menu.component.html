@@ -1,16 +1,27 @@
+<div class="p-1" [style.display]="selectedTabIndex === 0 || selectedTabIndex === 3?'block':'none'" jsplumb-palette
+  selector=".drag" surfaceId="callbackSDSurface" [typeExtractor]="typeExtractor" [dataGenerator]="dataGenerator"
+  style="width: 104%; max-height: 80vh; font-size: 1.5rem;overflow-y: auto">
+  <span class="drag" [attr.jtk-node-type]="sdToolbarTreeData[0].data.type" title="Drag to add action api"
+    [attr.jtk-width]="sdToolbarTreeData[0].data.w" [attr.jtk-height]="sdToolbarTreeData[0].data.h">state</span>
+</div>
+
+
 <p-accordion [multiple]="true">
   <p-accordionTab [selected]="true" header="Tooolbar">
     <p-header>Toolbar</p-header>
     <!--Control for State diagram-->
-    <div class="p-1" [style.display]="selectedTabIndex === 0?'block':'none'" jsplumb-palette selector=".drag"
-      surfaceId="callbackSDSurface" [typeExtractor]="typeExtractor" [dataGenerator]="dataGenerator"
+    <div class="p-1" [style.display]="selectedTabIndex === 0 || selectedTabIndex === 3?'block':'none'" jsplumb-palette
+      selector=".drag" surfaceId="callbackSDSurface" [typeExtractor]="typeExtractor" [dataGenerator]="dataGenerator"
       style="width: 104%; max-height: 80vh; font-size: 1.5rem;overflow-y: auto">
-      <p-tree [value]="sdToolbarTreeData">
+      <span class="drag" [attr.jtk-node-type]="sdToolbarTreeData[0].data.type" title="Drag to add action api"
+        [attr.jtk-width]="sdToolbarTreeData[0].data.w" [attr.jtk-height]="sdToolbarTreeData[0].data.h">state</span>
+
+      <!-- <p-tree [value]="sdToolbarTreeData">
         <ng-template let-node pTemplate="default">
           <span class="drag" [attr.jtk-node-type]="node.data.type" title="Drag to add action api"
             [attr.jtk-width]="node.data.w" [attr.jtk-height]="node.data.h">{{node.label}}</span><br>
         </ng-template>
-      </p-tree>
+      </p-tree> -->
     </div>
 
     <!--Controls for Flow chart-->
@@ -18,7 +29,7 @@
     <!--For padding of 1.5rem-->
     <div [style.display]="selectedTabIndex === 1?'block':'none'" class="p-1" jsplumb-palette selector=".drag"
       surfaceId="callbackFlowchartSurface" [typeExtractor]="typeExtractor" [dataGenerator]="dataGenerator"
-      style="width: 104%; max-height: 35vh; font-size: 1.5rem;overflow-y: auto">
+      style="width: 104%; max-height: 65vh; font-size: 1.5rem;overflow-y: auto">
       <!--Render api using tree. -->
       <p-tree [value]="fpToolbarTreeData" [filter]="true">
         <ng-template let-node pTemplate="default">
@@ -33,4 +44,3 @@
     </div>
   </p-accordionTab>
 </p-accordion>
-

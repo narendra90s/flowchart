@@ -8,3 +8,7 @@
     border: solid 1px white;
     border-radius : 3px;
   } 
+
+  :host>>>.mat-drawer-backdrop, .mat-drawer-shown{
+    visibility: hidden !important;
+  }

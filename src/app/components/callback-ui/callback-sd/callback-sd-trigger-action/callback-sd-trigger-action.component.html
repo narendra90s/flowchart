@@ -1,0 +1,112 @@
+<div style="padding: 0px 24px 0 0px;">
+  <p-fieldset>
+    <div class="text-center">
+      <div class="ui-g">
+        <div style="padding: 0px 6px 6px 0px;">
+          <button mat-button style="border: #3f51b5 solid 0.05rem;" color="primary" (click)="openDialogTrigger()">Add
+            Trigger
+            <i class="fa fa-plus-circle"></i></button>
+        </div>
+        <div>
+          <button *ngIf="callbackEntry !== null" mat-button style="border: #3f51b5 solid 0.05rem;" color="primary"
+            (click)="openDialogAction()">Add Action <i class="fa fa-plus-circle"></i></button>
+        </div>
+      </div>
+    </div>
+    <mat-divider></mat-divider>
+    <div class="ui-g" *ngIf="callback">
+      <!-- <ng-template *ngFor="let trigger of callback.triggers.length"> -->
+      <!-- <p-listbox [options]="callback.triggers" [(ngModel)]="selectedTrigger">
+        <ng-template let-car let-i="index" pTemplate="item">
+          <div class="ui-helper-clearfix">
+            <span>{{car.name}}</span>
+          </div>
+        </ng-template>
+      </p-listbox> -->
+      <!-- </ng-template> -->
+      <div class="ui-g-6">
+        <div style="background: #dce9ea;height: 25px;border-radius: 4px;padding: 4px;">
+         Trigger List
+        </div>
+        <div>
+          <mat-selection-list #list>
+            <mat-list-option *ngFor="let trigger of callback.triggers">
+              <div class="ui-g">
+                <div class="ui-g-8">
+                  <label>{{trigger.name}}</label>
+                </div>
+                <div class="ui-g-3 ui-g-offset-1">
+                  <!-- <i class="fa fa-pencil-square-o" title="Edit trigger"></i> -->
+                </div>
+              </div>
+            </mat-list-option>
+          </mat-selection-list>
+        </div>
+      </div>
+      <div class="ui-g-6">
+        <div style="background: #dce9ea;height: 25px;border-radius: 4px;padding: 4px;">
+          <label>Action List</label>
+        </div>
+        <div>
+            <mat-selection-list #list>
+                <mat-list-option *ngFor="let action of callback.actions">
+                  <div class="ui-g">
+                    <div class="ui-g-8">
+                      <label>{{action.name}}</label>
+                    </div>
+                    <div class="ui-g-3 ui-g-offset-1">
+                      <i class="fa fa-pencil-square-o" (click)="openflowChart(action)" title="Edit Action"></i>
+                    </div>
+                  </div>
+                </mat-list-option>
+              </mat-selection-list>
+        </div>
+      </div>
+    </div>
+  </p-fieldset>
+</div>
+
+<div>
+  <!-- <button type="button" (click)="openDialog()" pButton label="Open Dialog"></button>   -->
+  <p-dialog header="Add Trigger" [(visible)]="showTriggerDialog" appendTo="body" [contentStyle]="{'overflow':'visible'}"
+    [modal]="true" [responsive]="true" [style]="{width: '500px', minWidth: '250px'}" [minY]="70" [maximizable]="false"
+    [baseZIndex]="10000">
+    <app-sd-addtriggerdialog *ngIf="newTriggerName" [states]="callback.states" [triggerName]="newTriggerName"
+      (success)="addTriggerNode($event)"></app-sd-addtriggerdialog>
+  </p-dialog>
+</div>
+
+<div>
+  <p-dialog header="Add Action" [(visible)]="showActionDialog" appendTo="body" [contentStyle]="{'overflow':'visible'}"
+    [modal]="true" [responsive]="true" [style]="{width: '500px', minWidth: '250px'}" [minY]="70" [maximizable]="false"
+    [baseZIndex]="10000">
+    <p-fieldset *ngIf="newActionName">
+      <!-- Trigger Input-->
+      <div class="ui-g">
+        <div class="ui-g-4 label">
+          <label for="State Name">Trigger</label>
+        </div>
+        <div class="ui-g-8 field">
+          <p-dropdown [options]="callback.triggers" [(ngModel)]="selectedTriggerForAction" placeholder="Select Trigger"
+            optionLabel="name" [showClear]="true"></p-dropdown>
+          <!--<input pInputText type="text" size="20" disabled="disabled" [(ngModel)]="stateName"/>-->
+        </div>
+      </div>
+      <!--Action Name-->
+      <div class="ui-g">
+        <div class="ui-g-4 label">
+          <label>Action Name</label>
+        </div>
+        <div class="ui-g-8 field">
+          <input pInputText type="text" size="20" disabled="disabled" [(ngModel)]="newActionName" />
+        </div>
+      </div>
+      <!--Button to add -->
+      <div class="ui-g">
+        <div class="ui-g-7 ui-g-offset-5">
+          <button type="button" (click)="submitAddAction()" pButton label="Add" [style]="{float: 'left'}"></button>
+        </div>
+      </div>
+    </p-fieldset>
+  </p-dialog>
+</div>
