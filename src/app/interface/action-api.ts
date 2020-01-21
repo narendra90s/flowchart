@@ -50,7 +50,7 @@ export class ActionApi {
 
 export class ActionApiList {
     static apiList: {[key: string]: ActionApi[]} = {
-        SPA: [
+        SPA: [ 
             {
                 category: 'SPA',
                 label: 'Page Transition Start',

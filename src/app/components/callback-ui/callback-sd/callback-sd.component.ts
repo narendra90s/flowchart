@@ -280,13 +280,13 @@ export class CallbackSdComponent implements OnInit, OnChanges {
     // });
 
     //make edge for trigger to action.
-    for (let actionId in this.callback.actionMap) {
-      sdData.edges.push({
-        id: sdData.edges.length,
-        source: this.callback.actionMap.get(actionId).get('trigger'),
-        target: actionId
-      });
-    }
+    // for (let actionId in this.callback.actionMap) {
+    //   sdData.edges.push({
+    //     id: sdData.edges.length,
+    //     source: this.callback.actionMap.get(actionId).get('trigger'),
+    //     target: actionId
+    //   });
+    // }
 
     console.log('sdData - ', sdData);
 

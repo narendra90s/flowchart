@@ -314,4 +314,10 @@ export class CallbackDesignerComponent implements OnInit {
   }
 
 
+  select : boolean;
+  currentActionGet($event){
+    this.currentAction = $event;
+    this.select = true;
+  }
+
 }

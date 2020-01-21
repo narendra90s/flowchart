@@ -12,3 +12,13 @@
   :host>>>.mat-drawer-backdrop, .mat-drawer-shown{
     visibility: hidden !important;
   }
+
+  /* :host>>>.jtk-miniview{
+    position: absolute;
+    top: 47px;
+} */
+
+/* :host>>>.controls{
+    margin: -50px 88px 52px -151px;
+    position: relative;
+} */

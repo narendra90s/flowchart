@@ -1,6 +1,6 @@
 import { Component, OnInit, EventEmitter, Output, AfterViewInit, AfterContentInit, Input } from '@angular/core';
 import { ActionApi, ActionApiList } from 'src/app/interface/action-api';
-import { TreeNode } from 'primeng/api/public_api';
+import { TreeNode, MenuItem } from 'primeng/api/public_api';
 import { trigger } from '@angular/animations';
 import { CallbackDataServiceService } from 'src/app/service/callback-data-service.service';
 
@@ -24,8 +24,138 @@ export class CallbackSidebarMenuComponent implements OnInit {
   sdToolbarTreeData: TreeNode[] = [];
   apiCount = 0;
   timer: any = null;
+  items: MenuItem[];
 
   constructor(private cbData: CallbackDataServiceService) {
+
+    console.log("fpToolbarTreeData", this.fpToolbarTreeData);
+
+    this.items = [
+      {
+        label: 'Condition',
+        // data: { type: 'question' },
+        icon: 'pi pi-fw pi-file',
+        styleClass: 'drag condition'
+      },
+      {
+
+        label: 'SPA',
+        icon: 'pi pi-fw pi-file',
+        items: [
+          {
+            label: 'Page Transition Start',
+            id: 'cav_nv_ajax_pg_start',
+            styleClass: 'drag api',
+            title: 'Drag api'
+          },
+          {
+            label: 'Page Transition End',
+            id: 'cav_nv_ajax_pg_end',
+            styleClass: 'drag api',
+            title: 'Drag api'
+          },
+          {
+            label: 'Transaction Start',
+            id: 'cav_nv_ajax_start',
+            styleClass: 'drag api',
+            title: 'Drag api'
+          },
+          {
+            label: 'Transaction Report',
+            id: 'cav_nv_ajax_report',
+            styleClass: 'drag api',
+            title: 'Drag api'
+          },
+          {
+            label: 'Transaction End',
+            id: 'cav_nv_ajax_pg_end',
+            styleClass: 'drag api',
+            title: 'Drag api'
+          },
+
+        ]
+      },
+      {
+        label: 'Cookie',
+        icon: 'pi pi-fw pi-file',
+        items: [
+          {
+            label: 'Set Cookie',
+            id: 'setCookie',
+            styleClass: 'drag api',
+            title: 'Drag api'
+          },
+          {
+            label: 'Remove Cookie',
+            id: 'setCookie',
+            styleClass: 'drag api',
+            title: 'Drag api'
+          },
+        ]
+      },
+      {
+        label: 'State',
+        icon: 'pi pi-fw pi-file',
+        items: [
+          {
+            label: 'Goto State',
+            id: 'gotoState',
+            styleClass: 'drag api',
+            title: 'Drag api'
+          }
+        ]
+      },
+      {
+        label: 'Session_Data',
+        icon: 'pi pi-fw pi-file',
+        items: [
+          {
+            label: 'Set Session Data',
+            id: 'setSessionData',
+            styleClass: 'drag api',
+            title: 'Drag api'
+          }
+        ]
+      },
+      {
+        label: 'LoginId',
+        icon: 'pi pi-fw pi-file',
+        items: [
+          {
+            label: 'Set Login Id',
+            id: 'setLoginId',
+            styleClass: 'drag api',
+            title: 'Drag api'
+          }
+        ]
+      },
+      {
+        label: 'SessionId', 
+        icon: 'pi pi-fw pi-file',
+        items:[
+          {
+            label: 'Set SessionId',
+            id: 'setSessionId',
+            styleClass: 'drag api',
+            title: 'Drag api' 
+          }
+        ]
+      },
+      {
+        label: 'LogEvent', 
+        icon: 'pi pi-fw pi-file',
+        items: [
+          {
+            label: 'Log Event',
+            id: 'eventName',
+            styleClass: 'drag api',
+            title: 'Drag api' 
+          }
+        ]
+      }
+    ];
+
+
     this.actionApiList = ActionApiList.apiList;
 
     this.apiTreeData = this.apiToTreeData();
@@ -42,6 +172,8 @@ export class CallbackSidebarMenuComponent implements OnInit {
       expanded: true,
       children: this.apiTreeData
     }];
+
+    console.log("fpToolbarTreeData", this.fpToolbarTreeData);
 
     this.sdToolbarTreeData = [
       {
@@ -95,10 +227,41 @@ export class CallbackSidebarMenuComponent implements OnInit {
 
   /*These methods are related to jtk drop functioanlity */
   typeExtractor(el: Element) {
-    return el.getAttribute('jtk-node-type');
+    if (el.getAttribute('jtk-node-type'))
+      return el.getAttribute('jtk-node-type');
+
+    // Because of tiered menu we are not able to set attributes. 
+    // Get from class. 
+    if (el.classList.contains('condition')) {
+      return 'question';
+    } else if (el.classList.contains('api')) {
+      return 'action';
+    } else {
+      return 'Unknown';
+    }
   }
 
   dataGenerator(type: string, el: Element) {
+    // class based draggable element. 
+    console.log('dataGenerator on element - ', el);
+    if (el.classList.contains('condition')) {
+      return {
+        type: 'question',
+        w: 180,
+        h: 70
+      };
+    } else if (el.classList.contains('api')) {
+      return {
+        type: 'action',
+        w: 180,
+        h: 70,
+        api: el.querySelector('a').getAttribute('id')
+        // api: el.querySelector('a').getAttribute('title').replace('Drag api ', '')
+      }
+    }
+
+
+    // TODO: Check if this code is not used then remove. 
     let data = {
       type: el.getAttribute('jtk-node-type'),
       w: parseInt(el.getAttribute('jtk-width'), 10),

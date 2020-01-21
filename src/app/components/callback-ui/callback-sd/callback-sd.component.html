@@ -14,7 +14,7 @@
 
 <mat-sidenav-container style="width: 100%">
   <mat-sidenav #drawer2 position="end" mode="side" [hasBackdrop]="false">
-    <div [style.display]="sideNav !== 1 || sideNav === 3 ?'block':'none'" class="ui-g"
+    <!-- <div [style.display]="sideNav !== 1 || sideNav === 3 ?'block':'none'" class="ui-g"
       style=" background: #c0d3d6;height: 25px;border-radius: 4px;padding: 4px">
       <div class="ui-g-11" style="padding: 0px">
         <label>Trigger And Action</label>
@@ -22,14 +22,14 @@
       <div class="ui-g-1" style="padding: 0px">
         <i (click)="closeDrawer()" style="float: right" title="close pannel" class="fa fa-times"></i>
       </div>
-    </div>
-    <div [style.display]="sideNav !== 1 || sideNav === 3 ?'block':'none'"
+    </div> -->
+    <!-- <div [style.display]="sideNav !== 1 || sideNav === 3 ?'block':'none'"
       style="padding: 0 ; width: calc(100vw - 65vw)">
       <app-callback-sd-trigger-action [currentState]="currentState" (currentAction)="currentActionGet($event)" (flowChartFlag)="flowChartFlag($event)"
         [callback]="callback">
       </app-callback-sd-trigger-action>
-    </div>
-    <div [style.display]="sideNav === 1 ?'block':'none'" class="ui-g"
+    </div> -->
+    <!-- <div [style.display]="sideNav === 1 ?'block':'none'" class="ui-g"
       style=" background: #c0d3d6;height: 25px;border-radius: 4px;padding: 4px">
       <div class="ui-g-11" style="padding: 0px">
         <label>FlowChart Diagram</label>
@@ -41,8 +41,8 @@
             (click)="closeApiMenu()"></i></button>
         <i (click)="closeDrawerFlowchart()" style="float: right" title="close pannel" class="fa fa-times"></i>
       </div>
-    </div>
-    <div [style.display]="sideNav === 1 && ApiMenu === true?'block':'none'" style="width: 289px;position: fixed;
+    </div> -->
+    <!-- <div [style.display]="sideNav === 1 && ApiMenu === true?'block':'none'" style="width: 289px;position: fixed;
     margin: -123px -291px;">
       <app-callback-sidebar-menu [selectedTabIndex]="1" (loaded)="sidebarLoaded=true">
       </app-callback-sidebar-menu>
@@ -51,7 +51,7 @@
       <p-fieldset>
         <app-callback-flowchart [action]="currentAction" [callback]="callback"></app-callback-flowchart>
       </p-fieldset>
-    </div>
+    </div> -->
   </mat-sidenav>
 
   <!-- <mat-sidenav #drawer3 position="end" mode="side" [hasBackdrop]="false">
@@ -71,9 +71,9 @@
   </mat-sidenav> -->
 
   <mat-sidenav-content style="overflow: hidden;">
-    <div style="background: #c0d3d6;height: 25px;padding: 2px 32px;border-radius: 3px;">
+    <!-- <div style="background: #c0d3d6;height: 25px;padding: 2px 32px;border-radius: 3px;">
       <label>State Diagram</label>
-    </div>
+    </div> -->
     <div style="position: absolute;margin: 23px 0px 0px 23px;z-index:2000">
       <!-- <button mat-raised-button (click)="drawer2.open()">Toggle</button> -->
       <div class="p-1" jsplumb-palette selector=".drag" surfaceId="callbackSDSurface" [typeExtractor]="typeExtractor"

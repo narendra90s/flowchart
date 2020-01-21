@@ -30,20 +30,46 @@
     <i *ngIf="!opened" title="callback toggel" style="position: absolute;z-index: 9999;padding: 8px 4px;"
       (click)="sidenav.toggle()" class="fa fa-arrow-right"></i>
 
-    <div class="ui-g" style="padding: 0.2rem; height: 75vh;">
-      <!-- <div class="ui-g-2" style="margin-top: 42px ; padding: 0;">
-        <app-callback-sidebar-menu [selectedTabIndex]="activeTabIndex" (loaded)="sidebarLoaded=true">
-        </app-callback-sidebar-menu>
-      </div> -->
-      <div class="ui-g-12"
-        *ngIf="activeTabIndex === 0 || activeTabIndex === 1 || activeTabIndex === 2 || activeTabIndex === 3"
-        style="padding: 0">
-        <app-callback-sd (actionAdded)="actionAdded($event)" (stateAdded)="stateAdded($event)"
-          [currentState]="currentState" [action]="currentAction" [openFlag]="openFlag"
-          (openFlagChanged)="openFlagChanged($event)" [(activeTabIndex)]="activeTabIndex" [callback]="callback">
-        </app-callback-sd>
-      </div>
-    </div>
+
+    <p-accordion>
+      <p-accordionTab header="State Diagram" [selected]="true">
+        <div class="ui-g" style="padding: 0.2rem; height: 75vh;">
+          <div class="ui-g-7"
+            *ngIf="activeTabIndex === 0 || activeTabIndex === 1 || activeTabIndex === 2 || activeTabIndex === 3"
+            style="padding: 0">
+            <app-callback-sd (actionAdded)="actionAdded($event)" (stateAdded)="stateAdded($event)"
+              [currentState]="currentState" [action]="currentAction" [openFlag]="openFlag"
+              (openFlagChanged)="openFlagChanged($event)" [(activeTabIndex)]="activeTabIndex" [callback]="callback">
+            </app-callback-sd>
+          </div>
+          <div class="ui-g-5"
+            *ngIf="activeTabIndex === 0 || activeTabIndex === 1 || activeTabIndex === 2 || activeTabIndex === 3"
+            style="padding: 0">
+            <!-- <div class="ui-g" style=" background: #c0d3d6;height: 25px;border-radius: 4px;padding: 4px">
+              <div class="ui-g-12" style="padding: 0px">
+                <label>Trigger And Action</label>
+              </div>
+            </div> -->
+            <div style="padding: 0 ;">
+              <app-callback-sd-trigger-action [currentState]="currentState" (currentAction)="currentActionGet($event)"
+                (flowChartFlag)="flowChartFlag($event)" [callback]="callback">
+              </app-callback-sd-trigger-action>
+            </div>
+          </div>
+        </div>
+      </p-accordionTab>
+      <p-accordionTab header="Flowchart Diagram" [(selected)]="select">
+        <div class="ui-g" style="padding: 0.2rem;">
+          <div class="ui-g-2" style="z-index: 200" >
+            <app-callback-sidebar-menu [selectedTabIndex]="1" (loaded)="sidebarLoaded=true">
+            </app-callback-sidebar-menu>
+          </div>
+          <div class="ui-g-10" style="z-index: 100">
+            <app-callback-flowchart [action]="currentAction" [callback]="callback"></app-callback-flowchart>
+          </div>
+        </div>
+      </p-accordionTab>
+    </p-accordion>
     <!-- <div class="ui-g" style="padding: 0.2rem;"> -->
     <!-- <div class="ui-g-2" style="margin-top: 42px ; padding: 0;">
         <app-callback-sidebar-menu [selectedTabIndex]="activeTabIndex" (loaded)="sidebarLoaded=true">
@@ -94,7 +120,7 @@
         </div>
       </mat-drawer>
       <mat-drawer-content> -->
-        <!-- <div class="ui-g" style="padding: 0.2rem; height: 75vh;">
+    <!-- <div class="ui-g" style="padding: 0.2rem; height: 75vh;">
           <div class="ui-g-2" style="margin-top: 42px ; padding: 0;">
             <app-callback-sidebar-menu [selectedTabIndex]="activeTabIndex" (loaded)="sidebarLoaded=true">
             </app-callback-sidebar-menu>
@@ -107,7 +133,7 @@
             </app-callback-sd>
           </div>
         </div> -->
-      <!-- </mat-drawer-content>
+    <!-- </mat-drawer-content>
     </mat-drawer-container> -->
 
 
