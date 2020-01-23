@@ -2,8 +2,10 @@ import { Component, OnInit, ViewChild, Input, OnChanges } from '@angular/core';
 import { jsPlumbSurfaceComponent, jsPlumbService } from 'jsplumbtoolkit-angular';
 import { jsPlumbToolkit, Surface, Dialogs, DrawingTools, jsPlumbToolkitUtil } from 'jsplumbtoolkit';
 import { QuestionNodeComponent, ActionNodeComponent, StartNodeComponent, OutputNodeComponent } from 'src/app/flowchart';
-import { Callback, Action, ActionData, ActionApiCallingNodes } from 'callback';
+import { Callback, Action, ActionData, ActionApiCallingNodes, ConditionNode, JtkNodeParam } from 'callback';
 import { ActionApi, ActionApiList } from 'src/app/interface/action-api';
+import { Source } from 'webpack-sources';
+import { CallbackDataServiceService } from 'src/app/service/callback-data-service.service';
 
 @Component({
   selector: 'app-callback-flowchart',
@@ -15,6 +17,7 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
 
   @Input() callback: Callback;
   @Input() action: Action;
+  // @ViewChild(jsPlumbSurfaceComponent) surfaceComponent: jsPlumbSurfaceComponent;
 
   // This is flow chart data.
   flowChartData: any = {
@@ -49,35 +52,32 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
     { label: "Output", type: "output", w: 120, h: 70 }
   ];
 
-  constructor(private $jsplumb: jsPlumbService) {
+  constructor(private $jsplumb: jsPlumbService, private cdService: CallbackDataServiceService) {
     this.toolkitId = "callbackFlowchart";
     this.surfaceId = "callbackFlowchartSurface";
   }
 
   ngOnChanges() {
     // If action got change then initialize flowchart.
-   if (this.action != null) {
-      // add new nodes.
-      this.flowChartData = {
-        nodes: [{
-          type: 'start',
-          text: 'start',
-          id: 'start',
-          w: 100,
-          h: 70
-        }],
-        edges: []
-      };
+    if (this.action != null) {
+  
+      this.flowDiagramData = this.getFlowDiagramData(this.callback);
 
-      // update flowchart.
-      this.toolkit.load({ data: this.flowChartData });
-    } 
+      this.toolkit.load({ data: this.flowDiagramData });
+    }
+    console.log("Flowchart-component", this.action, this.callback);
 
-    this.flowDiagramData = this.getFlowDiagramData(this.flowChartData);
+  }
 
-    this.toolkit.load({ data: this.flowDiagramData });
-    console.log("Flowchart-component", this.action);
+  copyJData(input: any, out: any) {
+    const keys = ["w", "h", "top", "left"];
+    keys.forEach(key => {
+      if (input[key] !== undefined) {
+        out[key] = input[key];
+      }
+    });
 
+    return true;
   }
 
   getFlowDiagramData(flowChartData: any) {
@@ -86,46 +86,105 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
       edges: []
     };
 
-    this.flowChartData.nodes.forEach(start => {
+    fdData.nodes.push({
+      type: 'start',
+      text: 'start',
+      id: 'start',
+      w: 100,
+      h: 70
+    });
+    // this.copyJData(da.jData, fdData.nodes[fdData.nodes.length - 1]);
+
+    this.action.data.aNOdes.forEach(da => {
       fdData.nodes.push({
-        type: 'start',
-        text: 'start',
-        id: 'start',
-        w: 100,
+        "id": da.id,
+        "text": da.data.api["id"],
+        "type": "action",
+        "data": da.data,
+        w: 180,
         h: 70
       });
+      this.copyJData(da.jData, fdData.nodes[fdData.nodes.length - 1]);
     });
 
-    this.flowChartData.nodes.forEach(action => {
+    this.action.data.cNodes.forEach(d => {
+      let text = "'" + d.data.lhs + "' " + d.data.operator["name"] + " " + d.data.rhs;
       fdData.nodes.push({
-        "id": action.id,
-        "type": "action",
-        "text": action.name
-      });
-    });
-
-    this.flowChartData.nodes.forEach(question => {
-      fdData.nodes.push({
-        "id": question.id,
+        "id": d.id,
+        "text": text,
         "type": "question",
-        "text": question.name
+        "data": d.data,
+        w: 180,
+        h: 70
       });
+     this.copyJData(d.jData, fdData.nodes[fdData.nodes.length - 1]);
     });
 
+    fdData.edges = this.action.data.edges;
 
-    // this.flowChartData = {
-    //   nodes: [{
+
+
+    // this.callback.actions.forEach(action => {
+    //   if (this.action != null && action.id == this.action.id) {
+    //     fdData.nodes.push({
+    //       type: 'start',
+    //       text: 'start',
+    //       id: 'start',
+    //       w: 100,
+    //       h: 70
+    //     });
+
+    // if (this.action.data.aNOdes.length) {
+    //   this.action.data.aNOdes.forEach(da => {
+    //     fdData.nodes.push({
+    //       "id": da.id,
+    //       "text": da.data.api["id"],
+    //       "type": "action",
+    //       "data": da.data,
+    //       w: 180,
+    //       h: 70
+    //     });
+    //   });
+    // }
+    // if (this.action.data.cNodes.length) {
+    //   this.action.data.cNodes.forEach(d => {
+    //     let text = "'" + d.data.lhs + "' " + d.data.operator["name"] + " " + d.data.rhs;
+    //     fdData.nodes.push({
+    //       "id": d.id,
+    //       "text": text,
+    //       "type": "question",
+    //       "data": d.data,
+    //       w: 180,
+    //       h: 70
+    //     });
+    //   });
+    // }
+    // if (this.action.data.edges.length) {
+    //   this.action.data.edges.forEach(n => {
+    //     fdData.edges.push({
+    //       id: fdData.edges.length,
+    //       source: n.source,
+    //       target: n.target,
+    //       data: n.data
+    //     });
+    //   });
+    // }
+    // }
+    // else{
+    //   fdData.nodes.push({
     //     type: 'start',
     //     text: 'start',
     //     id: 'start',
     //     w: 100,
     //     h: 70
-    //   }],
-    //   edges: []
-    // };
+    //   });
+    // }
+    // });
 
     return fdData;
   }
+
+
   ngOnInit() {
     // get the toolkit instance
     this.toolkit = this.$jsplumb.getToolkit(this.toolkitId, this.toolkitParams);
@@ -136,12 +195,52 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
 
   }
 
+  updateBTInfo(toolKitData: any) {
+    console.log("updateListner called",toolKitData);
+    toolKitData.nodes.forEach((node: any) => {
+      if (node.type === 'start'){
+        node.jData = new JtkNodeParam();
+        return this.copyJData(node , node.jData);
+      }
+      if (node.type === 'action') {
+        // this.callback.actions.forEach(action => {
+          this.action.data.aNOdes.some(n => {
+            if (node.id === n.id) {
+              if (n.jData === undefined) {
+                n.jData = new JtkNodeParam();
+              }
+              return this.copyJData(node, n.jData);
+            }
+          });
+          return false;
+        // });
+      }
+      if (node.type === 'queston') {
+        // this.callback.actions.forEach(action => {
+          this.action.data.cNodes.some(nq => {
+            if (node.id === nq.id) {
+              if (nq.jData === undefined) {
+                nq.jData = new JtkNodeParam();
+              }
+              return this.copyJData(node, nq.jData);
+            }
+          })
+        // })
+      }
+    });
+
+    console.log('callback after updateBTInfo for flowdiagram - ', this.callback , toolKitData);
+  }
+
   dataUpdateListener() {
     console.log('JSPlumb data updated in flow Diagram - ', this.toolkit.exportData());
     // TODO: update jsplumb data.
     let tempToolkitData = Object(this.toolkit.exportData());
+    this.action.data.edges = tempToolkitData.edges;
 
-    console.log("toolKitData", tempToolkitData);
+    this.updateBTInfo(tempToolkitData);   
+
+    console.log("toolKitData", tempToolkitData, this.callback);
   }
 
   toolkitParams = {
@@ -259,7 +358,7 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
       "default": {
         anchor: "AutoDefault",
         endpoint: "Blank",
-        connector: ["Flowchart", { cornerRadius: 5 }],
+        connector: ["Flowchart", { curviness: 10 }],
         paintStyle: { strokeWidth: 2, stroke: "#f76258", outlineWidth: 3, outlineStroke: "transparent" },	//	paint style for this edge type.
         hoverPaintStyle: { strokeWidth: 2, stroke: "rgb(67,67,67)" }, // hover paint style for this edge type.
         events: {
@@ -358,7 +457,7 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
       renderer: this.surface
     });
 
-    this.toolkit.load({ url: "assets/data/flowchart-small.json" });
+    // this.toolkit.load({ url: "assets/data/flowchart-small.json" });
   }
 
   ngOnDestroy() {
@@ -368,7 +467,7 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
   // Handling for action api.
   handleActionApiAdded($event) {
     // TODO: set action.
-    console.log('action api submitted with values - ', $event);
+    console.log('action api submitted with values - ', $event, this.action.data.aNOdes);
 
     // Add in action.
     const value: any = $event.argument;
@@ -384,7 +483,7 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
     // TODO: show the complete data.
     // this.pendingApiJTKData.text = `${this.currentActionApi.api}(${args})`;
     this.pendingApiJTKData.text = this.currentActionApi.api;
-    this.pendingApiJTKData.id = jsPlumbToolkitUtil.uuid();
+    this.pendingApiJTKData.id = 'api_' + this.action.data.aNOdes.length;
     this.pendingApiJTKCallback(this.pendingApiJTKData);
     this.currentActionApi = null;
     this.pendingApiJTKCallback = null;
@@ -393,26 +492,40 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
 
     let apiNodeData = new ActionApiCallingNodes();
     apiNodeData.id = 'api_' + this.action.data.aNOdes.length;
-    apiNodeData.text = $event.api;
+    apiNodeData.text = $event.api.api;
     apiNodeData.data = $event;
     this.action.data.aNOdes.push(apiNodeData);
 
     console.log("actual flowchart data", this.flowChartData, $event, apiNodeData);
 
     // In case gotoState api called then trigger event. and do handling for edges at sd. 
+    if ($event.api.id === 'gotoState') {
+      console.log("on goto", $event.api.id);
+      this.cdService.broadcast('refreshSDEdge', $event.argument.stateName);
+    }
   }
 
   handleConditionAdded($event) {
+    console.log("HandleConditionAdded", $event);
     const data = $event;
     // TODO: instead of showing name for operator, better to show sign eg. >=
     const text = `'${data.lhs}' ${data.operator.name} ${data.rhs}`;
-    this.pendingConditionJTKData.id = jsPlumbToolkitUtil.uuid();
+    this.pendingConditionJTKData.id = 'condition_' + this.action.data.cNodes.length;
     this.pendingConditionJTKData.text = text;
     this.pendingConditionJTKCallback(this.pendingConditionJTKData);
 
     this.pendingConditionJTKCallback = null;
     this.pendingConditionJTKData = null;
     this.showConditionDialog = false;
+
+
+    let conditionNodeData = new ConditionNode();
+    conditionNodeData.id = 'condition_' + this.action.data.cNodes.length;
+    conditionNodeData.text = $event.condition;
+    conditionNodeData.data = $event;
+
+    this.action.data.cNodes.push(conditionNodeData);
+
     console.log('handleConditionAdded completed', this.flowChartData, $event);
   }
 }

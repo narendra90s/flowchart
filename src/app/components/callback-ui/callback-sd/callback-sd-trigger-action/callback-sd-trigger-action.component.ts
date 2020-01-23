@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, OnChanges, Output, EventEmitter } from '@angular/core';
-import { Callback, State, Trigger, Action } from 'callback';
+import { Callback, State, Trigger, Action, ActionData } from 'callback';
 
 @Component({
   selector: 'app-callback-sd-trigger-action',
@@ -40,16 +40,22 @@ export class CallbackSdTriggerActionComponent implements OnInit, OnChanges {
 
   ngOnChanges() {
     console.log("Callback is -", this.callback, this.currentState);
+    if(this.currentState){
+      this.getTriggerList();
+      this.getActionList();
+    }
   }
 
   openDialogTrigger() {
     this.showTriggerDialog = true;
     this.newTriggerName = 'Trigger_' + this.callback.triggers.length + '';
+    // this.triggerList();
   }
 
   openDialogAction(){
     this.showActionDialog = true;
     this.newActionName = 'Action_' + this.callback.actions.length + '';
+    // this.actionList();
   }
 
   submitAddAction() {
@@ -59,6 +65,8 @@ export class CallbackSdTriggerActionComponent implements OnInit, OnChanges {
     } else {
       let action = new Action(this.newActionName);
       action.id = 'action_' + this.callback.actions.length;
+      action.data = new ActionData();
+      action.stateId = this.selectedTriggerForAction.stateId;
       this.callback.actions.push(action);
       // this.listOfAction = this.callback.actions;
       // Note: We can have same callback for multiple trigger. That is why need to maintain mapping.
@@ -86,6 +94,7 @@ export class CallbackSdTriggerActionComponent implements OnInit, OnChanges {
 
       // TODO: It has to be taken care by double click.
       console.log('Emitting actionAdded event with data - ', action);
+      this.getActionList();
       // this.actionAdded.emit(action);
     }
   }
@@ -108,6 +117,7 @@ export class CallbackSdTriggerActionComponent implements OnInit, OnChanges {
     let tempTrigger = {label : this.newTriggerName , value : this.newTriggerName};
     this.listOfTrigger.push(tempTrigger); 
     // this.listOfTrigger = this.callback.triggers;
+    this.getTriggerList();
 
     console.log("After Adding Trigger",this.callback);
 
@@ -121,5 +131,31 @@ export class CallbackSdTriggerActionComponent implements OnInit, OnChanges {
     this.currentAction.emit(action);
     this.flowChartFlag.emit(this.openChart);
   }
+
+  triggerList : any = [];
+  getTriggerList(){
+    this.triggerList = [];
+    console.log("current State",this.currentState, this.callback.triggers);
+    this.callback.triggers.forEach(trigger =>{
+      if(trigger.stateId === this.currentState.id){
+        this.triggerList.push(trigger);
+      }
+    })
+    console.log("list of trigger",this.triggerList)
+    return this.triggerList;
+  }
+
+  actionList : any = [];
+  getActionList(){
+    this.actionList = [];
+    console.log("current State",this.currentState, this.callback.actions);
+    this.callback.actions.forEach(action =>{
+      if(action.stateId === this.currentState.id){
+        this.actionList.push(action);
+      }
+    })
+    return this.actionList;
+  }
+
 
 }

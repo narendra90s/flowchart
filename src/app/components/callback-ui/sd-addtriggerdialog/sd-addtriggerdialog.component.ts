@@ -82,8 +82,13 @@ export class SdAddtriggerdialogComponent implements OnInit {
         return;
       }
 
-      const trigger = {stateId: this.selectedState.value, name: this.triggerName, type: type,
-        urlPattern: this.urlPattern, domSelector: this.domSelector};
+      const trigger = {
+        stateId: this.selectedState.value,
+        name: this.triggerName, 
+        type: type,
+        urlPattern: this.urlPattern, 
+        domSelector: this.domSelector
+      };
       this.success.emit(trigger);
       console.log('Trigger Dialog Success');
     }

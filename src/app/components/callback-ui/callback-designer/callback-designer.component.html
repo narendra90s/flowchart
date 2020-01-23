@@ -34,7 +34,7 @@
     <p-accordion>
       <p-accordionTab header="State Diagram" [selected]="true">
         <div class="ui-g" style="padding: 0.2rem; height: 75vh;">
-          <div class="ui-g-7"
+          <div class="ui-g-9"
             *ngIf="activeTabIndex === 0 || activeTabIndex === 1 || activeTabIndex === 2 || activeTabIndex === 3"
             style="padding: 0">
             <app-callback-sd (actionAdded)="actionAdded($event)" (stateAdded)="stateAdded($event)"
@@ -42,7 +42,7 @@
               (openFlagChanged)="openFlagChanged($event)" [(activeTabIndex)]="activeTabIndex" [callback]="callback">
             </app-callback-sd>
           </div>
-          <div class="ui-g-5"
+          <div class="ui-g-3"
             *ngIf="activeTabIndex === 0 || activeTabIndex === 1 || activeTabIndex === 2 || activeTabIndex === 3"
             style="padding: 0">
             <!-- <div class="ui-g" style=" background: #c0d3d6;height: 25px;border-radius: 4px;padding: 4px">
@@ -52,7 +52,7 @@
             </div> -->
             <div style="padding: 0 ;">
               <app-callback-sd-trigger-action [currentState]="currentState" (currentAction)="currentActionGet($event)"
-                (flowChartFlag)="flowChartFlag($event)" [callback]="callback">
+                 [callback]="callback">
               </app-callback-sd-trigger-action>
             </div>
           </div>

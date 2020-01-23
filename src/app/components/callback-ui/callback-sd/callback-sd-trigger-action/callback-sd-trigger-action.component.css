@@ -1,3 +1,11 @@
 :host>>>.mat-pseudo-checkbox{
     display: none;
 }
+
+:host>>>.mat-list-base .mat-list-option {
+    font-size: 12px;
+}
+
+:host>>>.mat-list-base .mat-list-item .mat-list-item-content-reverse, .mat-list-base .mat-list-option .mat-list-item-content-reverse{
+    padding: 0px;
+}

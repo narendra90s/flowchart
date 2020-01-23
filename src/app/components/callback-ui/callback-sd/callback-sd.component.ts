@@ -20,7 +20,7 @@ export class CallbackSdComponent implements OnInit, OnChanges {
 
   @ViewChild('drawer2') drawer: any;
   @ViewChild('drawer3') drawer3: any;
-  @ViewChild('api') api : any;
+  @ViewChild('api') api: any;
   @ViewChild(jsPlumbSurfaceComponent) surfaceComponent: jsPlumbSurfaceComponent;
 
   @Output() actionAdded: EventEmitter<any> = new EventEmitter();
@@ -55,6 +55,7 @@ export class CallbackSdComponent implements OnInit, OnChanges {
 
   toolkitId: string;
   surfaceId: string;
+  stateEdge : any = [];
 
   nodeTypes = [
     { label: "State", type: "state", w: 100, h: 70 },
@@ -62,7 +63,7 @@ export class CallbackSdComponent implements OnInit, OnChanges {
     { label: "Action", type: "action", w: 120, h: 70 }
   ];
 
-  constructor(private $jsplumb: jsPlumbService) {
+  constructor(private $jsplumb: jsPlumbService, private cdService: CallbackDataServiceService) {
     this.toolkitId = "callbackSD";
     this.surfaceId = "callbackSDSurface";
     // initialize dialogs
@@ -90,6 +91,70 @@ export class CallbackSdComponent implements OnInit, OnChanges {
     this.toolkit = this.$jsplumb.getToolkit(this.toolkitId, this.toolkitParams);
 
     this.toolkit.bind("dataUpdated", this.dataUpdateListener.bind(this));
+
+    //Set listener to refresh edges.
+    this.cdService.on('refreshSDEdge').subscribe(data => this.refreshEdges(data));
+  }
+
+  refreshEdges(data) {
+    console.log('on goto refreshSDEdge event triggered for state - ', data , this.action);
+
+    let edges = [];
+    this.callback.actions.forEach(action => {
+      action.data.aNOdes.forEach(node =>{
+        if(node.data.api["api"] === 'CAVNV.sb.gotoState'){
+          let srcState = action.stateId;
+            let dstState;
+            if (node.data.argument["stateName"] === 'start') {
+              dstState = 'start';
+            } else if (node.data.argument["stateName"] === 'end') {
+              dstState = 'end';
+            } else {
+              dstState = node.data.argument["stateName"];
+            }
+            //Add edge. 
+            edges.push({
+              source: srcState,
+              target: dstState,
+            });
+        }
+      });
+    });
+
+    // clean existing edges. 
+    this.toolkit.getAllEdges().forEach(edge => this.toolkit.removeEdge(edge));
+
+    edges.forEach(edge => {
+      this.callback.states.forEach(state =>{
+        if(edge.source === state.id)
+          this.toolkit.addEdge(edge);
+      })
+    });
+
+    // this.callback.actions.forEach(action => {
+    //   action.data.aNOdes.forEach(api => {
+    //     if (api.data.api === 'CAVNV.sb.gotoState') {
+    //       let srcState = action.stateId;
+    //       let dstState;
+    //       if (api.data.arguments.get('stateName') === 'start') {
+    //         dstState = 'start';
+    //       } else if (api.data.arguments.get('stateName') === 'end') {
+    //         dstState = 'end';
+    //       } else {
+    //         dstState = api.data.arguments.get('startName');
+    //       }
+    //       //Add edge for this trigger. 
+    //       edges.push({
+    //         id: edges.length,
+    //         source: srcState,
+    //         target: dstState,
+    //         data : data
+    //       });
+    //     }
+    //   })
+    // });
+    console.log("state to state edge",edges);
+    // return edges;
   }
 
   sdToolbarTreeData: TreeNode[] = [];
@@ -131,6 +196,7 @@ export class CallbackSdComponent implements OnInit, OnChanges {
 
   // TODO: Move to some common util file.
   updateBTInfo(toolKitData: any) {
+    toolKitData.edges = this.stateEdge;
     toolKitData.nodes.forEach((node: any) => {
 
       if (node.type === 'state' || node.type === 'start' || node.type === 'end') {
@@ -139,7 +205,7 @@ export class CallbackSdComponent implements OnInit, OnChanges {
             if (state.jData === undefined) {
               state.jData = new JtkNodeParam();
             }
-            state.jData;
+
             return this.copyJData(node, state.jData);
           }
           return false;
@@ -166,16 +232,73 @@ export class CallbackSdComponent implements OnInit, OnChanges {
         })
       }
     })
+
+    console.log('callback after updateBTInfo - ', this.callback);
   }
 
   dataUpdateListener() {
     console.log('JSPlumb data updated - ', this.toolkit.exportData());
     // TODO: update jsplumb data.
     let tempToolkitData = Object(this.toolkit.exportData());
+    this.removeNodes(tempToolkitData);
+    this.updateBTInfo(tempToolkitData);   
 
-    this.updateBTInfo(tempToolkitData);
+    console.log("State Data on callback", this.callback, tempToolkitData,this.stateEdge);
+  }
 
-    console.log("State Data on callback", this.callback, tempToolkitData);
+
+  removeNodes(tempToolkitData){
+    console.log("tempToolkitData ----",tempToolkitData,this.callback);
+    this.callback.states = tempToolkitData.nodes;
+
+    // let flag : boolean = false;
+    let state = false;
+    let action = false;
+    for(const i in this.callback.actions){
+      state = false;
+      action = false;
+      for(const j in this.callback.states){
+        if(this.callback.actions[i].stateId != this.callback.states[j].id){
+          action = true;
+        }
+        else {
+          state = true;
+        } 
+      }
+      if(action == true && state == false){        
+        console.log("Action deleted",this.callback,this.callback.actions );
+      }
+    }
+
+    // let ind;
+    // this.callback.triggers.forEach(trigger =>{
+    //   this.callback.states.forEach(state =>{
+    //     if(trigger.stateId == state.id){
+    //       ind = this.callback.triggers.findIndex(x=>x.stateId === trigger.stateId);
+    //       console.log("deleting element",ind);
+    //       // this.callback.triggers.splice(ind,1);
+    //       // this.callback.triggers.splice(this.callback.triggers.indexOf(removetr),1);
+    //     }
+    //   })
+    // })
+
+
+    // let ind2;
+    // this.callback.actions.forEach(action =>{
+    //   this.callback.states.some(state =>{
+    //     if(action.stateId == state.id){
+    //       ind2 = this.callback.actions.findIndex(x=>x.stateId === action.stateId);
+    //       console.log("deleting element -",ind2);
+    //     }
+    //   })
+    // })
+    // this.callback.actions.splice(ind2,1);
+
+    console.log("after removing",this.callback );
+
+    // this.toolkit.getAllEdges().forEach(edge => this.toolkit.removeEdge(edge));
+
+    // tempToolkitData.edges.forEach(edge => this.toolkit.addEdge(edge));
   }
 
   closeDrawer() {
@@ -211,6 +334,10 @@ export class CallbackSdComponent implements OnInit, OnChanges {
 
     // reload jsplumb.
     this.toolkit.load({ data: this.stateDiagramData });
+
+    // add edges too.
+    setTimeout(() => this.refreshEdges('none'), 300);
+
     // this.openSideBar();
   }
 
@@ -260,9 +387,9 @@ export class CallbackSdComponent implements OnInit, OnChanges {
     //     "text": trigger.name
     //   })
 
-      // this.copyJData(trigger.jData, sdData.nodes[sdData.nodes.length - 1]);
+    // this.copyJData(trigger.jData, sdData.nodes[sdData.nodes.length - 1]);
 
-      //Add edge for this trigger. 
+    //Add edge for this trigger. 
     //   sdData.edges.push({
     //     id: sdData.edges.length,
     //     source: trigger.stateId,
@@ -276,7 +403,7 @@ export class CallbackSdComponent implements OnInit, OnChanges {
     //     "type": "action",
     //     "text": action.name
     //   });
-      // this.copyJData(action.jData, sdData.nodes[sdData.nodes.length - 1]);
+    // this.copyJData(action.jData, sdData.nodes[sdData.nodes.length - 1]);
     // });
 
     //make edge for trigger to action.
@@ -346,17 +473,17 @@ export class CallbackSdComponent implements OnInit, OnChanges {
   }
 
 
-  sideNav : any;
-  flowChartFlag($event){
-    console.log("flowchart -- ",$event);
+  sideNav: any;
+  flowChartFlag($event) {
+    console.log("flowchart -- ", $event);
     // this.drawer3.open();
     this.sideNav = CallbackDesignerComponent.FLOW_CHART_TAB;
   }
 
-  closeDrawerFlowchart(){
-   this.sideNav = CallbackDesignerComponent.TriggerActionSideBar;
+  closeDrawerFlowchart() {
+    this.sideNav = CallbackDesignerComponent.TriggerActionSideBar;
   }
- 
+
   /*
     (type:string, data:any, callback:Function) => {
       Dialogs.show({
@@ -474,7 +601,9 @@ export class CallbackSdComponent implements OnInit, OnChanges {
       "default": {
         anchor: "AutoDefault",
         endpoint: "Blank",
-        connector: ["Flowchart", { cornerRadius: 5 }],
+        // connectorStyle: { strokeStyle: "#5C96BC", lineWidth: 2 },
+        connector: ["StateMachine"],
+        // connector: ["Flowchart", { curviness: 10 }],
         paintStyle: { strokeWidth: 2, stroke: "#f76258", outlineWidth: 3, outlineStroke: "transparent" },	//	paint style for this edge type.
         hoverPaintStyle: { strokeWidth: 2, stroke: "rgb(67,67,67)" }, // hover paint style for this edge type.
         events: {
@@ -620,16 +749,18 @@ export class CallbackSdComponent implements OnInit, OnChanges {
       this.actionAdded.emit(action);
     }
   }
-  ApiMenu : boolean = false;
-  openApiMenu(){
+  ApiMenu: boolean = false;
+  openApiMenu() {
     this.ApiMenu = true;
   }
-  closeApiMenu(){
+  closeApiMenu() {
     this.ApiMenu = false;
   }
 
-  currentActionGet($event){
-    console.log("On CurrentAction",$event);
+  currentActionGet($event) {
+    console.log("On CurrentAction", $event);
     this.currentAction = $event;
   }
+
+  
 }
