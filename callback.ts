@@ -64,19 +64,21 @@ export class ConditionNode {
     data: ConditionData
     id: string;
     text: string;
+    jData: JtkNodeParam = new JtkNodeParam();
 }
 
 export class ActionApiData {
     // It will be actual api eg. CAVNV.utils.setCookie.
     // TODO: it is better to provide uniq id to each api and use it here. 
     api: string;
-    arguments: Map<string, string>
+    argument: Map<string, string>;
 }
 
 export class ActionApiCallingNodes {
     id: string;
     text: string;
     data: ActionApiData;
+    jData: JtkNodeParam = new JtkNodeParam();
 }
 
 export class ActionEdge {
@@ -87,16 +89,18 @@ export class ActionEdge {
 
 export class ActionData {
     // Condition node.  
-    cNodes: ConditionNode[];
+    cNodes: ConditionNode[] = [];
     // Action api node.
-    aNOdes: ActionApiCallingNodes[];
-    edges: ActionEdge[];
+    aNOdes: ActionApiCallingNodes[] = [];
+    edges: ActionEdge[] = [];
 }
 
 export class Action {
+    state: string;
+    stateId: string;
     id: string;
     name: string;
-    data: ActionData;
+    data: ActionData = new ActionData();
     jData: JtkNodeParam = new JtkNodeParam();
 
     constructor(name: string) {
