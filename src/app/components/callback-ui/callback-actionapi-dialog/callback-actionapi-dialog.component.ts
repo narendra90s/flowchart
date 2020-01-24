@@ -27,6 +27,7 @@ export class CallbackActionapiDialogComponent implements OnInit, OnChanges {
   // LocalVar: any = null;
   localVar : any ;
   stateList: any[] = [];
+  sessionStateList: any = [];
   constructor(private dpData: CallbackDataServiceService , public dialog: MatDialog) {
     this.groupedVariableList = [{
       label: 'Data points',
@@ -37,6 +38,12 @@ export class CallbackActionapiDialogComponent implements OnInit, OnChanges {
       value: 'fa fa-cubes',
       items: []
     }];
+
+    this.sessionStateList = [
+      {label : "BROWSER" , value: "BROWSER"},
+      {label : "SHOPPER" , value: "SHOPPER"},
+      {label : "BUYER" , value: "BUYER"}
+    ]
   }
 
   ngOnInit() {

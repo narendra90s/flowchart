@@ -118,6 +118,18 @@ export class CallbackSidebarMenuComponent implements OnInit {
         ]
       },
       {
+        label: 'Session_State',
+        icon: 'pi pi-fw pi-file',
+        items: [
+          {
+            label: 'Set Session State',
+            id: 'setSessionState',
+            styleClass: 'drag api',
+            title: 'Drag api'
+          }
+        ]
+      },
+      {
         label: 'LoginId',
         icon: 'pi pi-fw pi-file',
         items: [
@@ -130,26 +142,62 @@ export class CallbackSidebarMenuComponent implements OnInit {
         ]
       },
       {
-        label: 'SessionId', 
+        label: 'SessionId',
         icon: 'pi pi-fw pi-file',
-        items:[
+        items: [
           {
             label: 'Set SessionId',
             id: 'setSessionId',
             styleClass: 'drag api',
-            title: 'Drag api' 
+            title: 'Drag api'
           }
         ]
       },
       {
-        label: 'LogEvent', 
+        label: 'LogEvent',
         icon: 'pi pi-fw pi-file',
         items: [
           {
             label: 'Log Event',
             id: 'eventName',
             styleClass: 'drag api',
-            title: 'Drag api' 
+            title: 'Drag api'
+          }
+        ]
+      },
+      {
+        label: 'UserSegment',
+        icon: 'pi pi-fw pi-file',
+        items: [
+          {
+            label: 'Set User Segment',
+            id: 'userSegment',
+            styleClass: 'drag api',
+            title: 'Drag api'
+          }
+        ]
+      },
+      {
+        label: 'CustomMetric',
+        icon: 'pi pi-fw pi-file',
+        items: [
+          {
+            label: 'Custom Matric Name',
+            id: 'customMetric',
+            styleClass: 'drag api',
+            title: 'Drag api'
+          }
+        ]
+      },
+      {
+        label: 'OrderTotal',
+        icon: 'pi pi-fw pi-file',
+        items: [
+          {
+            label: 'Order Total',
+            id: 'orderTotal',
+            styleClass: 'drag api',
+            title: 'Drag api'
           }
         ]
       }

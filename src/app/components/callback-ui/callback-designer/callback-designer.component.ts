@@ -95,6 +95,20 @@ export class CallbackDesignerComponent implements OnInit {
 
     this.cbService.on('editState').subscribe(data => this.editState(data));
 
+    this.cbService.on('openActionFlowChart').subscribe((data: any) => {
+      console.log('openActionFlowChart called ', data);
+      let actionId = data.edge.data.actionId;
+
+      console.log('openActionFlowChart called for action - ', actionId);
+
+      this.callback.actions.some(action => {
+        if (action.id === actionId) {
+          this.currentAction = action;
+          return true;
+        }
+      })
+    });
+
 
     // register for change in localvariable and global variable
     this.cbService.currentCbData.subscribe(dataPoints => {

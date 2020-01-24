@@ -64,10 +64,12 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
       this.flowDiagramData = this.getFlowDiagramData(this.callback);
 
       this.toolkit.load({ data: this.flowDiagramData });
+
     }
     console.log("Flowchart-component", this.action, this.callback);
 
   }
+
 
   copyJData(input: any, out: any) {
     const keys = ["w", "h", "top", "left"];
@@ -119,6 +121,12 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
       });
      this.copyJData(d.jData, fdData.nodes[fdData.nodes.length - 1]);
     });
+
+    // this.callback.actions.forEach(action =>{
+    //   fdData.edges = action.data.edges;
+    //   console.log("inside getflo",fdData);
+    // });
+
 
     fdData.edges = this.action.data.edges;
 
@@ -181,6 +189,8 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
     // }
     // });
 
+
+    console.log("GetflowdiagramData called ===>",this.action.data.edges , fdData ,this.callback)
     return fdData;
   }
 

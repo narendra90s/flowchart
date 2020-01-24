@@ -98,6 +98,7 @@ export class ActionData {
 export class Action {
     state: string;
     stateId: string;
+    triggerId: string;
     id: string;
     name: string;
     data: ActionData = new ActionData();

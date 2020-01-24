@@ -3,10 +3,10 @@
 <!--Control Sidebar-->
 <!--TODO: Button to collapse/expand-->
 <!-- <div class="ui-g"> -->
-<mat-sidenav-container class="side-container">
+<mat-sidenav-container class="side-container" style="height: 100vh">
   <mat-sidenav style="background: rgb(255, 255, 255);width: calc(100vw - 85vw);" #sidenav mode="side"
     [(opened)]="opened" (opened)="events.push('open!')" (closed)="events.push('close!')">
-    <div class="text-center">
+    <div class="text-center" >
       <!-- (click)="showDialog()" -->
       <button mat-button style="width: 100% ; padding-top: 7px" color="primary" (click)="addCallback()"><i
           class="fa fa-plus-circle"></i>&nbsp;Add

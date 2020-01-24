@@ -67,6 +67,7 @@ export class CallbackSdTriggerActionComponent implements OnInit, OnChanges {
       action.id = 'action_' + this.callback.actions.length;
       action.data = new ActionData();
       action.stateId = this.selectedTriggerForAction.stateId;
+      action.triggerId = this.selectedTriggerForAction.id;
       this.callback.actions.push(action);
       // this.listOfAction = this.callback.actions;
       // Note: We can have same callback for multiple trigger. That is why need to maintain mapping.

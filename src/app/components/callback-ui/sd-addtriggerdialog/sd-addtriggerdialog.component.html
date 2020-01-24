@@ -28,7 +28,26 @@
     <div class="ui-g-8 field">
       <p-dropdown [options]="TriggerTypes" [(ngModel)]="triggerType" placeholder="Select Trigger" optionLabel="name" [showClear]="true"></p-dropdown>
     </div>
-  </div>  
+  </div> 
+  
+  <!-- <div class="ui-g">
+    <div class="ui-g-4 label">
+      <label>Set TimeOut</label>
+    </div>
+    <div class="ui-g-8 field">
+      <input pInputText type="number" [(ngModel)]="timeOut"/>
+    </div>
+  </div> -->
+
+  <!--Argument 1: Time Out-->
+  <div *ngIf="triggerType && firstArgument[triggerType.code] == 'TimeOut'" class="ui-g">
+    <div class="ui-g-4 label">
+      <label>Time Out</label>
+    </div>
+    <div class="ui-g-8 field">
+      <input type="number" placeholder="TimeOut (ms)" size="20"  pInputText (input)="dirty = false" [class.invalid]="dirty === true && !timeOut"  [(ngModel)]="timeOut" required/>
+    </div>
+  </div> 
 
   <!--Argument 1: Dom Selector-->
   <div *ngIf="triggerType && firstArgument[triggerType.code] == 'DOM_SELECTOR'" class="ui-g">

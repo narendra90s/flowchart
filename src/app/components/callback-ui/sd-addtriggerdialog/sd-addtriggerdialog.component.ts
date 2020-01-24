@@ -18,6 +18,7 @@ export class SdAddtriggerdialogComponent implements OnInit {
   @Output() success: EventEmitter<any> = new EventEmitter();
   @Output() close: EventEmitter<any> = new EventEmitter();
   triggerType: any;
+  timeOut : number = null;
   domSelector: string = null;
   urlPattern: string = null;
   // First argument mapping.
@@ -35,7 +36,10 @@ export class SdAddtriggerdialogComponent implements OnInit {
       {name: 'Content Change', code: 'CONTENT_CHANGE'},
       {name: 'HashChange', code: 'HASHCHANGE'},
       {name: 'XHR Success', code: 'XHR_COMPLETE' },
-      {name: 'XHR Failed', code : 'XHR_FAILED'}];
+      {name: 'XHR Failed', code : 'XHR_FAILED'},
+      {name: 'Set TimeOut' , code : 'TimeOut'}
+    ];
+
 
     this.firstArgument = {
       CLICK: 'DOM_SELECTOR',
@@ -44,7 +48,8 @@ export class SdAddtriggerdialogComponent implements OnInit {
       CONTENT_CHANGE: 'DOM_SELECTOR',
       HASHCHANGE: 'NONE',
       XHR_COMPLETE: 'URL_PATTERN',
-      XHR_FAILED: 'URL_PATTERN'
+      XHR_FAILED: 'URL_PATTERN',
+      TimeOut : 'TimeOut'
     };
    }
 
@@ -81,13 +86,20 @@ export class SdAddtriggerdialogComponent implements OnInit {
         console.log('form dirty');
         return;
       }
+      if (this.firstArgument[type] === 'TimeOut' && !(this.timeOut && this.timeOut))
+      {
+        this.dirty = true;
+        console.log('form dirty');
+        return;
+      }
 
       const trigger = {
         stateId: this.selectedState.value,
         name: this.triggerName, 
         type: type,
         urlPattern: this.urlPattern, 
-        domSelector: this.domSelector
+        domSelector: this.domSelector,
+        timeOut : this.timeOut
       };
       this.success.emit(trigger);
       console.log('Trigger Dialog Success');
@@ -95,5 +107,6 @@ export class SdAddtriggerdialogComponent implements OnInit {
     this.triggerType = null;
     this.domSelector = null;
     this.urlPattern = null;
+    this.timeOut = null;
   }
 }

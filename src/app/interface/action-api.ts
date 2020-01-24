@@ -3,7 +3,7 @@ export enum ApiArgumentType {
     STRING = 1,
     NUMBER = 2,
     STATE = 3,
-    
+
 }
 
 export class Operator {
@@ -49,8 +49,8 @@ export class ActionApi {
 }
 
 export class ActionApiList {
-    static apiList: {[key: string]: ActionApi[]} = {
-        SPA: [ 
+    static apiList: { [key: string]: ActionApi[] } = {
+        SPA: [
             {
                 category: 'SPA',
                 label: 'Page Transition Start',
@@ -83,7 +83,7 @@ export class ActionApiList {
                     type: ApiArgumentType.STRING,
                     required: true
                 }]
-            } , {
+            }, {
                 category: 'SPA',
                 label: 'Transaction Start',
                 id: 'cav_nv_ajax_start',
@@ -99,7 +99,7 @@ export class ActionApiList {
                     type: ApiArgumentType.STRING,
                     required: true
                 }]
-            } , {
+            }, {
                 category: 'SPA',
                 label: 'Transaction Report',
                 id: 'cav_nv_ajax_report',
@@ -115,7 +115,7 @@ export class ActionApiList {
                     type: ApiArgumentType.STRING,
                     required: true
                 }]
-            } , {
+            }, {
                 category: 'SPA',
                 label: 'Transaction End',
                 id: 'cav_nv_ajax_end',
@@ -131,7 +131,7 @@ export class ActionApiList {
                     type: ApiArgumentType.STRING,
                     required: true
                 }]
-            }  
+            }
         ],
         Cookie: [
             {
@@ -178,7 +178,7 @@ export class ActionApiList {
 
             }
         ],
-        Session_Data : [
+        Session_Data: [
             {
                 category: 'Session_Data',
                 label: 'Set Session Data',
@@ -197,7 +197,7 @@ export class ActionApiList {
                 }]
             },
         ],
-        LoginId : [
+        LoginId: [
             {
                 category: 'LoginId',
                 label: 'Set LoginId',
@@ -211,7 +211,7 @@ export class ActionApiList {
                 }]
             },
         ],
-        SessionId : [
+        SessionId: [
             {
                 category: 'SessionId',
                 label: 'Set SessionId',
@@ -225,7 +225,7 @@ export class ActionApiList {
                 }]
             },
         ],
-        LogEvent : [
+        LogEvent: [
             {
                 category: 'LogEvent',
                 label: 'Log Event',
@@ -244,12 +244,73 @@ export class ActionApiList {
                 }]
             },
         ],
+        UserSegment: [
+            {
+                category: 'UserSegment',
+                label: 'Set User Segment',
+                id: 'userSegment',
+                api: 'CAVNV.userSegment',
+                arguments: [{
+                    label: 'User Segment',
+                    name: 'name',
+                    type: ApiArgumentType.STRING,
+                    required: true
+                }]
+            },
+        ],
+        CustomMetric: [
+            {
+                category: 'CustomMetric',
+                label: 'Custom Metric',
+                id: 'customMetric',
+                api: 'CAVNV.customMetric',
+                arguments: [{
+                    label: 'Name',
+                    name: 'customMatricName',
+                    type: ApiArgumentType.STRING,
+                    required: true
+                }, {
+                    label: 'Valus',
+                    name: 'value',
+                    type: ApiArgumentType.STRING,
+                    required: true
+                }]
+            },
+        ],
+        OrderTotal: [
+            {
+                category: 'OrderTotal',
+                label: 'Order Total',
+                id: 'orderTotal',
+                api: 'CAVNV.orderTotal',
+                arguments: [{
+                    label: 'Order Total',
+                    name: 'oederTotal',
+                    type: ApiArgumentType.STRING,
+                    required: true
+                }]
+            },
+        ],
+        Session_State: [
+            {
+                category: 'Session_State',
+                label: 'Set Session State',
+                id: 'setSessionState',
+                api: 'CAVNV.sb.setSessionState',
+                arguments: [{
+                    label: 'Session State',
+                    name: 'sessionState',
+                    type: ApiArgumentType.STATE,
+                    required: true
+                }]
+            },
+        ],
     };
 
     static apiMap: Map<string, ActionApi> = null;
     static getApiData(api: string): ActionApi {
         // Check if map is prepared. If not then create that first.
-        if (this.apiMap  === null) {
+        if (this.apiMap === null) {
             this.loadApiMap();
         }
         return this.apiMap.get(api);

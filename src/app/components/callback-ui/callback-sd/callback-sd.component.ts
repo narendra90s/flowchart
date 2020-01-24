@@ -55,7 +55,7 @@ export class CallbackSdComponent implements OnInit, OnChanges {
 
   toolkitId: string;
   surfaceId: string;
-  stateEdge : any = [];
+  stateEdge: any = [];
 
   nodeTypes = [
     { label: "State", type: "state", w: 100, h: 70 },
@@ -97,26 +97,33 @@ export class CallbackSdComponent implements OnInit, OnChanges {
   }
 
   refreshEdges(data) {
-    console.log('on goto refreshSDEdge event triggered for state - ', data , this.action);
+    console.log('on goto refreshSDEdge event triggered for state - ', data, this.action);
 
     let edges = [];
     this.callback.actions.forEach(action => {
-      action.data.aNOdes.forEach(node =>{
-        if(node.data.api["api"] === 'CAVNV.sb.gotoState'){
+      action.data.aNOdes.forEach(node => {
+        if (node.data.api["api"] === 'CAVNV.sb.gotoState') {
           let srcState = action.stateId;
-            let dstState;
-            if (node.data.argument["stateName"] === 'start') {
-              dstState = 'start';
-            } else if (node.data.argument["stateName"] === 'end') {
-              dstState = 'end';
-            } else {
-              dstState = node.data.argument["stateName"];
+          let dstState;
+          if (node.data.argument["stateName"] === 'start') {
+            dstState = 'start';
+          } else if (node.data.argument["stateName"] === 'end') {
+            dstState = 'end';
+          } else {
+            dstState = node.data.argument["stateName"];
+          }
+          // TODO: take trigger name instead of id.
+          const label = "[ " +  action.triggerId +", " +  action.name + "]";
+          //Add edge. 
+          // let data = "[ " + action.id + " ," + action.triggerId + " ]";
+          edges.push({
+            source: srcState,
+            target: dstState,
+            data: {
+              label: label,
+              actionId: action.id
             }
-            //Add edge. 
-            edges.push({
-              source: srcState,
-              target: dstState,
-            });
+          });
         }
       });
     });
@@ -125,11 +132,17 @@ export class CallbackSdComponent implements OnInit, OnChanges {
     this.toolkit.getAllEdges().forEach(edge => this.toolkit.removeEdge(edge));
 
     edges.forEach(edge => {
-      this.callback.states.forEach(state =>{
-        if(edge.source === state.id)
+    
+      this.callback.states.forEach(state => {
+        if (edge.source === state.id)
           this.toolkit.addEdge(edge);
       })
     });
+
+    setTimeout(() => {
+      // check for all overlay and set their label.
+      this.toolkit
+    }, 300);
 
     // this.callback.actions.forEach(action => {
     //   action.data.aNOdes.forEach(api => {
@@ -153,7 +166,7 @@ export class CallbackSdComponent implements OnInit, OnChanges {
     //     }
     //   })
     // });
-    console.log("state to state edge",edges);
+    console.log("state to state edge", edges);
     // return edges;
   }
 
@@ -233,6 +246,8 @@ export class CallbackSdComponent implements OnInit, OnChanges {
       }
     })
 
+    setTimeout(() => this.removeNodes(), 100);
+
     console.log('callback after updateBTInfo - ', this.callback);
   }
 
@@ -240,47 +255,133 @@ export class CallbackSdComponent implements OnInit, OnChanges {
     console.log('JSPlumb data updated - ', this.toolkit.exportData());
     // TODO: update jsplumb data.
     let tempToolkitData = Object(this.toolkit.exportData());
-    this.removeNodes(tempToolkitData);
-    this.updateBTInfo(tempToolkitData);   
+    this.updateBTInfo(tempToolkitData);
 
-    console.log("State Data on callback", this.callback, tempToolkitData,this.stateEdge);
+
+    console.log("State Data on callback", this.callback, tempToolkitData, this.stateEdge);
   }
 
 
-  removeNodes(tempToolkitData){
-    console.log("tempToolkitData ----",tempToolkitData,this.callback);
+  removeNodes() {
+    let tempToolkitData = Object(this.toolkit.exportData());
+    console.log("removeNodes tempToolkitData ----", tempToolkitData, this.callback);
+  
     this.callback.states = tempToolkitData.nodes;
+    let edges = tempToolkitData.edges;
+     
+
+    // this.toolkit.getAllEdges().forEach(edge => this.toolkit.removeEdge(edge));
+    // edges.forEach(edge => {
+    //   this.callback.states.forEach(state => {
+    //     if (edge.source === state.id)
+    //       this.toolkit.addEdge(edge);
+    //   })
+    // });
+    console.log("edges after removing node",edges);
+
+    let actionArr = [];
+    this.callback.actions.forEach(action => {
+      actionArr.push(action.stateId);
+    });
+    let stateArr = [];
+    this.callback.states.forEach(state => {
+      stateArr.push(state.id);
+    });
+    let triggerArr = [];
+    this.callback.triggers.forEach(trigger => {
+      triggerArr.push(trigger.stateId);
+    })
+    // console.log("data on ======>", stateArr, actionArr);
+
+    let StateSet = new Set(stateArr);
+    let actionDiff = ([...actionArr].filter(x => !StateSet.has(x)))[0];
+    let triggerDiff = ([...triggerArr].filter(x => !StateSet.has(x)))[0];
+
+    // console.log("data on ======>", stateArr, actionArr, actionDiff);
+    let ind = 0;
+    let aNOdesInd = 0;
+    let delAnodeInd;
+    // let edgeInd =0;
+    // let delEdgeInd;
+    let delindex;
+    let indTrigger = 0;
+    let delTriggerInd;
+    this.callback.actions.forEach(action => {
+      if (action.stateId === actionDiff) {
+        delindex = ind;
+        // console.log("action data on ================== d>",delindex);
+        this.callback.actions.splice(delindex, 1);
+        // ind = this.callback.triggers.findIndex(x=>x.stateId === trigger.stateId);
+        // console.log("data on delete =====>",action ,"index --->",this.callback.actions.findIndex(x=>x.stateId === action.stateId)); 
+      }
+      ind++;
+      action.data.aNOdes.forEach(aNode => {
+          if (aNode.data.argument["stateName"] === actionDiff) {
+            delAnodeInd = aNOdesInd;
+            action.data.aNOdes.splice(delAnodeInd, 1);
+          }
+          aNOdesInd++;
+      });
+      // action.data.edges.forEach(edge =>{
+      //   if (edge.source != aNode.id || edge.target != aNode.id){
+      //     delEdgeInd = edgeInd;
+      //     action.data.edges.splice(delEdgeInd,1);
+      //   }
+      //   edgeInd++;
+      // })
+      // action.data.edges.forEach(edge =>{
+      //   if(edge.source !== )
+      // })
+    });
+    this.callback.triggers.forEach(trigger => {
+      if (trigger.stateId === triggerDiff) {
+        delTriggerInd = indTrigger;
+        this.callback.triggers.splice(delTriggerInd, 1);
+      }
+      indTrigger++;
+    });
+
+    // this.toolkit.getAllEdges().forEach(edge => this.toolkit.removeEdge(edge));
+
+    // tempToolkitData.edges.forEach(edge => {
+    //   this.callback.states.forEach(state => {
+    //     if (edge.source === state.id)
+    //       this.toolkit.addEdge(edge);
+    //   })
+    // });
+
+
+
+
+
 
     // let flag : boolean = false;
-    let state = false;
-    let action = false;
-    for(const i in this.callback.actions){
-      state = false;
-      action = false;
-      for(const j in this.callback.states){
-        if(this.callback.actions[i].stateId != this.callback.states[j].id){
-          action = true;
-        }
-        else {
-          state = true;
-        } 
-      }
-      if(action == true && state == false){        
-        console.log("Action deleted",this.callback,this.callback.actions );
-      }
-    }
+    // let ind;
+    // for(let i in this.callback.actions){
+    //   for(let j in this.callback.states){
+    //     if(this.callback.actions[i].stateId != this.callback.states[j].id){
+    //       console.log("-->"+i);
+    //     }
+    //     else {
+
+    //     } 
+    //   }
+    //   // if(action == true && state == false){        
+    //   //   console.log("Action deleted",this.callback,this.callback.actions ,this.callback.actions.splice(parseInt(i),1) );
+    //   // }
+    // }
 
     // let ind;
     // this.callback.triggers.forEach(trigger =>{
     //   this.callback.states.forEach(state =>{
-    //     if(trigger.stateId == state.id){
+    //     if(trigger.stateId !== state.id){
     //       ind = this.callback.triggers.findIndex(x=>x.stateId === trigger.stateId);
     //       console.log("deleting element",ind);
     //       // this.callback.triggers.splice(ind,1);
     //       // this.callback.triggers.splice(this.callback.triggers.indexOf(removetr),1);
     //     }
-    //   })
-    // })
+    //   });
+    // });
 
 
     // let ind2;
@@ -294,7 +395,7 @@ export class CallbackSdComponent implements OnInit, OnChanges {
     // })
     // this.callback.actions.splice(ind2,1);
 
-    console.log("after removing",this.callback );
+    console.log("after removing", this.callback);
 
     // this.toolkit.getAllEdges().forEach(edge => this.toolkit.removeEdge(edge));
 
@@ -619,7 +720,17 @@ export class CallbackSdComponent implements OnInit, OnChanges {
         },
         overlays: [
           ["Arrow", { location: 1, width: 10, length: 10 }],
-          ["Arrow", { location: 0.3, width: 10, length: 10 }]
+          ["Label", {
+            label: "${label}",
+            location: 0.4,
+            events: {
+              click: (params: any) => {
+                // trigger event to open flowchart. 
+                this.cdService.broadcast('openActionFlowChart', params);
+              }
+            }
+          }]
+     
         ]
       },
       "connection": {
@@ -630,7 +741,8 @@ export class CallbackSdComponent implements OnInit, OnChanges {
               label: "${label}",
               events: {
                 click: (params: any) => {
-                  this.editLabel(params.edge);
+                  // trigger event to open flowchart. 
+                  this.cdService.broadcast('openActionFlowChart', params);
                 }
               }
             }
@@ -762,5 +874,5 @@ export class CallbackSdComponent implements OnInit, OnChanges {
     this.currentAction = $event;
   }
 
-  
+
 }

@@ -1,6 +1,6 @@
 <div class="p-1" [style.display]="selectedTabIndex === 0 || selectedTabIndex === 3?'block':'none'" jsplumb-palette
   selector=".drag" surfaceId="callbackSDSurface" [typeExtractor]="typeExtractor" [dataGenerator]="dataGenerator"
-  style="width: 104%; max-height: 80vh; font-size: 1.5rem;overflow-y: auto">
+  style="">
   <span class="drag" [attr.jtk-node-type]="sdToolbarTreeData[0].data.type" title="Drag to add action api"
     [attr.jtk-width]="sdToolbarTreeData[0].data.w" [attr.jtk-height]="sdToolbarTreeData[0].data.h">state</span>
 </div>
@@ -29,7 +29,7 @@
 <!--For padding of 1.5rem-->
 <div [style.display]="selectedTabIndex === 1?'block':'none'" class="p-1" jsplumb-palette selector=".drag"
   surfaceId="callbackFlowchartSurface" [typeExtractor]="typeExtractor" [dataGenerator]="dataGenerator"
-  style="width: 104%; max-height: 65vh; font-size: 1.5rem;">
+  style="">
   <!--Render api using tree. -->
 
 
