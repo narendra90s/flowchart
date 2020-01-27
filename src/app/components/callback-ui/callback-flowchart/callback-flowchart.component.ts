@@ -61,7 +61,14 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
     // If action got change then initialize flowchart.
     if (this.action != null) {
   
-      this.flowDiagramData = this.getFlowDiagramData(this.callback);
+      // console.log("onChanges called ==>",this.action);
+      this.callback.actions.forEach(action =>{
+        if(action.id === this.action.id){
+          this.toolkit.clear();
+          this.flowDiagramData = this.getFlowDiagramData(this.callback);
+        }
+      });      
+      // this.flowDiagramData = this.getFlowDiagramData(this.callback);
 
       this.toolkit.load({ data: this.flowDiagramData });
 
@@ -127,7 +134,7 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
     //   console.log("inside getflo",fdData);
     // });
 
-
+    // console.log("refresh edge of flowchart",this.callback.actions);
     fdData.edges = this.action.data.edges;
 
 
@@ -201,12 +208,12 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
 
     this.toolkit.bind("dataUpdated", this.dataUpdateListener.bind(this));
 
-    console.log("Flow Diagram", this.flowChartData, this.toolkit);
+    console.log("Flow Diagram onInit ===>", this.flowChartData, this.toolkit);
 
   }
 
   updateBTInfo(toolKitData: any) {
-    console.log("updateListner called",toolKitData);
+    // console.log("updateListner called ===>",toolKitData);
     toolKitData.nodes.forEach((node: any) => {
       if (node.type === 'start'){
         node.jData = new JtkNodeParam();
@@ -250,7 +257,8 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
 
     this.updateBTInfo(tempToolkitData);   
 
-    console.log("toolKitData", tempToolkitData, this.callback);
+
+    console.log("toolKitData on refresh", tempToolkitData, this.callback);
   }
 
   toolkitParams = {

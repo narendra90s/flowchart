@@ -3,12 +3,13 @@ import { jsPlumbSurfaceComponent, jsPlumbService } from 'jsplumbtoolkit-angular'
 import { jsPlumbToolkit, Surface, Dialogs, jsPlumbToolkitUtil, DrawingTools } from 'jsplumbtoolkit';
 import { QuestionNodeComponent, ActionNodeComponent, StartNodeComponent, OutputNodeComponent, EndNodeComponent, StateNodeComponent, SDActionNodeComponent } from 'src/app/flowchart';
 import { DialogModule } from 'primeng/dialog';
-import { Callback, StateType, State, Trigger, Action, JtkNodeParam } from 'callback';
+import { Callback, StateType, State, Trigger, Action, JtkNodeParam, CallBackData } from 'callback';
 import { startTimeRange } from '@angular/core/src/profile/wtf_impl';
 import { CallbackDataServiceService } from 'src/app/service/callback-data-service.service';
 import { CallbackDesignerComponent } from '../callback-designer/callback-designer.component';
 import { InvokeFunctionExpr } from '@angular/compiler';
 import { TreeNode } from 'primeng/api/public_api';
+import { findIndex } from 'rxjs/operators';
 
 @Component({
   selector: 'app-callback-sd',
@@ -113,7 +114,7 @@ export class CallbackSdComponent implements OnInit, OnChanges {
             dstState = node.data.argument["stateName"];
           }
           // TODO: take trigger name instead of id.
-          const label = "[ " +  action.triggerId +", " +  action.name + "]";
+          const label = "(" + action.triggerId.replace("trigger_", "t") + "," + action.id.replace("action_", "a") + ")";
           //Add edge. 
           // let data = "[ " + action.id + " ," + action.triggerId + " ]";
           edges.push({
@@ -132,7 +133,7 @@ export class CallbackSdComponent implements OnInit, OnChanges {
     this.toolkit.getAllEdges().forEach(edge => this.toolkit.removeEdge(edge));
 
     edges.forEach(edge => {
-    
+
       this.callback.states.forEach(state => {
         if (edge.source === state.id)
           this.toolkit.addEdge(edge);
@@ -197,6 +198,8 @@ export class CallbackSdComponent implements OnInit, OnChanges {
   }
 
   copyJData(input: any, out: any) {
+    if (!input) return;
+
     const keys = ["w", "h", "top", "left"];
     keys.forEach(key => {
       if (input[key] !== undefined) {
@@ -210,41 +213,43 @@ export class CallbackSdComponent implements OnInit, OnChanges {
   // TODO: Move to some common util file.
   updateBTInfo(toolKitData: any) {
     toolKitData.edges = this.stateEdge;
-    toolKitData.nodes.forEach((node: any) => {
+    if (toolKitData) {
+      toolKitData.nodes.forEach((node: any) => {
 
-      if (node.type === 'state' || node.type === 'start' || node.type === 'end') {
-        this.callback.states.some(state => {
-          if (node.id === state.id) {
-            if (state.jData === undefined) {
-              state.jData = new JtkNodeParam();
-            }
+        if (node.type === 'state' || node.type === 'start' || node.type === 'end') {
+          this.callback.states.some(state => {
+            if (node.id === state.id) {
+              if (state.jData === undefined) {
+                state.jData = new JtkNodeParam();
+              }
 
-            return this.copyJData(node, state.jData);
-          }
-          return false;
-        });
-      } else if (node.type === 'trigger') {
-        this.callback.triggers.some(trigger => {
-          if (node.id === trigger.id) {
-            if (trigger.jData === undefined) {
-              trigger.jData = new JtkNodeParam();
+              return this.copyJData(node, state.jData);
             }
-            return this.copyJData(node, trigger.jData);
-          }
-          return false;
-        })
-      } else if (node.type === 'action') {
-        this.callback.actions.some(action => {
-          if (node.id === action.id) {
-            if (action.jData === undefined) {
-              action.jData = new JtkNodeParam();
+            return false;
+          });
+        } else if (node.type === 'trigger') {
+          this.callback.triggers.some(trigger => {
+            if (node.id === trigger.id) {
+              if (trigger.jData === undefined) {
+                trigger.jData = new JtkNodeParam();
+              }
+              return this.copyJData(node, trigger.jData);
             }
-            return this.copyJData(node, action.jData);
-          }
-          return false;
-        })
-      }
-    })
+            return false;
+          })
+        } else if (node.type === 'action') {
+          this.callback.actions.some(action => {
+            if (node.id === action.id) {
+              if (action.jData === undefined) {
+                action.jData = new JtkNodeParam();
+              }
+              return this.copyJData(node, action.jData);
+            }
+            return false;
+          })
+        }
+      })
+    }
 
     setTimeout(() => this.removeNodes(), 100);
 
@@ -265,19 +270,11 @@ export class CallbackSdComponent implements OnInit, OnChanges {
   removeNodes() {
     let tempToolkitData = Object(this.toolkit.exportData());
     console.log("removeNodes tempToolkitData ----", tempToolkitData, this.callback);
-  
+
     this.callback.states = tempToolkitData.nodes;
     let edges = tempToolkitData.edges;
-     
 
-    // this.toolkit.getAllEdges().forEach(edge => this.toolkit.removeEdge(edge));
-    // edges.forEach(edge => {
-    //   this.callback.states.forEach(state => {
-    //     if (edge.source === state.id)
-    //       this.toolkit.addEdge(edge);
-    //   })
-    // });
-    console.log("edges after removing node",edges);
+    console.log("edges after removing node", edges);
 
     let actionArr = [];
     this.callback.actions.forEach(action => {
@@ -291,48 +288,80 @@ export class CallbackSdComponent implements OnInit, OnChanges {
     this.callback.triggers.forEach(trigger => {
       triggerArr.push(trigger.stateId);
     })
-    // console.log("data on ======>", stateArr, actionArr);
+
+    let edgeTargetArr = [];
+    let aNodeIdArr = [];
 
     let StateSet = new Set(stateArr);
     let actionDiff = ([...actionArr].filter(x => !StateSet.has(x)))[0];
     let triggerDiff = ([...triggerArr].filter(x => !StateSet.has(x)))[0];
 
-    // console.log("data on ======>", stateArr, actionArr, actionDiff);
     let ind = 0;
     let aNOdesInd = 0;
+    let anodeID;
     let delAnodeInd;
-    // let edgeInd =0;
-    // let delEdgeInd;
     let delindex;
     let indTrigger = 0;
     let delTriggerInd;
+    let edgeTargetDiff = [];
+    let aNodeSet: any;
+    let deleting: any;
+    let edgeInd = 0;
+    let deledgeInd;
     this.callback.actions.forEach(action => {
       if (action.stateId === actionDiff) {
         delindex = ind;
-        // console.log("action data on ================== d>",delindex);
         this.callback.actions.splice(delindex, 1);
         // ind = this.callback.triggers.findIndex(x=>x.stateId === trigger.stateId);
         // console.log("data on delete =====>",action ,"index --->",this.callback.actions.findIndex(x=>x.stateId === action.stateId)); 
       }
       ind++;
       action.data.aNOdes.forEach(aNode => {
-          if (aNode.data.argument["stateName"] === actionDiff) {
-            delAnodeInd = aNOdesInd;
-            action.data.aNOdes.splice(delAnodeInd, 1);
-          }
-          aNOdesInd++;
+        aNodeIdArr.push(aNode.id);
+        if (aNode.data.argument["stateName"] === actionDiff) {
+          delAnodeInd = aNOdesInd;
+          deleting = action.data.aNOdes[delAnodeInd];
+          console.log("- delete Diff target", deleting);
+          action.data.aNOdes.splice(delAnodeInd, 1);
+        }
+        aNOdesInd++;
       });
-      // action.data.edges.forEach(edge =>{
-      //   if (edge.source != aNode.id || edge.target != aNode.id){
-      //     delEdgeInd = edgeInd;
-      //     action.data.edges.splice(delEdgeInd,1);
-      //   }
-      //   edgeInd++;
-      // })
-      // action.data.edges.forEach(edge =>{
-      //   if(edge.source !== )
-      // })
+      action.data.edges.forEach(edge => {
+        // edgeTargetArr.push(edge.target);
+        if (deleting) {
+          if (edge.target === deleting.id) {
+            deledgeInd = edgeInd;
+            console.log("- delete data", edge, deledgeInd, action.data.edges);
+            action.data.edges.splice(deledgeInd, 1);
+          }
+        }
+        edgeInd++;
+      });
     });
+
+
+    // aNodeSet = new Set(aNodeIdArr);
+    // edgeTargetDiff = ([...edgeTargetArr].filter(x => !aNodeSet.has(x)));
+
+
+    // // console.log("- delete Diff target",deleting);
+    // let edgeInd = 0;
+    // let deledgeInd;
+
+    // this.callback.actions.forEach(action =>{
+    //   action.data.edges.forEach(edge =>{
+    //     edgeTargetDiff.forEach(data=> {
+    //       if (edge.target === data ){
+    //         deledgeInd = edgeInd;
+    //         // console.log(deledgeInd ," - delete from -", edgeTargetDiff);
+    //       }
+    //       edgeInd++;
+    //     })
+    //   })
+    // })
+
+
+
     this.callback.triggers.forEach(trigger => {
       if (trigger.stateId === triggerDiff) {
         delTriggerInd = indTrigger;
@@ -410,7 +439,7 @@ export class CallbackSdComponent implements OnInit, OnChanges {
   }
 
   // FIXME: Currently it is loading stateDiagramData all the time. It should do only if callback is changed. 
-  ngOnChanges() {
+  ngOnChanges(changes: SimpleChanges) {
     // for (let change in changes) {
 
     //   if (changes[change].firstChange || (changes[change].previousValue != changes[change].currentValue)) {
@@ -422,63 +451,72 @@ export class CallbackSdComponent implements OnInit, OnChanges {
     //   }
     // }
 
-    if (this.openFlag == true && this.drawer) {
-      this.drawer.open();
-      this.sideNav = CallbackDesignerComponent.TriggerActionSideBar;
-      this.openFlag = false;
+    for (let change in changes) {
+      if (change === 'openFlag') {
+        if (this.openFlag == true && this.drawer) {
+          this.drawer.open();
+          this.sideNav = CallbackDesignerComponent.TriggerActionSideBar;
+          this.openFlag = false;
+        }
+      } else if (change  === 'callback') {
+        if (!changes[change].firstChange) {
+          this.toolkit.clear();
+        }
+
+        console.log("callback and ActivetabIndex in sd", this.openFlag, this.callback, this.activeTabIndex, this.currentState);
+
+        this.stateDiagramData = this.getStateDiagramData(this.callback);
+    
+        this.toolkit.load({ data: this.stateDiagramData });
+    
+        // add edges too.
+        setTimeout(() => this.refreshEdges('none'), 300);    
+      }
     }
 
-    // Callback is changed. So reset the stateDiagramData.
-    // this.activeTabIndex = CallbackDesignerComponent.TriggerActionSideBar;
-    console.log("callback and ActivetabIndex in sd", this.openFlag, this.callback, this.activeTabIndex, this.currentState);
-    this.stateDiagramData = this.getStateDiagramData(this.callback);
-
-    // reload jsplumb.
-    this.toolkit.load({ data: this.stateDiagramData });
-
-    // add edges too.
-    setTimeout(() => this.refreshEdges('none'), 300);
-
-    // this.openSideBar();
   }
 
   getStateDiagramData(callback: Callback) {
+    console.log("swithing b/w callbacks getStateDiagramData", this.callback);
     let sdData = {
       nodes: [],
       edges: []
     };
+    if (this.callback) {
+      this.callback.states.forEach(state => {
+        switch (state.type) {
+          case StateType.Start:
+            // TODO: Need to remember node position.
+            sdData.nodes.push({
+              "id": "start",
+              "type": "start",
+              "text": "Start",
+              "w": 100,
+              "h": 70
+            });
+            break;
+          case StateType.End:
+            sdData.nodes.push({
+              "id": "end",
+              "type": "end",
+              "text": "End",
+              "w": 100,
+              "h": 70
+            });
+            break;
+          default:
+            sdData.nodes.push({
+              "id": state.id,
+              "type": "state",
+              "text": state.text,
+            });
+        }
 
-    this.callback.states.forEach(state => {
-      switch (state.type) {
-        case StateType.Start:
-          // TODO: Need to remember node position.
-          sdData.nodes.push({
-            "id": "start",
-            "type": "start",
-            "text": "Start",
-            "w": 100,
-            "h": 70
-          });
-          break;
-        case StateType.End:
-          sdData.nodes.push({
-            "id": "end",
-            "type": "end",
-            "text": "End",
-            "w": 100,
-            "h": 70
-          });
-          break;
-        default:
-          sdData.nodes.push({
-            "id": state.id,
-            "type": "state",
-            "text": state.text,
-          });
-      }
 
-      this.copyJData(state.jData, sdData.nodes[sdData.nodes.length - 1]);
-    });
+        this.copyJData(state.jData, sdData.nodes[sdData.nodes.length - 1]);
+      });
+
+    }
 
     // Iterate triggers. 
     // this.callback.triggers.forEach(trigger => {
@@ -669,6 +707,8 @@ export class CallbackSdComponent implements OnInit, OnChanges {
     });
   }
 
+  selectAccord: boolean = false;
+
   view = {
     nodes: {
       "start": {
@@ -727,10 +767,12 @@ export class CallbackSdComponent implements OnInit, OnChanges {
               click: (params: any) => {
                 // trigger event to open flowchart. 
                 this.cdService.broadcast('openActionFlowChart', params);
+                this.selectAccord = true;
+                this.openFlagChanged.emit(this.selectAccord);
               }
             }
           }]
-     
+
         ]
       },
       "connection": {

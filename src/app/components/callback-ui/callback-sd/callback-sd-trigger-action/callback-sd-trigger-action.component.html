@@ -1,64 +1,53 @@
-<div>
-  <p-fieldset [style]="{'height': '75vh'}"  legend="Trigger And Action">
-    <div class="text-center">
-      <div class="ui-g" >
-        <div style="padding: 0px 6px 6px 0px;">
-          <button mat-button style="border: #3f51b5 solid 0.05rem;" color="primary" (click)="openDialogTrigger()">Trigger<i class="fa fa-plus-circle"></i></button>
-        </div>
-        <div>
-          <button *ngIf="callbackEntry !== null" mat-button style="border: #3f51b5 solid 0.05rem;" color="primary"
-            (click)="openDialogAction()">Action <i class="fa fa-plus-circle"></i></button>
-        </div>
-      </div>
+<div *ngIf="!currentState">
+  <p-fieldset [style]="{'height': '75vh'}">
+    <div>
+      No State Selected.
     </div>
-    <mat-divider></mat-divider>
-    <div class="ui-g" *ngIf="callback">
-      <!-- <ng-template *ngFor="let trigger of callback.triggers.length"> -->
-      <!-- <p-listbox [options]="callback.triggers" [(ngModel)]="selectedTrigger">
-        <ng-template let-car let-i="index" pTemplate="item">
-          <div class="ui-helper-clearfix">
-            <span>{{car.name}}</span>
-          </div>
-        </ng-template>
-      </p-listbox> -->
-      <!-- </ng-template> -->
-      <div class="ui-g-6">
-        <div style="background: #dce9ea;height: 25px;border-radius: 4px;padding: 4px;">
-         Trigger List
-        </div>
-        <div>
-          <mat-selection-list #list>
-            <mat-list-option *ngFor="let trigger of triggerList">
-              <div class="ui-g">
-                <div class="ui-g-8">
-                  <label>{{trigger.name}}</label>
-                </div>
-                <div class="ui-g-3 ui-g-offset-1">
-                  <!-- <i class="fa fa-pencil-square-o" title="Edit trigger"></i> -->
-                </div>
-              </div>
-            </mat-list-option>
-          </mat-selection-list>
-        </div>
+  </p-fieldset>
+</div>
+<div *ngIf="currentState" style="height: 66vh;">
+  <p-fieldset [style]="{'height': '75vh'}" legend="{{currentState.text}}">
+    <div class="text-center">
+      <div class="ui-g" style="background: #dce9ea;height: 25px;border-radius: 4px;padding: 4px;">
+        <label>Trigger's</label>
+        <span style="margin-left: auto;" title="Add Trigger" (click)="openDialogTrigger()"><i
+            class="fa fa-plus-circle"></i></span>
       </div>
-      <div class="ui-g-6">
-        <div style="background: #dce9ea;height: 25px;border-radius: 4px;padding: 4px;">
-          <label>Action List</label>
-        </div>
-        <div>
+      <div class="ui-g" style="max-height: 23vh;">
+        <mat-selection-list #list>
+          <mat-list-option *ngFor="let trigger of triggerList">
+            <div class="ui-g">
+              <div class="ui-g-8">
+                <label>{{trigger.name}}</label>
+              </div>
+              <div class="ui-g-3 ui-g-offset-1">
+                <!-- <i class="fa fa-pencil-square-o" title="Edit trigger"></i> -->
+              </div>
+            </div>
+          </mat-list-option>
+        </mat-selection-list>
+      </div>
+      <br>
+      <mat-divider></mat-divider>
+      <br>
+      <div class="ui-g" style="background: #dce9ea;height: 25px;border-radius: 4px;padding: 4px;">
+        <label>Action's</label>
+        <span style="margin-left: auto;" title="Add Action" (click)="openDialogAction()"><i
+            class="fa fa-plus-circle"></i></span>
+      </div>
+      <div class="ui-g" style="max-height: 23vh;">
             <mat-selection-list #list>
-                <mat-list-option *ngFor="let action of actionList">
-                  <div class="ui-g">
-                    <div class="ui-g-8">
-                      <label>{{action.name}}</label>
-                    </div>
-                    <div class="ui-g-3 ui-g-offset-1">
-                      <i class="fa fa-pencil-square-o" (click)="openflowChart(action)" title="Edit Action"></i>
-                    </div>
+              <mat-list-option *ngFor="let action of actionList">
+                <div class="ui-g">
+                  <div class="ui-g-8">
+                    <label>{{action.name}}</label>
                   </div>
-                </mat-list-option>
-              </mat-selection-list>
-        </div>
+                  <div class="ui-g-3 ui-g-offset-1">
+                    <i class="fa fa-pencil-square-o" (click)="openflowChart(action)" title="Edit Action"></i>
+                  </div>
+                </div>
+              </mat-list-option>
+            </mat-selection-list>
       </div>
     </div>
   </p-fieldset>
@@ -69,7 +58,7 @@
   <p-dialog header="Add Trigger" [(visible)]="showTriggerDialog" appendTo="body" [contentStyle]="{'overflow':'visible'}"
     [modal]="true" [responsive]="true" [style]="{width: '500px', minWidth: '250px'}" [minY]="70" [maximizable]="false"
     [baseZIndex]="10000">
-    <app-sd-addtriggerdialog *ngIf="newTriggerName" [states]="callback.states" [triggerName]="newTriggerName"
+    <app-sd-addtriggerdialog *ngIf="newTriggerName"  [states]="callback.states" [triggerName]="newTriggerName"
       (success)="addTriggerNode($event)"></app-sd-addtriggerdialog>
   </p-dialog>
 </div>

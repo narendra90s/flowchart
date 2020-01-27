@@ -155,7 +155,7 @@ export class CallbackDesignerComponent implements OnInit {
 
   openFlagChanged($event)
   {
-    this.openFlag = $event;
+    this.select = $event;
   }
 
   editState(obj){
