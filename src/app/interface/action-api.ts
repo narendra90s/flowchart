@@ -1,8 +1,10 @@
 
 export enum ApiArgumentType {
+    ANY = 0,
     STRING = 1,
     NUMBER = 2,
     STATE = 3,
+    REGEX = 4
 
 }
 
@@ -36,8 +38,9 @@ export class Operator {
 export class ApiArgument {
     label: string;
     name: string;
-    type: number;
+    type?: number;
     required = true;
+    defaultValue ?: any;
 }
 
 export class ActionApi {
@@ -305,6 +308,92 @@ export class ActionApiList {
                 }]
             },
         ],
+        localVarApi: [
+            {
+                category: 'localVarApi',
+                label: 'Store Value',
+                id: 'assignValue',
+                api: 'CAVNV.sb.assign',
+                arguments: [{
+                    label: 'Local Variable',
+                    name: 'varName',
+                    type: ApiArgumentType.ANY,
+                    required: true
+                }, {
+                    label: 'Value',
+                    name: 'value',
+                    type: ApiArgumentType.ANY,
+                    required: true
+                }]
+            },
+            {
+                category: 'localVarApi',
+                label: 'Increment',
+                id: 'increment',
+                api: 'CAVNV.sb.increment',
+                arguments: [{
+                    label: 'Local Variable',
+                    name: 'varName',
+                    type: ApiArgumentType.NUMBER,
+                    required: true
+                }, {
+                    label: 'By',
+                    name: 'by',
+                    type: ApiArgumentType.NUMBER,
+                    defaultValue: 1,
+                    required: true
+                }]
+            }, {
+                category: 'localVarApi',
+                label: 'Decrement',
+                id: 'decrement',
+                api: 'CAVNV.sb.decrement',
+                arguments: [{
+                    label: 'Local Variable',
+                    name: 'varName',
+                    type: ApiArgumentType.ANY,
+                    required: true
+                }, {
+                    label: 'By',
+                    name: 'by',
+                    type: ApiArgumentType.NUMBER,
+                    defaultValue: 1,
+                    required: true
+                }]
+            }, {
+                category: 'localVarApi',
+                label: 'trim',
+                id: 'trim',
+                api: 'CAVNV.sb.trim',
+                arguments: [{
+                    label: 'Local Variable',
+                    name: 'varName',
+                    type: ApiArgumentType.STRING,
+                    required: true
+                }]
+            }, {
+                category: 'localVarApi',
+                label: 'replace',
+                id: 'replace',
+                api: 'CAVNV.sb.replace',
+                arguments: [{
+                    label: 'Local Variable',
+                    name: 'varName',
+                    type: ApiArgumentType.STRING,
+                    required: true
+                }, {
+                    label: 'search value',
+                    name: 'searchVal',
+                    type: ApiArgumentType.REGEX,
+                    required: true
+                }, {
+                    label: 'new value', 
+                    name: 'newVal',
+                    type: ApiArgumentType.STRING,
+                    required: true
+                }]
+            }
+        ]
     };
 
     static apiMap: Map<string, ActionApi> = null;
