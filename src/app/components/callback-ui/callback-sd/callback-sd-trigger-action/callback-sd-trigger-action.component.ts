@@ -46,13 +46,16 @@ export class CallbackSdTriggerActionComponent implements OnInit, OnChanges {
     }
   }
 
+  stateName : any;
   openDialogTrigger() {
     this.showTriggerDialog = true;
+    this.stateName = this.currentState.id;
     this.newTriggerName = 'Trigger_' + this.callback.triggers.length + '';
     // this.triggerList();
   }
 
   openDialogAction(){
+    console.log("triggerList",this.triggerList);
     this.showActionDialog = true;
     this.newActionName = 'Action_' + this.callback.actions.length + '';
     // this.actionList();

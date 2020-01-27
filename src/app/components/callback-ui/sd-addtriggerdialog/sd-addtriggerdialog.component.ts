@@ -55,10 +55,10 @@ export class SdAddtriggerdialogComponent implements OnInit {
 
   ngOnInit() {
     // If states are given then set the state option.
-    this.states.forEach(state => {
-      if (state.type != StateType.End)
-        this.stateList.push({name: state.text, value: state.id});
-    });
+    // this.states.forEach(state => {
+    //   if (state.type != StateType.End)
+    //     this.stateList.push({name: state.text, value: state.id});
+    // });
   }
 
   ngOnChange() {
@@ -94,7 +94,7 @@ export class SdAddtriggerdialogComponent implements OnInit {
       }
 
       const trigger = {
-        stateId: this.selectedState.value,
+        stateId: this.stateName,
         name: this.triggerName, 
         type: type,
         urlPattern: this.urlPattern, 

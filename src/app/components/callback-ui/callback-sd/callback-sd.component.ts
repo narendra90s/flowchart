@@ -39,7 +39,7 @@ export class CallbackSdComponent implements OnInit, OnChanges {
   sidebarLoaded = false;
   currentAction: Action = null;
 
-  private stateDiagramData: any;
+  private stateDiagramData: any = null;
 
   //It will be set when new trigger is being added.
   newTriggerName: string = null;
@@ -459,18 +459,28 @@ export class CallbackSdComponent implements OnInit, OnChanges {
           this.openFlag = false;
         }
       } else if (change  === 'callback') {
+
         if (!changes[change].firstChange) {
           this.toolkit.clear();
         }
 
+        if (this.callback === null) return;
+
+
         console.log("callback and ActivetabIndex in sd", this.openFlag, this.callback, this.activeTabIndex, this.currentState);
 
         this.stateDiagramData = this.getStateDiagramData(this.callback);
+
+        if (this.toolkit) {
     
-        this.toolkit.load({ data: this.stateDiagramData });
+          this.toolkit.load({ data: this.stateDiagramData });
     
-        // add edges too.
-        setTimeout(() => this.refreshEdges('none'), 300);    
+          // add edges too.
+          setTimeout(() => this.refreshEdges('none'), 300);  
+        } else {
+          // it will be set once toolkit is found.
+        }
+  
       }
     }
 
@@ -509,6 +519,8 @@ export class CallbackSdComponent implements OnInit, OnChanges {
               "id": state.id,
               "type": "state",
               "text": state.text,
+              "w": 100,
+              "h": 70
             });
         }
 
@@ -721,6 +733,7 @@ export class CallbackSdComponent implements OnInit, OnChanges {
       "selectable": {
         events: {
           tap: (params: any) => {
+            console.log("Selected State",this.currentState);
             this.toggleSelection(params.node);
           }
         }
@@ -856,6 +869,12 @@ export class CallbackSdComponent implements OnInit, OnChanges {
       renderer: this.surface
     });
 
+    if (this.stateDiagramData) {
+      this.toolkit.load({ data: this.stateDiagramData });
+    
+      // add edges too.
+      setTimeout(() => this.refreshEdges('none'), 300);  
+    }
     // this.toolkit.load({ url:"assets/data/flowchart-small.json" });
   }
 

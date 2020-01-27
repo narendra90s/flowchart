@@ -5,9 +5,9 @@
         <label [attr.for]="item.label">{{item.label}}</label>
       </div>
       <div *ngIf="api.id !== 'gotoState' && api.id !== 'setSessionState'" class="ui-g-8 field">
-        <p-dropdown [options]="groupedVariableList" [formControlName]="item.name" [placeholder]="'Select' + item.label"
+        <p-dropdown [options]="(api.category !== 'localVarApi' || item.name !== 'varName')?groupedVariableList:localVariableList" [formControlName]="item.name" [placeholder]="'Select' + item.label"
           [group]="true" [showClear]="true" editable="true" filter="true">
-          <ng-template let-group pTemplate="group">
+          <ng-template let-group pTemplate="group" > 
             <i [class]="group.value" style="width:20px;vertical-align:middle"></i>
             <span style="margin-left:.25em">{{group.label}}</span>
             <i *ngIf="group.label == 'Data points'" class="fa fa-plus" style="float: right" title="Extract Data"

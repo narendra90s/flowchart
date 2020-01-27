@@ -23,6 +23,7 @@ export class CallbackActionapiDialogComponent implements OnInit, OnChanges {
   form: FormGroup;
 
   groupedVariableList: any;
+  localVariableList: any = [];
   extractedData: any = null;
   // LocalVar: any = null;
   localVar : any ;
@@ -74,6 +75,11 @@ export class CallbackActionapiDialogComponent implements OnInit, OnChanges {
     this.callback.states.forEach(state => {
       this.stateList.push({label: state.text, value: state.id});
     });
+
+    if (this.api.category === 'localVarApi') {
+      this.localVariableList = [this.groupedVariableList[1]];
+    }
+
     console.log('form group initialized');
   }
 

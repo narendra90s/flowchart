@@ -13,8 +13,8 @@
         <span style="margin-left: auto;" title="Add Trigger" (click)="openDialogTrigger()"><i
             class="fa fa-plus-circle"></i></span>
       </div>
-      <div class="ui-g" style="max-height: 23vh;">
-        <mat-selection-list #list>
+      <div class="ui-g" style="max-height: 23vh;" *ngIf="triggerList.length">
+        <mat-selection-list #list style="width: 100%;">
           <mat-list-option *ngFor="let trigger of triggerList">
             <div class="ui-g">
               <div class="ui-g-8">
@@ -27,6 +27,11 @@
           </mat-list-option>
         </mat-selection-list>
       </div>
+      <div *ngIf="triggerList.length < 1">
+        <label style="font-size: 12px;padding: 4px;">
+          No Action Added...
+        </label>
+      </div>
       <br>
       <mat-divider></mat-divider>
       <br>
@@ -35,8 +40,8 @@
         <span style="margin-left: auto;" title="Add Action" (click)="openDialogAction()"><i
             class="fa fa-plus-circle"></i></span>
       </div>
-      <div class="ui-g" style="max-height: 23vh;">
-            <mat-selection-list #list>
+      <div class="ui-g" style="max-height: 23vh;" *ngIf="actionList.length">
+            <mat-selection-list #list style="width: 100%;">
               <mat-list-option *ngFor="let action of actionList">
                 <div class="ui-g">
                   <div class="ui-g-8">
@@ -49,6 +54,11 @@
               </mat-list-option>
             </mat-selection-list>
       </div>
+      <div *ngIf="actionList.length < 1">
+        <label style="font-size: 12px;padding: 4px;">
+          No Trigger Added...
+        </label>
+      </div>
     </div>
   </p-fieldset>
 </div>
@@ -58,7 +68,7 @@
   <p-dialog header="Add Trigger" [(visible)]="showTriggerDialog" appendTo="body" [contentStyle]="{'overflow':'visible'}"
     [modal]="true" [responsive]="true" [style]="{width: '500px', minWidth: '250px'}" [minY]="70" [maximizable]="false"
     [baseZIndex]="10000">
-    <app-sd-addtriggerdialog *ngIf="newTriggerName"  [states]="callback.states" [triggerName]="newTriggerName"
+    <app-sd-addtriggerdialog *ngIf="newTriggerName"  [stateName]="stateName" [triggerName]="newTriggerName"
       (success)="addTriggerNode($event)"></app-sd-addtriggerdialog>
   </p-dialog>
 </div>
@@ -74,9 +84,9 @@
           <label for="State Name">Trigger</label>
         </div>
         <div class="ui-g-8 field">
-          <p-dropdown [options]="callback.triggers" [(ngModel)]="selectedTriggerForAction" placeholder="Select Trigger"
+          <p-dropdown [options]="triggerList" [(ngModel)]="selectedTriggerForAction" placeholder="Select Trigger"
             optionLabel="name" [showClear]="true"></p-dropdown>
-          <!--<input pInputText type="text" size="20" disabled="disabled" [(ngModel)]="stateName"/>-->
+          <!-- <input pInputText type="text" size="20" disabled="disabled" [(ngModel)]="stateName"/> -->
         </div>
       </div>
       <!--Action Name-->

@@ -191,15 +191,15 @@
 </mat-sidenav-container>
 <!-- </div> -->
 <!-- Add Trigger dialog -->
-<div>
+<!-- <div> -->
   <!-- <button type="button" (click)="openDialog()" pButton label="Open Dialog"></button>   -->
-  <p-dialog header="Add Trigger" [(visible)]="AddTriggerDialog" appendTo="body" [contentStyle]="{'overflow':'visible'}"
+  <!-- <p-dialog header="Add Trigger" [(visible)]="AddTriggerDialog" appendTo="body" [contentStyle]="{'overflow':'visible'}"
     [modal]="true" [responsive]="true" [style]="{width: '500px', minWidth: '250px'}" [minY]="70" [maximizable]="false"
     [baseZIndex]="10000">
     <app-sd-addtriggerdialog *ngIf="newTriggerName" [states]="callback.states" [triggerName]="newTriggerName"
       (success)="addTriggerNode($event)"></app-sd-addtriggerdialog>
   </p-dialog>
-</div>
+</div> -->
 
 <!-- AddCallback Popup -->
 <p-dialog header="Add Callback" [modal]="true" appendTo="body" [contentStyle]="{'overflow':'visible'}"

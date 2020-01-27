@@ -1,3 +1,10 @@
+.menu.ui-widget {
+  font-size: 12px;
+}
+
+
+/*TODO: if not needed then remove*/
+
 .action-category {
     font-size: small;
     font-family: 'Open Sans', sans-serif;font-weight: bolder;

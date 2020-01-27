@@ -15,6 +15,7 @@ export class ExtractdataComponent implements OnInit {
   form: FormGroup = null;
   dataType: any;
   dataSource: any;
+  indexOption : any;
   eleProperty: any;
   urlProperties: any;
   eleStyle: any;
@@ -26,6 +27,9 @@ export class ExtractdataComponent implements OnInit {
       name: new FormControl('', Validators.required),
       type: new FormControl('', Validators.required),
       source: new FormControl('', Validators.required),
+      pattern : new FormControl('',Validators.required),
+      patternIndex : new FormControl('',Validators.required),
+      index : new FormControl(''),
       cssSelector: new FormControl(''),
       property: new FormControl(''),
       attributeName : new FormControl(''),
@@ -74,6 +78,12 @@ export class ExtractdataComponent implements OnInit {
       { label: 'Href', value: 'href' },
       { label: 'Search', value: 'search' },
       { label: 'Protocol', value: 'protocol' }
+    ];
+
+    this.indexOption =[
+      {label : 'First' , value : 'First'},
+      {label : 'Last' , value : 'Last'},
+      {label : 'Index Position' , value : 'Index'}
     ]
   }
 

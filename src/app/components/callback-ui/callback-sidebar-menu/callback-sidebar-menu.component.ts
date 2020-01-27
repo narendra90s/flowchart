@@ -30,181 +30,210 @@ export class CallbackSidebarMenuComponent implements OnInit {
 
     console.log("fpToolbarTreeData", this.fpToolbarTreeData);
 
-    this.items = [
-      {
-        label: 'Condition',
-        // data: { type: 'question' },
-        icon: 'pi pi-fw pi-file',
-        styleClass: 'drag condition'
-      },
-      {
-
-        label: 'SPA',
-        icon: 'pi pi-fw pi-file',
-        items: [
-          {
-            label: 'Page Transition Start',
-            id: 'cav_nv_ajax_pg_start',
-            styleClass: 'drag api',
-            title: 'Drag api'
-          },
-          {
-            label: 'Page Transition End',
-            id: 'cav_nv_ajax_pg_end',
-            styleClass: 'drag api',
-            title: 'Drag api'
-          },
-          {
-            label: 'Transaction Start',
-            id: 'cav_nv_ajax_start',
-            styleClass: 'drag api',
-            title: 'Drag api'
-          },
-          {
-            label: 'Transaction Report',
-            id: 'cav_nv_ajax_report',
-            styleClass: 'drag api',
-            title: 'Drag api'
-          },
-          {
-            label: 'Transaction End',
-            id: 'cav_nv_ajax_pg_end',
-            styleClass: 'drag api',
-            title: 'Drag api'
-          },
-
-        ]
-      },
-      {
-        label: 'Cookie',
-        icon: 'pi pi-fw pi-file',
-        items: [
-          {
-            label: 'Set Cookie',
-            id: 'setCookie',
-            styleClass: 'drag api',
-            title: 'Drag api'
-          },
-          {
-            label: 'Remove Cookie',
-            id: 'setCookie',
-            styleClass: 'drag api',
-            title: 'Drag api'
-          },
-        ]
-      },
-      {
-        label: 'State',
-        icon: 'pi pi-fw pi-file',
-        items: [
-          {
-            label: 'Goto State',
-            id: 'gotoState',
-            styleClass: 'drag api',
-            title: 'Drag api'
-          }
-        ]
-      },
-      {
-        label: 'Session_Data',
-        icon: 'pi pi-fw pi-file',
-        items: [
-          {
-            label: 'Set Session Data',
-            id: 'setSessionData',
-            styleClass: 'drag api',
-            title: 'Drag api'
-          }
-        ]
-      },
-      {
-        label: 'Session_State',
-        icon: 'pi pi-fw pi-file',
-        items: [
-          {
-            label: 'Set Session State',
-            id: 'setSessionState',
-            styleClass: 'drag api',
-            title: 'Drag api'
-          }
-        ]
-      },
-      {
-        label: 'LoginId',
-        icon: 'pi pi-fw pi-file',
-        items: [
-          {
-            label: 'Set Login Id',
-            id: 'setLoginId',
-            styleClass: 'drag api',
-            title: 'Drag api'
-          }
-        ]
-      },
-      {
-        label: 'SessionId',
-        icon: 'pi pi-fw pi-file',
-        items: [
-          {
-            label: 'Set SessionId',
-            id: 'setSessionId',
-            styleClass: 'drag api',
-            title: 'Drag api'
-          }
-        ]
-      },
-      {
-        label: 'LogEvent',
-        icon: 'pi pi-fw pi-file',
-        items: [
-          {
-            label: 'Log Event',
-            id: 'eventName',
-            styleClass: 'drag api',
-            title: 'Drag api'
-          }
-        ]
-      },
-      {
-        label: 'UserSegment',
-        icon: 'pi pi-fw pi-file',
-        items: [
-          {
-            label: 'Set User Segment',
-            id: 'userSegment',
-            styleClass: 'drag api',
-            title: 'Drag api'
-          }
-        ]
-      },
-      {
-        label: 'CustomMetric',
-        icon: 'pi pi-fw pi-file',
-        items: [
-          {
-            label: 'Custom Matric Name',
-            id: 'customMetric',
-            styleClass: 'drag api',
-            title: 'Drag api'
-          }
-        ]
-      },
-      {
-        label: 'OrderTotal',
-        icon: 'pi pi-fw pi-file',
-        items: [
-          {
-            label: 'Order Total',
-            id: 'orderTotal',
-            styleClass: 'drag api',
-            title: 'Drag api'
-          }
-        ]
-      }
-    ];
-
-
+    
     this.actionApiList = ActionApiList.apiList;
+
+    this.items = [{
+      label: 'Condition', 
+      icon: 'pi pi-fw pi-file',
+      styleClass: 'drag condition nvmenuitem'
+    }];
+
+    for (let apiGroup in this.actionApiList) {
+      let item = {
+        label: apiGroup,
+        icon: 'pi pi-fw',
+        styleClass: 'nvmenuitem',
+        items: []
+      };
+
+      this.actionApiList[apiGroup].forEach(api => {
+        item.items.push({
+          label: api.label,
+          id: api.id,
+          styleClass: 'drag api nvmenuitem',
+          title : 'Drag api ' +  api.label
+        });
+      });
+
+      this.items.push(item);
+    }
+    
+    
+    // this.items = [
+    //   {
+    //     label: 'Condition',
+    //     // data: { type: 'question' },
+    //     icon: 'pi pi-fw pi-file',
+    //     styleClass: 'drag condition'
+    //   },
+    //   {
+
+    //     label: 'SPA',
+    //     icon: 'pi pi-fw pi-file',
+    //     items: [
+    //       {
+    //         label: 'Page Transition Start',
+    //         id: 'cav_nv_ajax_pg_start',
+    //         styleClass: 'drag api',
+    //         title: 'Drag api'
+    //       },
+    //       {
+    //         label: 'Page Transition End',
+    //         id: 'cav_nv_ajax_pg_end',
+    //         styleClass: 'drag api',
+    //         title: 'Drag api'
+    //       },
+    //       {
+    //         label: 'Transaction Start',
+    //         id: 'cav_nv_ajax_start',
+    //         styleClass: 'drag api',
+    //         title: 'Drag api'
+    //       },
+    //       {
+    //         label: 'Transaction Report',
+    //         id: 'cav_nv_ajax_report',
+    //         styleClass: 'drag api',
+    //         title: 'Drag api'
+    //       },
+    //       {
+    //         label: 'Transaction End',
+    //         id: 'cav_nv_ajax_pg_end',
+    //         styleClass: 'drag api',
+    //         title: 'Drag api'
+    //       },
+
+    //     ]
+    //   },
+    //   {
+    //     label: 'Cookie',
+    //     icon: 'pi pi-fw pi-file',
+    //     items: [
+    //       {
+    //         label: 'Set Cookie',
+    //         id: 'setCookie',
+    //         styleClass: 'drag api',
+    //         title: 'Drag api'
+    //       },
+    //       {
+    //         label: 'Remove Cookie',
+    //         id: 'setCookie',
+    //         styleClass: 'drag api',
+    //         title: 'Drag api'
+    //       },
+    //     ]
+    //   },
+    //   {
+    //     label: 'State',
+    //     icon: 'pi pi-fw pi-file',
+    //     items: [
+    //       {
+    //         label: 'Goto State',
+    //         id: 'gotoState',
+    //         styleClass: 'drag api',
+    //         title: 'Drag api'
+    //       }
+    //     ]
+    //   },
+    //   {
+    //     label: 'Session_Data',
+    //     icon: 'pi pi-fw pi-file',
+    //     items: [
+    //       {
+    //         label: 'Set Session Data',
+    //         id: 'setSessionData',
+    //         styleClass: 'drag api',
+    //         title: 'Drag api'
+    //       }
+    //     ]
+    //   },
+    //   {
+    //     label: 'Session_State',
+    //     icon: 'pi pi-fw pi-file',
+    //     items: [
+    //       {
+    //         label: 'Set Session State',
+    //         id: 'setSessionState',
+    //         styleClass: 'drag api',
+    //         title: 'Drag api'
+    //       }
+    //     ]
+    //   },
+    //   {
+    //     label: 'LoginId',
+    //     icon: 'pi pi-fw pi-file',
+    //     items: [
+    //       {
+    //         label: 'Set Login Id',
+    //         id: 'setLoginId',
+    //         styleClass: 'drag api',
+    //         title: 'Drag api'
+    //       }
+    //     ]
+    //   },
+    //   {
+    //     label: 'SessionId',
+    //     icon: 'pi pi-fw pi-file',
+    //     items: [
+    //       {
+    //         label: 'Set SessionId',
+    //         id: 'setSessionId',
+    //         styleClass: 'drag api',
+    //         title: 'Drag api'
+    //       }
+    //     ]
+    //   },
+    //   {
+    //     label: 'LogEvent',
+    //     icon: 'pi pi-fw pi-file',
+    //     items: [
+    //       {
+    //         label: 'Log Event',
+    //         id: 'eventName',
+    //         styleClass: 'drag api',
+    //         title: 'Drag api'
+    //       }
+    //     ]
+    //   },
+    //   {
+    //     label: 'UserSegment',
+    //     icon: 'pi pi-fw pi-file',
+    //     items: [
+    //       {
+    //         label: 'Set User Segment',
+    //         id: 'userSegment',
+    //         styleClass: 'drag api',
+    //         title: 'Drag api'
+    //       }
+    //     ]
+    //   },
+    //   {
+    //     label: 'CustomMetric',
+    //     icon: 'pi pi-fw pi-file',
+    //     items: [
+    //       {
+    //         label: 'Custom Matric Name',
+    //         id: 'customMetric',
+    //         styleClass: 'drag api',
+    //         title: 'Drag api'
+    //       }
+    //     ]
+    //   },
+    //   {
+    //     label: 'OrderTotal',
+    //     icon: 'pi pi-fw pi-file',
+    //     items: [
+    //       {
+    //         label: 'Order Total',
+    //         id: 'orderTotal',
+    //         styleClass: 'drag api',
+    //         title: 'Drag api'
+    //       }
+    //     ]
+    //   }
+    // ];
+
+
 
     this.apiTreeData = this.apiToTreeData();
 

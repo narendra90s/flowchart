@@ -219,9 +219,10 @@ export class CallbackDesignerComponent implements OnInit {
 
       // select current callback.
       if (name === null) {
-        this.callbackEntry = this.callbackEntry[0];
+        this.callbackEntry = this.callbackList[0];
         this.callback = this.callbackEntry.jsondata;
-        return;
+        this.deserializeActionMap(this.callback);
+        return true;
       } else {
         this.callbackList.some(cb => {
           if (cb.name === name) {

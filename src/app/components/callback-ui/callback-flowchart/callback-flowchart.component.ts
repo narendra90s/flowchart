@@ -60,14 +60,13 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
   ngOnChanges() {
     // If action got change then initialize flowchart.
     if (this.action != null) {
-  
-      // console.log("onChanges called ==>",this.action);
-      this.callback.actions.forEach(action =>{
-        if(action.id === this.action.id){
-          this.toolkit.clear();
-          this.flowDiagramData = this.getFlowDiagramData(this.callback);
-        }
-      });      
+      
+      if (this.toolkit) {
+        this.toolkit.clear();
+      }
+
+      this.flowDiagramData = this.getFlowDiagramData();
+      
       // this.flowDiagramData = this.getFlowDiagramData(this.callback);
 
       this.toolkit.load({ data: this.flowDiagramData });
@@ -79,6 +78,8 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
 
 
   copyJData(input: any, out: any) {
+    if (!input) return;
+
     const keys = ["w", "h", "top", "left"];
     keys.forEach(key => {
       if (input[key] !== undefined) {
@@ -89,7 +90,7 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
     return true;
   }
 
-  getFlowDiagramData(flowChartData: any) {
+  getFlowDiagramData() {
     let fdData = {
       nodes: [],
       edges: []
@@ -216,7 +217,8 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
     // console.log("updateListner called ===>",toolKitData);
     toolKitData.nodes.forEach((node: any) => {
       if (node.type === 'start'){
-        node.jData = new JtkNodeParam();
+        if (!node.jData)
+          node.jData = new JtkNodeParam();
         return this.copyJData(node , node.jData);
       }
       if (node.type === 'action') {
@@ -245,6 +247,7 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
         // })
       }
     });
+    
 
     console.log('callback after updateBTInfo for flowdiagram - ', this.callback , toolKitData);
   }
@@ -336,15 +339,21 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
   }
 
   editLabel(edge: any) {
-    Dialogs.show({
-      id: "dlgText",
-      data: {
-        text: edge.data.label || ""
-      },
-      onOK: (data: any) => {
-        this.toolkit.updateEdge(edge, { label: data.text });
-      }
+    console.log("On Edit edge",edge , this.action);
+    this.action.data.edges.forEach(edge =>{
+      
+
     });
+
+    // Dialogs.show({
+    //   id: "dlgText",
+    //   data: {
+    //     text: edge.data.label || ""
+    //   },
+    //   onOK: (data: any) => {
+    //     this.toolkit.updateEdge(edge, { label: data.text });
+    //   }
+    // });
   }
 
   view = {

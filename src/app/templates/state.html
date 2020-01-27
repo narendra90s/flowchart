@@ -1,4 +1,4 @@
-<div [style.width]="obj.w + 'px'" [style.height]="obj.h +'px'" class="flowchart-object flowchart-start">
+<div [style.width]="obj.w + 'px'" [style.height]="obj.h +'px'" class="flowchart-object flowchart-start" (click)="editStateNode(obj)">
     <div style="position:relative">
         <div class="node-edit node-action" (click)="editStateNode(obj)">
             <i class="fa fa-pencil-square-o"></i>

@@ -157,3 +157,7 @@ nav a.active {
     z-index: 100;
 }
 
+
+.nvmenuitem.ui-widget {
+    font-size: 12px;
+}

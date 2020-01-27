@@ -72,6 +72,11 @@ export class CallbackActionConditionDialogComponent implements OnInit, OnChanges
   onSubmit() {
     console.log('form submitted with value - ', this.form.value);
     this.conditionAdded.emit(this.form.value);
+    this.clearForm();
+  }
+
+  clearForm(){
+    this.form.reset();
   }
 
   getGroupedVarData() {
