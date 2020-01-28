@@ -93,6 +93,7 @@ export class ActionData {
     // Action api node.
     aNOdes: ActionApiCallingNodes[] = [];
     edges: ActionEdge[] = [];
+    startNodeJData: JtkNodeParam;
 }
 
 export class Action {
@@ -120,7 +121,8 @@ export class DataPoint {
 
 export class LocalVariable {
     name: string;
-    type: number;
+    // TODO: 
+    type?: number = 0;
 }
 
 /**This class is for storing callback's */

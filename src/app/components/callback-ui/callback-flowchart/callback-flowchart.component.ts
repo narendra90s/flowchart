@@ -6,6 +6,7 @@ import { Callback, Action, ActionData, ActionApiCallingNodes, ConditionNode, Jtk
 import { ActionApi, ActionApiList } from 'src/app/interface/action-api';
 import { Source } from 'webpack-sources';
 import { CallbackDataServiceService } from 'src/app/service/callback-data-service.service';
+import { Dialog } from 'primeng/dialog/dialog';
 
 @Component({
   selector: 'app-callback-flowchart',
@@ -103,7 +104,10 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
       w: 100,
       h: 70
     });
+
+    //FIXME: how to remember start position.
     // this.copyJData(da.jData, fdData.nodes[fdData.nodes.length - 1]);
+    this.copyJData(this.action.data.startNodeJData, fdData.nodes[fdData.nodes.length - 1]);
 
     this.action.data.aNOdes.forEach(da => {
       fdData.nodes.push({
@@ -217,9 +221,9 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
     // console.log("updateListner called ===>",toolKitData);
     toolKitData.nodes.forEach((node: any) => {
       if (node.type === 'start'){
-        if (!node.jData)
-          node.jData = new JtkNodeParam();
-        return this.copyJData(node , node.jData);
+        if (!this.action.data.startNodeJData)
+          this.action.data.startNodeJData = new JtkNodeParam();
+        return this.copyJData(node , this.action.data.startNodeJData);
       }
       if (node.type === 'action') {
         // this.callback.actions.forEach(action => {
@@ -234,7 +238,7 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
           return false;
         // });
       }
-      if (node.type === 'queston') {
+      if (node.type === 'question') {
         // this.callback.actions.forEach(action => {
           this.action.data.cNodes.some(nq => {
             if (node.id === nq.id) {
@@ -339,10 +343,19 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
   }
 
   editLabel(edge: any) {
-    console.log("On Edit edge",edge , this.action);
-    this.action.data.edges.forEach(edge =>{
-      
+    console.log("On Edit edge",edge , this.action , Object(this.toolkit.exportData()));
 
+    if (edge.source.getType() !== 'question') return;
+
+    Dialogs.show({
+      id: "dlgRadio",
+      data : {
+        yes : edge.data.label,
+        no : edge.data.label
+      },
+      onOK: (data: any) => {
+            this.toolkit.updateEdge(edge, { label: data.text});
+          }
     });
 
     // Dialogs.show({
@@ -401,7 +414,7 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
         },
         overlays: [
           ["Arrow", { location: 1, width: 10, length: 10 }],
-          ["Arrow", { location: 0.3, width: 10, length: 10 }]
+  
         ]
       },
       "connection": {
@@ -411,9 +424,10 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
             "Label", {
               label: "${label}",
               events: {
+                /*
                 click: (params: any) => {
                   this.editLabel(params.edge);
-                }
+                }*/
               }
             }
           ]
@@ -425,17 +439,18 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
         endpoint: "Blank",
         anchor: "Continuous",
         uniqueEndpoint: true,
-        edgeType: "default"
+        edgeType: "default",
+        maxConnections: 1
       },
       "source": {
         endpoint: "Blank",
         paintStyle: { fill: "#84acb3" },
         anchor: "AutoDefault",
-        maxConnections: -1,
+        maxConnections: 2,
         edgeType: "connection"
       },
       "target": {
-        maxConnections: -1,
+        maxConnections: 1,
         endpoint: "Blank",
         anchor: "AutoDefault",
         paintStyle: { fill: "#84acb3" },

@@ -39,10 +39,13 @@
   <p-header>Local Variable</p-header>
   <p-fieldset>
     <div class="ui-g">
-      <div class="ui-g-7">
-        <input type="text" style="width: 75px" pInputText [(ngModel)]="localVar">
+      <div class="ui-g-6">
+        <label>Local Variable</label>
       </div>
       <div class="ui-g-5">
+        <input type="text" style="width: 75px" pInputText [(ngModel)]="localVar">
+      </div>
+      <div class="ui-g-1">
         <i class="fa fa-plus" style="float: right ; padding: 9px 4px;" title="Add Local Variable"
           (click)="addLocalVar()"></i>
       </div>
@@ -50,7 +53,7 @@
   </p-fieldset>
 </p-dialog>
 
-<p-dialog [(visible)]="showExtractDialog" appendTo="body" [style]="{'min-width':'350px' , 'left':' 492px'}"
+<p-dialog [(visible)]="showExtractDialog" appendTo="body" [style]="{'min-width':'400px' , 'left':' 492px'}"
   [contentStyle]="{'overflow':'visible'}">
   <p-header>Extract Data</p-header>
   <app-extractdata (extractedData)="ectractedDataPoint($event)"></app-extractdata>

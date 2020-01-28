@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Subject, Observable } from 'rxjs';
-import { Callback } from 'callback';
+import { Callback, DataPoint, LocalVariable } from 'callback';
 import { filter } from 'rxjs/operators';
 // import 'rxjs/add/operator/map'
 // import 'rxjs/Rx';
 import { map } from "rxjs/operators";
+import { Local } from 'protractor/built/driverProviders';
 
 
 
@@ -15,25 +16,52 @@ interface CallBackServiceEvent {
 @Injectable()
 export class CallbackDataServiceService {
 
-  callbackObj : Callback;
-  callbacks = [];
+  currentCallback: Callback;
+
   private _eventCallBack = new Subject<CallBackServiceEvent>();
-
-
-  cbDataSource = new BehaviorSubject<any>(null);
-  currentCbData = this.cbDataSource.asObservable();
-
-  // localvarData = new BehaviorSubject<any>(null);
-  // currentLocalData = this.localvarData.asObservable();
   
   constructor() {
-    this.callbackObj = new Callback();
+
    }
 
-  ChangeDataPoint(extractedData: any) {
-    console.log("calling service extractedData",extractedData);
-    this.cbDataSource.next(extractedData);
-  }
+   setCallback(cb: Callback) {
+     this.currentCallback = cb;
+     console.log('setCallback called for - ', cb);
+   }
+
+   addDataPoint(dp: DataPoint) : DataPoint[] {
+    if (this.currentCallback) {
+      this.currentCallback.dataPoints.push(dp);
+      this.broadcast('addedDataPoint', this.currentCallback.dataPoints);
+      console.log('triggered addedDataPoint, data - ', this.currentCallback.dataPoints);
+      return this.currentCallback.dataPoints;
+    }
+    return [];
+   }
+
+   getDataPoint() {
+    if (this.currentCallback) {
+      return this.currentCallback.dataPoints;
+    }
+    return [];
+   }
+
+   addLocalVar(local: LocalVariable): LocalVariable[] {
+      if (this.currentCallback) {
+        this.currentCallback.localVariables.push(local);
+        this.broadcast('addedLocalVar', this.currentCallback.localVariables);
+        return this.currentCallback.localVariables;
+      }
+      return [];
+   }
+
+   getLocalVar() {
+    if (this.currentCallback) {
+      return this.currentCallback.localVariables;
+    }
+    return [];
+   }
+
 
   //TODO : Handling should be taken care of
   // ChangeLocalVariable(LocalVar : any){

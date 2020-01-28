@@ -42,7 +42,7 @@ export class CallbackSidebarMenuComponent implements OnInit {
     for (let apiGroup in this.actionApiList) {
       let item = {
         label: apiGroup,
-        icon: 'pi pi-fw',
+        icon: 'pi pi-fw pi-file',
         styleClass: 'nvmenuitem',
         items: []
       };

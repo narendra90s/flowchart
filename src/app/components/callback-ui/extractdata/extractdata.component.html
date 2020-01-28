@@ -25,31 +25,7 @@
           [placeholder]="'Select Type'"></p-dropdown>
       </div>
     </div>
-    <div class="ui-g">
-      <div class="ui-g-4">
-        <label>Pattern</label>
-      </div>
-      <div class="ui-g-8">
-        <input type="text" pInputText [formControlName]="'pattern'">
-      </div>
-    </div>
-    <div class="ui-g">
-      <div class="ui-g-4">
-        <label>Pattern Index</label>
-      </div>
-      <div class="ui-g-8">
-        <p-dropdown [options]="indexOption" appendTo="body" [formControlName]="'patternIndex'" 
-          [placeholder]="'Select Index'"></p-dropdown>
-      </div>
-    </div>
-    <div class="ui-g" *ngIf='form.value.patternIndex == "Index"'>
-      <div class="ui-g-4">
-        <label>Index</label>
-      </div>
-      <div class="ui-g-8">
-        <input type="text" pInputText [formControlName]="'index'">
-      </div>
-    </div>
+
     <div class="ui-g" *ngIf='form.value.source == "ele"'>
       <div class="ui-g-4">
         <span>CSS Selector</span>
@@ -111,6 +87,31 @@
         <div class="ui-g-6">
           open editor ... <span style="float:right;font-size: 16px;cursor:pointer;" (click)="openEditor = true">
             <i class="fa fa-pencil-square-o" title="open Editor"></i></span>
+        </div>
+      </div>
+      <div class="ui-g">
+        <div class="ui-g-4">
+          <label>Pattern</label>
+        </div>
+        <div class="ui-g-8">
+          <input type="text" pInputText [formControlName]="'pattern'">
+        </div>
+      </div>
+      <div class="ui-g">
+        <div class="ui-g-4">
+          <label>Pattern Index</label>
+        </div>
+        <div class="ui-g-8">
+          <p-dropdown [options]="indexOption" appendTo="body" [formControlName]="'patternIndex'" 
+            [placeholder]="'Select Index'"></p-dropdown>
+        </div>
+      </div>
+      <div class="ui-g" *ngIf='form.value.patternIndex == "Index"'>
+        <div class="ui-g-4">
+          <label>Index</label>
+        </div>
+        <div class="ui-g-8">
+          <input type="text" pInputText [formControlName]="'index'">
         </div>
       </div>
     <!--submit button-->

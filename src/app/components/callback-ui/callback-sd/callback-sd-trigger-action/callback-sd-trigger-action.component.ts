@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnChanges, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, Output, EventEmitter, SimpleChanges } from '@angular/core';
 import { Callback, State, Trigger, Action, ActionData } from 'callback';
 
 @Component({
@@ -9,7 +9,7 @@ import { Callback, State, Trigger, Action, ActionData } from 'callback';
 export class CallbackSdTriggerActionComponent implements OnInit, OnChanges {
 
 
-  @Input() callback: Callback = null;
+  @Input() callback = null;
   @Input() currentState: State;
   @Output() flowChartFlag: EventEmitter<any> = new EventEmitter();
   @Output() currentAction: EventEmitter<any> = new EventEmitter();
@@ -26,8 +26,8 @@ export class CallbackSdTriggerActionComponent implements OnInit, OnChanges {
   newActionName: string = null;
   pendingActionCallback: Function = null;
   pendingActionData: any = null;
-  listOfTrigger : any;
-  selectedTrigger : any;
+  listOfTrigger: any;
+  selectedTrigger: any;
 
   constructor() {
     // this.listOfAction = this.callback.actions;
@@ -38,15 +38,19 @@ export class CallbackSdTriggerActionComponent implements OnInit, OnChanges {
     console.log("Calling action trigger OnInit", this.callback);
   }
 
-  ngOnChanges() {
-    console.log("Callback is -", this.callback, this.currentState);
-    if(this.currentState){
-      this.getTriggerList();
-      this.getActionList();
+  ngOnChanges(changes: SimpleChanges) {
+    console.log("Callback is -", this.callback);
+    for (let change in changes) {
+      console.log("changes is-" , change);
+      if (change === 'currentState') {
+        console.log("currentState is changed -" , );
+        this.getTriggerList();
+        this.getActionList();
+      }
     }
   }
 
-  stateName : any;
+  stateName: any;
   openDialogTrigger() {
     this.showTriggerDialog = true;
     this.stateName = this.currentState.id;
@@ -54,8 +58,8 @@ export class CallbackSdTriggerActionComponent implements OnInit, OnChanges {
     // this.triggerList();
   }
 
-  openDialogAction(){
-    console.log("triggerList",this.triggerList);
+  openDialogAction() {
+    console.log("triggerList", this.triggerList);
     this.showActionDialog = true;
     this.newActionName = 'Action_' + this.callback.actions.length + '';
     // this.actionList();
@@ -117,44 +121,44 @@ export class CallbackSdTriggerActionComponent implements OnInit, OnChanges {
     // this.pendingTriggerData = null;
     this.showTriggerDialog = false;
     this.newTriggerName = null;
-    this.callback.triggers.push(trigger);   
-    let tempTrigger = {label : this.newTriggerName , value : this.newTriggerName};
-    this.listOfTrigger.push(tempTrigger); 
+    this.callback.triggers.push(trigger);
+    let tempTrigger = { label: this.newTriggerName, value: this.newTriggerName };
+    this.listOfTrigger.push(tempTrigger);
     // this.listOfTrigger = this.callback.triggers;
     this.getTriggerList();
 
-    console.log("After Adding Trigger",this.callback);
+    console.log("After Adding Trigger", this.callback);
 
   }
 
 
-  openChart : boolean = false;
-  openflowChart(action){
-    console.log("Current Action",action);
+  openChart: boolean = false;
+  openflowChart(action) {
+    console.log("Current Action", action);
     this.openChart = true;
     this.currentAction.emit(action);
     this.flowChartFlag.emit(this.openChart);
   }
 
-  triggerList : any = [];
-  getTriggerList(){
+  triggerList: any = [];
+  getTriggerList() {
     this.triggerList = [];
-    console.log("current State",this.currentState, this.callback.triggers);
-    this.callback.triggers.forEach(trigger =>{
-      if(trigger.stateId === this.currentState.id){
+    console.log("current State", this.currentState, this.callback.triggers);
+    this.callback.triggers.forEach(trigger => {
+      if (trigger.stateId === this.currentState.id) {
         this.triggerList.push(trigger);
       }
     })
-    console.log("list of trigger",this.triggerList)
+    console.log("list of trigger", this.triggerList)
     return this.triggerList;
   }
 
-  actionList : any = [];
-  getActionList(){
+  actionList: any = [];
+  getActionList() {
     this.actionList = [];
-    console.log("current State",this.currentState, this.callback.actions);
-    this.callback.actions.forEach(action =>{
-      if(action.stateId === this.currentState.id){
+    console.log("current State", this.currentState, this.callback.actions);
+    this.callback.actions.forEach(action => {
+      if (action.stateId === this.currentState.id) {
         this.actionList.push(action);
       }
     })

@@ -27,8 +27,8 @@ export class ExtractdataComponent implements OnInit {
       name: new FormControl('', Validators.required),
       type: new FormControl('', Validators.required),
       source: new FormControl('', Validators.required),
-      pattern : new FormControl('',Validators.required),
-      patternIndex : new FormControl('',Validators.required),
+      pattern : new FormControl(''),
+      patternIndex : new FormControl(''),
       index : new FormControl(''),
       cssSelector: new FormControl(''),
       property: new FormControl(''),
@@ -88,24 +88,29 @@ export class ExtractdataComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.callbackdataservice.currentCbData.subscribe((extractedData) => {
-      if (extractedData && extractedData.length) {
-        this.extractedDataList = extractedData;
-      } else {
-        this.extractedDataList = [];
-      }
-    });
+
+
+    // this.callbackdataservice.currentCbData.subscribe((extractedData) => {
+    //   if (extractedData && extractedData.length) {
+    //     this.extractedDataList = extractedData;
+    //   } else {
+    //     this.extractedDataList = [];
+    //   }
+    // });
   }
 
   onSubmit() {
+    
     console.log('form submitted with value -  in', this.form.value);
-    this.extractedData.emit(this.form.value);
-    this.newExtractedData();
+    this.callbackdataservice.addDataPoint(this.form.value);
+
+    this.extractedData.emit(false);
+    // this.newExtractedData();
   }
 
-  newExtractedData(){
-    this.extractedDataList.push(this.form.value);
-    this.callbackdataservice.ChangeDataPoint(this.extractedDataList);
-  }
+  // newExtractedData(){
+  //   this.extractedDataList.push(this.form.value);
+  //   this.callbackdataservice.ChangeDataPoint(this.extractedDataList);
+  // }
 
 }

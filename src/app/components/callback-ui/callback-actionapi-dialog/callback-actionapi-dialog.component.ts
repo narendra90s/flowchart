@@ -22,7 +22,7 @@ export class CallbackActionapiDialogComponent implements OnInit, OnChanges {
 
   form: FormGroup;
 
-  groupedVariableList: any;
+  groupedVariableList: any = [];
   localVariableList: any = [];
   extractedData: any = null;
   // LocalVar: any = null;
@@ -30,15 +30,6 @@ export class CallbackActionapiDialogComponent implements OnInit, OnChanges {
   stateList: any[] = [];
   sessionStateList: any = [];
   constructor(private dpData: CallbackDataServiceService , public dialog: MatDialog) {
-    this.groupedVariableList = [{
-      label: 'Data points',
-      value: 'fa fa-mixcloud',
-      items: []
-    }, {
-      label: 'Local variables',
-      value: 'fa fa-cubes',
-      items: []
-    }];
 
     this.sessionStateList = [
       {label : "BROWSER" , value: "BROWSER"},
@@ -48,18 +39,11 @@ export class CallbackActionapiDialogComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
-    this.groupedVariableList[1].items = [];
-    this.groupedVariableList[0].items = [];
-
-    this.dpData.currentCbData.subscribe((extractedData) => {
-      if (extractedData && extractedData.length) {
-        this.extractedData = extractedData;
-      } else {
-        this.extractedData = [];
-      }
-      this.getGroupedVarData();
-    });
     this.getGroupedVarData();
+
+    //register for change. 
+    this.dpData.on('addedLocalVar').subscribe(data => this.getGroupedVarData());
+    this.dpData.on('addedDataPoint').subscribe(data => this.getGroupedVarData());
    }
 
   ngOnChanges() {
@@ -101,13 +85,37 @@ export class CallbackActionapiDialogComponent implements OnInit, OnChanges {
 
 
   getGroupedVarData() {
-    if (this.extractedData != undefined) {      
-      for (let i = 0; i < this.extractedData.length; i++) {
-        let temp = {label : this.extractedData[i].name , value : this.extractedData[i].name };
-        console.log("items og DataPoints", this.groupedVariableList[0].items[i]);
+        // TODO: it has to pass by parent component or some other service.
+        this.groupedVariableList = [{
+          label: 'Data points',
+          value: 'fa fa-mixcloud',
+          items: []
+        }, {
+          label: 'Local variables',
+          value: 'fa fa-cubes',
+          items: []
+    
+        }];
+
+    let dataPoints = this.dpData.getDataPoint();
+    let localVars = this.dpData.getLocalVar();
+
+    if (dataPoints) {
+      // this.groupedVariableList[0].items = [];   
+      for (let i = 0; i < dataPoints.length; i++) {
+        let temp = { label: dataPoints[i].name, value: dataPoints[i].name };
         this.groupedVariableList[0].items[i] = temp;
       }
     }
+    if (localVars) {
+      for (let i = 0; i < localVars.length; i++) {
+        // this.groupedVariableList[1].items = [];
+        console.log("items of localVar", localVars[i]  , " , this.groupedVariableList[1]",this.groupedVariableList[1].items);
+        this.groupedVariableList[1].items[i] = {label : localVars[i].name , value: localVars[i].name};
+      }
+    }
+
+    this.localVariableList = [this.groupedVariableList[1]];
   }
 
   showExtractDialog : any = false;
@@ -122,9 +130,9 @@ export class CallbackActionapiDialogComponent implements OnInit, OnChanges {
 
   showLocalVarDialog : boolean = false;
   addLocalVar(){    
-    let TempLocalVar = {label : this.localVar , value : this.localVar};
-    this.groupedVariableList[1].items.push(TempLocalVar);
+    // let TempLocalVar = {label : this.localVar , value : this.localVar};
+    this.dpData.addLocalVar({name : this.localVar});
+    // this.groupedVariableList[1].items.push(TempLocalVar);
     this.showLocalVarDialog = false;
   }
-
 }

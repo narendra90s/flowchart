@@ -58,7 +58,7 @@
           </div>
         </div>
       </p-accordionTab>
-      <p-accordionTab header="Flowchart Diagram" [(selected)]="select">
+      <p-accordionTab header="Flowchart Diagram for : {{currentActionName}}" [(selected)]="select">
         <div class="ui-g" style="padding: 0.2rem;">
           <div class="ui-g-2" style="z-index: 200" >
             <app-callback-sidebar-menu [selectedTabIndex]="1" (loaded)="sidebarLoaded=true">

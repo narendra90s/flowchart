@@ -101,6 +101,8 @@ export class CallbackDesignerComponent implements OnInit {
 
       console.log('openActionFlowChart called for action - ', actionId);
 
+      this.currentActionName = actionId;
+
       this.callback.actions.some(action => {
         if (action.id === actionId) {
           this.currentAction = action;
@@ -108,19 +110,6 @@ export class CallbackDesignerComponent implements OnInit {
         }
       })
     });
-
-
-    // register for change in localvariable and global variable
-    this.cbService.currentCbData.subscribe(dataPoints => {
-      if (this.callback) {
-        this.callback.dataPoints = dataPoints;
-      }
-    });
-    // this.cbService.currentLocalData.subscribe(localVariables => {
-    //   if (this.callback) {
-    //     this.callback.localVariables = localVariables;
-    //   }
-    // });
   }
 
   // ngOnChanges(){
@@ -192,6 +181,8 @@ export class CallbackDesignerComponent implements OnInit {
     this.AddCallbackDialog = true;
     // this.addCallbackData();
     this.callback = new Callback();
+
+    this.cbService.setCallback(this.callback);
   }
 
   // Event will be triggered by sd when a new action is added.
@@ -222,6 +213,7 @@ export class CallbackDesignerComponent implements OnInit {
         this.callbackEntry = this.callbackList[0];
         this.callback = this.callbackEntry.jsondata;
         this.deserializeActionMap(this.callback);
+        this.cbService.setCallback(this.callback);
         return true;
       } else {
         this.callbackList.some(cb => {
@@ -235,10 +227,8 @@ export class CallbackDesignerComponent implements OnInit {
         });
       }
 
-      // broadcast changed global and local variable list. 
-      this.cbService.ChangeDataPoint(this.callback.dataPoints);
+      this.cbService.setCallback(this.callback);
 
-      // this.cbService.ChangeLocalVariable(this.callback.localVariables);
     });
     // this.callbackService.broadcast('change', this.callbackService.callbackObj);
   }
@@ -295,10 +285,9 @@ export class CallbackDesignerComponent implements OnInit {
       this.callback = callbackEntry.jsondata;
     }
 
-    this.deserializeActionMap(this.callback);
+    this.cbService.setCallback(this.callback);
 
-    // broadcast changed global and local variable list. 
-    this.cbService.ChangeDataPoint(this.callback.dataPoints);
+    this.deserializeActionMap(this.callback);
 
     // this.cbService.ChangeLocalVariable(this.callback.localVariables);
 
@@ -330,9 +319,12 @@ export class CallbackDesignerComponent implements OnInit {
 
 
   select : boolean;
+  currentActionName : string = null;
   currentActionGet($event){
     this.currentAction = $event;
+    this.currentActionName = this.currentAction.name;
     this.select = true;
+    console.log("current Action",this.currentAction.name)
   }
 
 }
