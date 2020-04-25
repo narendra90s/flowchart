@@ -8,6 +8,10 @@
 -->
 <!-- <div style="padding: 0px 24px 0 0px;">
   <p-fieldset> -->
+    <div style="position: absolute; margin-top: -20px;">
+      <button *ngIf="!!surface" (click)="surface.refresh()" >Refresh Layoyut</button>
+      <button *ngIf="!!surface" (click)="surface.relayout()" >ReLayout Layout</button>
+    </div>
     <jsplumb-surface [surfaceId]="surfaceId" [toolkitId]="toolkitId" [view]="view" [renderParams]="renderParams"
       [nodeResolver]="resolveNode"></jsplumb-surface>
     <jsplumb-miniview [surfaceId]="surfaceId"></jsplumb-miniview>

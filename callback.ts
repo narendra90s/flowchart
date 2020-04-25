@@ -71,6 +71,7 @@ export class ActionApiData {
     // It will be actual api eg. CAVNV.utils.setCookie.
     // TODO: it is better to provide uniq id to each api and use it here. 
     api: string;
+    id: string;
     argument: Map<string, string>;
 }
 

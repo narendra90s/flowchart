@@ -60,7 +60,7 @@ export class CallbackActionapiDialogComponent implements OnInit, OnChanges {
       this.stateList.push({label: state.text, value: state.id});
     });
 
-    if (this.api.category === 'localVarApi') {
+    if (this.api && this.api.category === 'localVarApi') {
       this.localVariableList = [this.groupedVariableList[1]];
     }
 
@@ -80,7 +80,7 @@ export class CallbackActionapiDialogComponent implements OnInit, OnChanges {
 
   onSubmit() {
     console.log('Form submitted successfully. value - ', this.form.value);
-    this.actionApiSubmit.emit({ api: this.api, argument: this.form.value });
+    this.actionApiSubmit.emit({ api: this.api.api, argument: this.form.value });
   }
 
 

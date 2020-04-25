@@ -17,7 +17,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
 import { TieredMenuModule } from 'primeng/tieredmenu';
 
-import { FlowchartComponent, QuestionNodeComponent, ActionNodeComponent, StartNodeComponent, OutputNodeComponent, EndNodeComponent, StateNodeComponent, SDActionNodeComponent } from './flowchart';
+import { FlowchartComponent, QuestionNodeComponent, ActionNodeComponent, StartNodeComponent, OutputNodeComponent, EndNodeComponent, StateNodeComponent, SDActionNodeComponent, PlaceHolderComponent } from './flowchart';
 import { StateDiagramComponent } from './state-diagram/state-diagram.component';
 import { CallbackSdComponent } from './components/callback-ui/callback-sd/callback-sd.component';
 import { SdAddtriggerdialogComponent } from './components/callback-ui/sd-addtriggerdialog/sd-addtriggerdialog.component';
@@ -49,7 +49,7 @@ import { CallbackSdTriggerActionComponent } from './components/callback-ui/callb
         MatDividerModule, MatButtonModule, AccordionModule, TreeModule, ListboxModule, MatSidenavModule, MultiSelectModule, MatDialogModule, MatCardModule, MatListModule, MatMenuModule , TieredMenuModule],
     declarations: [AppComponent, QuestionNodeComponent, ActionNodeComponent, StartNodeComponent, OutputNodeComponent,
         DatasetComponent, ControlsComponent, FlowchartComponent, StateDiagramComponent, CallbackSdComponent,
-        SdAddtriggerdialogComponent, CallbackDesignerComponent, EndNodeComponent, StateNodeComponent,
+        SdAddtriggerdialogComponent, CallbackDesignerComponent, EndNodeComponent, StateNodeComponent, PlaceHolderComponent,
         CallbackFlowchartComponent,
         CallbackSidebarMenuComponent,
         CallbackActionapiDialogComponent,
@@ -57,7 +57,7 @@ import { CallbackSdTriggerActionComponent } from './components/callback-ui/callb
         SDActionNodeComponent, ExtractdataComponent, CallbackSdTriggerActionComponent],
     bootstrap: [AppComponent],
     providers: [CallbackDataServiceService],
-    entryComponents: [QuestionNodeComponent, ActionNodeComponent, StartNodeComponent, OutputNodeComponent, EndNodeComponent, StateNodeComponent, SDActionNodeComponent, ExtractdataComponent],
+    entryComponents: [QuestionNodeComponent, ActionNodeComponent, StartNodeComponent, OutputNodeComponent, EndNodeComponent, StateNodeComponent, SDActionNodeComponent, ExtractdataComponent, PlaceHolderComponent],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class AppModule {

@@ -1,4 +1,4 @@
-import {Component, ViewChild} from '@angular/core';
+import {Component, ViewChild, Output, EventEmitter, Input, ElementRef, AfterViewInit} from '@angular/core';
 
 import { Dialogs, DrawingTools, Node, Port, Edge, Group, jsPlumbToolkit, Surface } from "jsplumbtoolkit";
 
@@ -112,6 +112,40 @@ export class StateNodeComponent extends BaseEditableNodeComponent {
 
 @Component({ templateUrl:"templates/output.html" })
 export class OutputNodeComponent extends BaseEditableNodeComponent  { }
+
+// ---------------PlaceHolder node ------------
+@Component({templateUrl: 'templates/placeholder.html'})
+export class PlaceHolderComponent extends BaseEditableNodeComponent  { 
+  /*
+  @Input() nodeid: string;
+  // @Output() droppedInPlaceHolder: EventEmitter<any> = new EventEmitter();
+  
+  constructor(private cbService: CallbackDataServiceService, private element: ElementRef) {
+    super();
+  }
+
+  ngAfterViewInit() {
+    // register the drop related callback. As these were not getting registered. 
+    this.element.nativeElement.addEventListener('dragover', (event) => this.allowDrop(event));
+    this.element.nativeElement.addEventListener('drop', (event) => this.drop(event));
+  }
+
+  // This event will be used by flowpath instance.
+  drop(event) {
+    console.log('PlaceHolder drop called');
+    this.cbService.broadcast('droppedInPlaceHolder',
+    {event, node: this.element.nativeElement.querySelector('[nodeid]').getAttribute('nodeid')});
+    // stop propogration.
+    event.stopPropagation();
+  }
+
+  allowDrop(event) {
+    console.log('PlaceHolder drop called');
+    event.prevendDefault();
+    event.stopPropagation();
+  }
+  */
+}
 
 // -------------- /node components ------------------------------------
 

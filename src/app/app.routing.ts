@@ -7,7 +7,7 @@ import {CallbackSdComponent} from './components/callback-ui/callback-sd/callback
 import { CallbackDesignerComponent } from './components/callback-ui/callback-designer/callback-designer.component';
 
 export const AppRoutes: Routes = [
-  { path: '', redirectTo: 'home', pathMatch: 'full' },
+  { path: '', redirectTo: 'callback', pathMatch: 'full' },
   { path: 'home', component: FlowchartComponent },
   { path: 'data', component: DatasetComponent },
   {path: 'sd', component: StateDiagramComponent},

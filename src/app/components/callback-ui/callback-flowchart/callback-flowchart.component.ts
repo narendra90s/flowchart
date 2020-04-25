@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, Input, OnChanges } from '@angular/core';
 import { jsPlumbSurfaceComponent, jsPlumbService } from 'jsplumbtoolkit-angular';
 import { jsPlumbToolkit, Surface, Dialogs, DrawingTools, jsPlumbToolkitUtil } from 'jsplumbtoolkit';
-import { QuestionNodeComponent, ActionNodeComponent, StartNodeComponent, OutputNodeComponent } from 'src/app/flowchart';
+import { QuestionNodeComponent, ActionNodeComponent, StartNodeComponent, OutputNodeComponent, PlaceHolderComponent } from 'src/app/flowchart';
 import { Callback, Action, ActionData, ActionApiCallingNodes, ConditionNode, JtkNodeParam } from 'callback';
 import { ActionApi, ActionApiList } from 'src/app/interface/action-api';
 import { Source } from 'webpack-sources';
@@ -50,7 +50,8 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
   nodeTypes = [
     { label: "Question", type: "question", w: 120, h: 120 },
     { label: "Action", type: "action", w: 120, h: 70 },
-    { label: "Output", type: "output", w: 120, h: 70 }
+    { label: "Output", type: "output", w: 120, h: 70 },
+    {label: "PlaceHolder", type: "placeholder", w: 120, h: 70}
   ];
 
   constructor(private $jsplumb: jsPlumbService, private cdService: CallbackDataServiceService) {
@@ -213,8 +214,168 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
 
     this.toolkit.bind("dataUpdated", this.dataUpdateListener.bind(this));
 
+    // Attach event for droppedInPlaceHolder.
+    this.cdService.on('droppedInPlaceHolder').subscribe(data => {
+      console.log('droppedInPlaceHolder occurred with data - ', data);
+    });
+
+    // register nodeAdded.
+    this.toolkit.bind('nodeAdded', (param) => {
+      let data = param.data;
+      //data, node, eventInfo. 
+      console.log('nodeAdded data - ', param);
+      // eventInfo will only come when drag and drop.
+      if (param.eventInfo) {
+        // check if condition node added then add another two nodes.
+        if (data.type === 'question') {
+          console.log('New question node added by user.')
+
+          // Add the edge with previous node.
+          let aboveNode = this.findAboveNode(data);
+
+          console.log('aboveNode - ', aboveNode);
+
+          if (aboveNode) {
+            this.toolkit.addEdge({
+              source: aboveNode.id,
+              target: data.id
+            });
+          }
+
+
+          // add placeholder nodes. 
+          let leftNodePosisiton = {left: data.left - (50 + 180), top: data.top + (70 + 50)};
+          let rightNodePostition = {left: data.left + (50 + 180), top: data.top + (70 + 50)};
+          // add new nodes.
+          // Add two more placeholder nodes.
+          // ID should be generated automatically.
+          this.toolkit.addNode({type: 'placeholder',
+            id: data.id + '_left_ph',
+            w: 100, h: 70,
+            text: 'Place Holder',
+            top: leftNodePosisiton.top,
+            left: leftNodePosisiton.left,
+            data: {
+              label: 'yes',
+              type: 'connection',
+              id: jsPlumbToolkitUtil.uuid()
+            }
+          });
+          this.toolkit.addNode({
+            type: 'placeholder',
+            id: data.id + '_right_ph',
+            w: 100, h: 70,
+            text: 'Place Holder',
+            top: rightNodePostition.top,
+            left: rightNodePostition.left,
+            data: {
+              label: 'no',
+              type: 'connection',
+              id: jsPlumbToolkitUtil.uuid()
+            }
+          });
+        } 
+      } else {
+        if (data.type === 'placeholder') {
+          // Connect it with it's parent. 
+          let parentId = data.id.replace(/_left_ph$/, '').replace(/_right_ph$/, '');
+          this.toolkit.addEdge({
+            source: parentId,
+            target: data.id
+          });
+
+          // make these node droppable. 
+          setTimeout(() => {
+            this.makePlaceHolderDroppable(data.id);
+          }, 100);
+        }
+      }
+    });
+
     console.log("Flow Diagram onInit ===>", this.flowChartData, this.toolkit);
 
+  }
+
+  makePlaceHolderDroppable(nodeid: string) {
+    // search for Element.
+    const element: any = document.querySelector('[nodeid="' + nodeid + '"]');
+    if (element != null) {
+      element.addEventListener('drop', (event) => {
+        console.log('Dropped in Placeholder '+ nodeid + '. EventData - ', event);
+        event.stopPropagation();
+      });
+
+      element.addEventListener('dragover', (event) => {
+        console.log('dragover in placeholder ' +  nodeid + '.');
+        event.preventDefault();
+      });
+    }
+    
+  }
+
+  // data will have node information like id, type, top, left etc.
+  findAboveNode(data: any): any {
+    if (this.action === null) {
+      return null;
+    }
+
+    let hasJData = (jData) => {
+      return jData && !isNaN(jData.top) && !isNaN(jData.left);
+    }
+
+    let nodeHasEdge = {};
+    let connectedNodes = [];
+    // iteate all aNdoes and cNodes to find the one which does not have edge and on top of it. 
+    this.action.data.edges.forEach(edge => {
+      nodeHasEdge[edge.source] = true;
+    });
+
+    // filter those do not have edge.
+    this.action.data.aNOdes.forEach(aNode => {
+      // Need to filter above nodes only.
+      if (!nodeHasEdge[aNode.id] && (hasJData(aNode.jData) && aNode.jData.top > data.top)) {
+        connectedNodes.push(aNode);
+      }
+    });
+
+    this.action.data.cNodes.forEach(cNode => {
+      if (!nodeHasEdge[cNode.id] && (hasJData(cNode.jData) && cNode.jData.top > data.top)) {
+        connectedNodes.push(cNode);
+      }
+    });
+
+    // Find the node which is most close.
+    let aboveNode = null, minDistance = Number.MAX_SAFE_INTEGER;
+
+    // Check with start node too.
+    if (!connectedNodes['start'] && hasJData(this.action.data.startNodeJData)) {
+      let jDataForStart = this.action.data.startNodeJData;
+      // get it's distance form current node.
+      let distance = Math.sqrt(
+        Math.pow((Math.abs(data.top - jDataForStart.top)), 2) +
+        Math.pow((Math.abs(data.left - jDataForStart.left)), 2)
+      );
+      minDistance = distance;
+
+      aboveNode = {
+        id: 'start'
+      };
+    }
+    connectedNodes.forEach((node) => {
+      let distance = Math.sqrt(
+        Math.pow((Math.abs(data.top - node.jData.top)), 2) +
+        Math.pow((Math.abs(data.left - node.jData.left)), 2)
+      );
+
+      console.log('diagonal distance - ' +  distance);
+
+      if (distance < minDistance) {
+        aboveNode = node;
+        minDistance = distance;
+      }
+    });
+
+    return aboveNode;
   }
 
   updateBTInfo(toolKitData: any) {
@@ -292,6 +453,12 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
         this.pendingConditionJTKCallback = callback;
         this.pendingConditionJTKData = data;
         return;
+      } else {
+        console.log('nodeFactory called for unknown node - ', type, data);
+        // Check if id it not there then add a new one. 
+        data.id = jsPlumbToolkitUtil.uuid();
+        //create it. 
+        callback(data);
       }
       /*
             Dialogs.show({
@@ -327,6 +494,7 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
       "ActionNode": ActionNodeComponent,
       "StartNode": StartNodeComponent,
       "OutputNode": OutputNodeComponent,
+      "PlaceHolder": PlaceHolderComponent
     })[typeId]
   }
 
@@ -392,6 +560,10 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
       "action": {
         parent: "selectable",
         template: "ActionNode"
+      }, 
+      "placeholder": {
+        parent: 'selectable',
+        template: 'PlaceHolder'
       }
     },
     edges: {
@@ -461,8 +633,10 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
 
   renderParams = {
     layout: {
-      type: "Spring"
+      type: "Spring",
+      magnetize: true /*By Default it is true */
     },
+    refreshLayoutOnEdgeConnect: true,
     events: {
       canvasClick: (e: Event) => {
         this.toolkit.clearSelection();
@@ -535,7 +709,7 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
     let apiNodeData = new ActionApiCallingNodes();
     apiNodeData.id = 'api_' + this.action.data.aNOdes.length;
     apiNodeData.text = $event.api.api;
-    apiNodeData.data = $event;
+    apiNodeData.data = {api: $event.api.api, id: $event.api.id, argument: $event.arguments};
     this.action.data.aNOdes.push(apiNodeData);
 
     console.log("actual flowchart data", this.flowChartData, $event, apiNodeData);
@@ -567,6 +741,12 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
     conditionNodeData.data = $event;
 
     this.action.data.cNodes.push(conditionNodeData);
+
+
+
+    // TODO: add these two nodes with these placeholder.
+
+
 
     console.log('handleConditionAdded completed', this.flowChartData, $event);
   }
