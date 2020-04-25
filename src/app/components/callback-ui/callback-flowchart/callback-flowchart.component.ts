@@ -37,6 +37,8 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
   pendingConditionJTKCallback: Function = null;
   pendingConditionJTKData: any = null;
 
+  lastPlaceHolderSource: string = null;
+
   @ViewChild(jsPlumbSurfaceComponent) surfaceComponent: jsPlumbSurfaceComponent;
 
   toolkit: jsPlumbToolkit;
@@ -226,22 +228,33 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
       console.log('nodeAdded data - ', param);
       // eventInfo will only come when drag and drop.
       if (param.eventInfo) {
+        if (data.type === 'question' || data.type === 'action') {
+          // try to add to previous node. 
+          if (this.lastPlaceHolderSource != null) {
+            this.toolkit.addEdge({
+              source: this.lastPlaceHolderSource,
+              target: data.id
+            });
+          } else {
+            // Add the edge with previous node.
+            const aboveNode = this.findAboveNode(data);
+
+            console.log('aboveNode - ', aboveNode);
+
+            if (aboveNode) {
+              this.toolkit.addEdge({
+                source: aboveNode.id,
+                target: data.id
+              });
+            }
+          }
+        }
+
+        this.lastPlaceHolderSource = null;
+
         // check if condition node added then add another two nodes.
         if (data.type === 'question') {
           console.log('New question node added by user.')
-
-          // Add the edge with previous node.
-          let aboveNode = this.findAboveNode(data);
-
-          console.log('aboveNode - ', aboveNode);
-
-          if (aboveNode) {
-            this.toolkit.addEdge({
-              source: aboveNode.id,
-              target: data.id
-            });
-          }
-
 
           // add placeholder nodes. 
           let leftNodePosisiton = {left: data.left - (50 + 180), top: data.top + (70 + 50)};
@@ -303,12 +316,12 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
       element.addEventListener('drop', (event) => {
         console.log('Dropped in Placeholder '+ nodeid + '. EventData - ', event);
         event.stopPropagation();
-      });
+      }, true);
 
       element.addEventListener('dragover', (event) => {
         console.log('dragover in placeholder ' +  nodeid + '.');
         event.preventDefault();
-      });
+      }, true);
     }
     
   }
@@ -429,12 +442,48 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
     console.log("toolKitData on refresh", tempToolkitData, this.callback);
   }
 
+  // react - w, h, left, top and point - left, top
+  isInsideRectange(react: any, point: any): boolean {
+    return ((react.left - (react.w/2 + 20) < point.left) && 
+       (react.left + (react.w/2 + 20) > point.left) && 
+       (react.top - (react.h/2 + 20) < point.top) && 
+       (react.top + (react.h/2 + 20) > point.top)) 
+  }
+
+  // tslint:disable-next-line: member-ordering
   toolkitParams = {
     nodeFactory: (type: string, data: any, callback: Function) => {
       if (this.action == null) {
         console.log('No Action selected.');
         return;
       }
+      
+      if (type === 'action' || type === 'question') {
+        // in data there is left and top.
+
+        console.log('Checking for placeholder element - ', data);
+        this.toolkit.getNodes().some(node => {
+          if (node.data.type === 'placeholder') {
+            // check if point lie in between node.
+            if (this.isInsideRectange(node.data, data)) {
+              // remove this node and take it's position.
+              data.left = node.data.left;
+              data.top = node.data.top;
+
+              let edges = node['getAllEdges']();
+              if (edges.length ) {
+                this.lastPlaceHolderSource = edges[0].source.id;
+              }
+
+              console.log('last placeholder source - ' +  this.lastPlaceHolderSource);
+              this.toolkit.removeNode(node);
+              return true;
+            }
+          }
+          return false;
+        });
+      }
+
       console.log('Dropped node type - ', type);
       if (type === 'action') {
         // get api name first. 
