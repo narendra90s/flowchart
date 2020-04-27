@@ -263,6 +263,8 @@ export class CallbackSdComponent implements OnInit, OnChanges {
     this.updateBTInfo(tempToolkitData);
 
 
+    this.callback.dirty = true;
+
     console.log("State Data on callback", this.callback, tempToolkitData, this.stateEdge);
   }
 
@@ -586,6 +588,7 @@ export class CallbackSdComponent implements OnInit, OnChanges {
           let state = new State('State_' + this.callback.states.length, StateType.NORMAL, Jdata);
           state.id = 'state_' + this.callback.states.length;
           this.callback.states.push(state);
+          this.callback.dirty = true;
           console.log('Emitting stateAdded event with data - this.Jdata ', state);
           // this.activeTabIndex = CallbackDesignerComponent.TriggerActionSideBar;
           console.log("activeTab - ", this.activeTabIndex);
@@ -894,6 +897,7 @@ export class CallbackSdComponent implements OnInit, OnChanges {
       let action = new Action(this.newActionName);
       action.id = 'action_' + this.callback.actions.length;
       this.callback.actions.push(action);
+      this.callback.dirty = true;
       // Note: We can have same callback for multiple trigger. That is why need to maintain mapping.
 
       this.pendingActionData.text = action.name;

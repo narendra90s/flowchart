@@ -61,6 +61,7 @@ export class ConditionData {
 
 export class ConditionNode {
     type: number;
+    dirty = false;
     data: ConditionData
     id: string;
     text: string;
@@ -77,6 +78,7 @@ export class ActionApiData {
 }
 
 export class ActionApiCallingNodes {
+    dirty = false;
     id: string;
     text: string;
     data: ActionApiData;
@@ -99,6 +101,8 @@ export class ActionData {
 }
 
 export class Action {
+    dirty: boolean = false;
+    placeHolderNodes = 0;
     state: string;
     stateId: string;
     triggerId: string;
@@ -149,6 +153,7 @@ export class CallBackData {
 }
 
 export class Callback {
+    dirty: boolean = false;
     states: State[] = [];
     triggers: Trigger[] = [];
     actions: Action[] = [];

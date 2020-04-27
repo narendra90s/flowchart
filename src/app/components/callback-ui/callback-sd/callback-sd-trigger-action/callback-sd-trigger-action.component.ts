@@ -9,7 +9,7 @@ import { Callback, State, Trigger, Action, ActionData } from 'callback';
 export class CallbackSdTriggerActionComponent implements OnInit, OnChanges {
 
 
-  @Input() callback = null;
+  @Input() callback: Callback = null;
   @Input() currentState: State;
   @Output() flowChartFlag: EventEmitter<any> = new EventEmitter();
   @Output() currentAction: EventEmitter<any> = new EventEmitter();
@@ -76,6 +76,7 @@ export class CallbackSdTriggerActionComponent implements OnInit, OnChanges {
       action.stateId = this.selectedTriggerForAction.stateId;
       action.triggerId = this.selectedTriggerForAction.id;
       this.callback.actions.push(action);
+      this.callback.dirty = true;
       // this.listOfAction = this.callback.actions;
       // Note: We can have same callback for multiple trigger. That is why need to maintain mapping.
 
@@ -122,6 +123,7 @@ export class CallbackSdTriggerActionComponent implements OnInit, OnChanges {
     this.showTriggerDialog = false;
     this.newTriggerName = null;
     this.callback.triggers.push(trigger);
+    this.callback.dirty = true;
     let tempTrigger = { label: this.newTriggerName, value: this.newTriggerName };
     this.listOfTrigger.push(tempTrigger);
     // this.listOfTrigger = this.callback.triggers;

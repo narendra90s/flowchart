@@ -66,7 +66,9 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
   ngOnChanges() {
     // If action got change then initialize flowchart.
     if (this.action != null) {
-      
+      // reset placeholder node count.
+      this.action.placeHolderNodes = 0;
+
       if (this.toolkit) {
         this.toolkit.clear();
       }
@@ -292,6 +294,8 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
               id: jsPlumbToolkitUtil.uuid()
             }
           });
+          // increase placeholder count.
+          this.action.placeHolderNodes += 2;
         } 
       } else {
         if (data.type === 'placeholder') {
@@ -482,7 +486,10 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
     let tempToolkitData = Object(this.toolkit.exportData());
     this.action.data.edges = tempToolkitData.edges;
 
-    this.updateBTInfo(tempToolkitData);   
+    this.updateBTInfo(tempToolkitData);
+
+    this.callback.dirty = true;
+    this.action.dirty = true;
 
 
     console.log("toolKitData on refresh", tempToolkitData, this.callback);
@@ -523,6 +530,8 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
 
               console.log('last placeholder source - ' +  this.lastPlaceHolderSource);
               this.toolkit.removeNode(node);
+              // adjust placeholder nodes count.
+              this.action.placeHolderNodes --;
               return true;
             }
           }
@@ -546,7 +555,13 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
         // This should be populated on form update. 
         apiNodeData.text = api.api + '(...)';
         apiNodeData.data = {api, argument: null};
+        // mark this as dirty as not put valid data yet.
+        apiNodeData.dirty = true;
         this.action.data.aNOdes.push(apiNodeData);
+
+        // mark the action and callback both dirty.
+        this.action.dirty = true;
+        this.callback.dirty = true;
 
         callback(data);
 
@@ -567,8 +582,12 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
         conditionNodeData.id = data.id;
         conditionNodeData.text = '...';
         conditionNodeData.data = null;
+        // mark it dirty. 
+        conditionNodeData.dirty = true;
 
         this.action.data.cNodes.push(conditionNodeData);
+        this.action.dirty = true;
+        this.callback.dirty = true;
 
         callback(data);
 
@@ -867,6 +886,11 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
       aNode.text = $event.api.api + '(' +  args + ')';
       this.editNode.text = aNode.text;
 
+      aNode.dirty = false;
+      
+      this.action.dirty = true;
+      this.callback.dirty = true;
+
       // In case gotoState api called then trigger event. and do handling for edges at sd. 
       if ($event.api.id === 'gotoState') {
         console.log("on goto", $event.api.id);
@@ -900,6 +924,13 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
       cNode.data = $event;
       cNode.text = text;
       this.editNode.text = text;
+
+      // Its fixed. 
+      cNode.dirty = false;
+
+      // mark dirty.
+      this.action.dirty = true;
+      this.callback.dirty = true;
     }
 
     this.editNode = null;
