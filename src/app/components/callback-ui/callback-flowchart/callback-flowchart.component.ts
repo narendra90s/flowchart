@@ -484,7 +484,12 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
     console.log('JSPlumb data updated in flow Diagram - ', this.toolkit.exportData());
     // TODO: update jsplumb data.
     let tempToolkitData = Object(this.toolkit.exportData());
-    this.action.data.edges = tempToolkitData.edges;
+
+    // filter placeholder edges. 
+    this.action.data.edges = tempToolkitData.edges.filter(edge => {
+      return (!(edge.source.endsWith('_right_ph') || edge.source.endsWith('_left_ph') ||
+          edge.target.endsWith('_right_ph') || edge.target.endsWith('_left_ph')));
+    });
 
     this.updateBTInfo(tempToolkitData);
 
@@ -887,7 +892,7 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
       this.editNode.text = aNode.text;
 
       aNode.dirty = false;
-      
+
       this.action.dirty = true;
       this.callback.dirty = true;
 
