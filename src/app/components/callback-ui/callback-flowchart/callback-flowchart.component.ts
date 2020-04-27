@@ -237,7 +237,7 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
             });
           } else {
             // Add the edge with previous node.
-            const aboveNode = this.findAboveNode(data);
+            const aboveNode = this.findAboveNode2(data);
 
             console.log('aboveNode - ', aboveNode);
 
@@ -324,6 +324,47 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
       }, true);
     }
     
+  }
+
+
+  findAboveNode2(data: any): any {
+    if (this.action === null) {
+      return null;
+    }
+
+    let nodeAboveThis = null;
+    // check for node above this node.
+    this.toolkit.getNodes().forEach(node => {
+      // get all nodes above this node.
+      const rect = node.data;
+      if (rect.top && rect.left &&
+        (rect.left > (data.left - (data.w / 2 + 20))) &&
+        (rect.left < (data.left + (data.w / 2 + 20))) &&
+        (rect.top < data.top)) {
+          // this node is above the
+          if (nodeAboveThis) {
+            if (nodeAboveThis.data.top < node.data.top) {
+              nodeAboveThis = node;
+            }
+          } else {
+            nodeAboveThis = node;
+          }
+        }
+    });
+
+    // if above node found then check it has connection or not.
+    if (nodeAboveThis != null) {
+      // check for it's edges.
+      let edges = nodeAboveThis['getAllEdges']();
+      if (!edges.some(edge => {
+        if (edge.source === nodeAboveThis.data.id) {
+          return true;
+        }
+      })) {
+        return nodeAboveThis.data;
+      }
+    }
+    return null;
   }
 
   // data will have node information like id, type, top, left etc.
