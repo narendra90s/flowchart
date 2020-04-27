@@ -16,6 +16,7 @@ import { ExtractdataComponent } from '../extractdata/extractdata.component';
 export class CallbackActionapiDialogComponent implements OnInit, OnChanges {
 
   @Input() api: ActionApi;
+  @Input() args: any;
   // It is needed to show state in state Api.
   @Input() callback: Callback;
   @Output() actionApiSubmit: EventEmitter<any> = new EventEmitter();
@@ -70,9 +71,15 @@ export class CallbackActionapiDialogComponent implements OnInit, OnChanges {
   toFormGroup(args: ApiArgument[]) {
     const group: any = {};
 
+    // set the initial value from args input.
+    // TODO: format the args.
     args.forEach(argument => {
       console.log('toFormGroup : argiment name - ', argument.name);
-      group[argument.name] = argument.required ? new FormControl('', Validators.required) : new FormControl('');
+      let initialValue = '';
+      if (this.args && typeof this.args[argument.name] === 'string') {
+        initialValue = this.args[argument.name];
+      }
+      group[argument.name] = argument.required ? new FormControl(initialValue, Validators.required) : new FormControl('');
     });
 
     return new FormGroup(group);

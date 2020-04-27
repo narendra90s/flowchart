@@ -1,4 +1,4 @@
-import { Component, OnInit, OnChanges, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, OnChanges, EventEmitter, Output, Input } from '@angular/core';
 import { Operator } from 'src/app/interface/action-api';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { validateConfig } from '@angular/router/src/config';
@@ -12,6 +12,7 @@ import { CallbackDataServiceService } from 'src/app/service/callback-data-servic
 export class CallbackActionConditionDialogComponent implements OnInit, OnChanges {
 
   @Output() conditionAdded: EventEmitter<any> = new EventEmitter();
+  @Input() args: any;
   form: FormGroup = null;
 
   // TODO: operator list has to be generated dynamically on the basis of operand type.
@@ -23,12 +24,6 @@ export class CallbackActionConditionDialogComponent implements OnInit, OnChanges
 
   constructor(private dpData: CallbackDataServiceService) {
     this.operatorList = Operator.operatorList;
-    // initialise form group.
-    this.form = new FormGroup({
-      lhs: new FormControl('', Validators.required),
-      rhs: new FormControl('', Validators.required),
-      operator: new FormControl('', Validators.required),
-    });
 
 
   }
@@ -42,14 +37,28 @@ export class CallbackActionConditionDialogComponent implements OnInit, OnChanges
   ngOnInit() {
     this.getGroupedVarData();
 
-    //register for change. 
+    this.setForm();
+
+    // register for change. 
     this.dpData.on('addedLocalVar').subscribe(data => this.getGroupedVarData());
     this.dpData.on('addedDataPoint').subscribe(data => this.getGroupedVarData());
+  }
+
+  setForm() {
+    let args = this.args || {};
+    // initialise form group.
+    this.form = new FormGroup({
+      lhs: new FormControl(args['lhs'] || '', Validators.required),
+      rhs: new FormControl(args['rhs'] || '', Validators.required),
+      operator: new FormControl(args['operator'] || '', Validators.required),
+    });
   }
 
   ngOnChanges() {
     console.log('ngOnChanges - called', this.extractedData, "\n", this.LocalVar);
 
+    // new args may received.
+    this.setForm();
   }
 
   onSubmit() {

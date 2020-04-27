@@ -26,16 +26,18 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
     edges: []
   };
 
+  // It will be used to edit node.
+  editNode = null;
+
   // Handling input for api.
   showApiDialog = false;
   currentActionApi: ActionApi = null;
-  pendingApiJTKCallback: Function = null;
-  pendingApiJTKData: any = null;
+  currentActionApiArgs: any = null;
 
   // Handling for condition dialog.
   showConditionDialog = false;
-  pendingConditionJTKCallback: Function = null;
-  pendingConditionJTKData: any = null;
+  currentConditionArg = null;
+
 
   lastPlaceHolderSource: string = null;
 
@@ -216,10 +218,13 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
 
     this.toolkit.bind("dataUpdated", this.dataUpdateListener.bind(this));
 
-    // Attach event for droppedInPlaceHolder.
-    this.cdService.on('droppedInPlaceHolder').subscribe(data => {
-      console.log('droppedInPlaceHolder occurred with data - ', data);
+    this.cdService.on('editActionNode').subscribe((data) => {
+      this.editApiNode(data);
     });
+
+    this.cdService.on('editQuestionNode').subscribe((data) => {
+      this.editConditionNode(data);
+    })
 
     // register nodeAdded.
     this.toolkit.bind('nodeAdded', (param) => {
@@ -527,21 +532,49 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
 
       console.log('Dropped node type - ', type);
       if (type === 'action') {
-        // get api name first. 
-        let api = ActionApiList.getApiData(data.api);
-        if (api === null) return;
+        // get api name first.
+        const api = ActionApiList.getApiData(data.api);
+        if (api === null) { return; }
+
+        // add node.
+        data.text = api.api + '(...)';
+        data.id = 'api_' + this.action.data.aNOdes.length;
+
+        // add aNodes.
+        const apiNodeData = new ActionApiCallingNodes();
+        apiNodeData.id = data.id;
+        // This should be populated on form update. 
+        apiNodeData.text = api.api + '(...)';
+        apiNodeData.data = {api, argument: null};
+        this.action.data.aNOdes.push(apiNodeData);
+
+        callback(data);
+
+        // open edit popup.
+        this.editNode = data;
+        this.showApiDialog = true;
+        this.currentActionApi = api;
+        // Initially there is no data available.
+        this.currentActionApiArgs = null;
 
         console.log('api name - ', data.api, ' data - ', api);
-
-        this.currentActionApi = api;
-        this.pendingApiJTKData = data;
-        this.pendingApiJTKCallback = callback;
-        this.showApiDialog = true;
         return;
-      } else if (type == 'question') {
+      } else if (type === 'question') {
+        data.text = '...';
+        data.id = 'condition_' + this.action.data.cNodes.length;
+
+        const conditionNodeData = new ConditionNode();
+        conditionNodeData.id = data.id;
+        conditionNodeData.text = '...';
+        conditionNodeData.data = null;
+
+        this.action.data.cNodes.push(conditionNodeData);
+
+        callback(data);
+
         this.showConditionDialog = true;
-        this.pendingConditionJTKCallback = callback;
-        this.pendingConditionJTKData = data;
+        this.currentConditionArg = null;
+        this.editNode = data;
         return;
       } else {
         console.log('nodeFactory called for unknown node - ', type, data);
@@ -586,7 +619,7 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
       "OutputNode": OutputNodeComponent,
       "PlaceHolder": PlaceHolderComponent
     })[typeId]
-  }
+}
 
   getToolkit(): jsPlumbToolkit {
     return this.toolkit;
@@ -770,6 +803,45 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
     console.log('flowchart being destroyed');
   }
 
+
+  getNode(id: string, type: string): any {
+    if (this.action == null) {
+      return null;
+    }
+
+    const list: any[] = type === 'a' ? this.action.data.aNOdes : this.action.data.cNodes;
+    let qnode = null;
+    list.some((node: any) => {
+      if (node.id === id) {
+        qnode = node;
+        return true;
+      }
+    });
+    return qnode;
+  }
+
+  getANode(id: string): ActionApiCallingNodes {
+    return this.getNode(id, 'a');
+  }
+
+  getCNode(id: string): ConditionNode {
+    return this.getNode(id, 'c');
+  }
+
+
+
+  // argument is node obj. It will comtain id too.
+  editApiNode(data) {
+    const aNode = this.getANode(data.id);
+
+    if (aNode != null) {
+      this.editNode = data;
+      this.showApiDialog = true;
+      this.currentActionApi = aNode.data.api;
+      this.currentActionApiArgs = aNode.data.argument;
+    }
+  }
+
   // Handling for action api.
   handleActionApiAdded($event) {
     // TODO: set action.
@@ -786,28 +858,34 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
       args += `${arg.name}:${value[arg.name]}`;
     });
 
-    // TODO: show the complete data.
-    // this.pendingApiJTKData.text = `${this.currentActionApi.api}(${args})`;
-    this.pendingApiJTKData.text = this.currentActionApi.api;
-    this.pendingApiJTKData.id = 'api_' + this.action.data.aNOdes.length;
-    this.pendingApiJTKCallback(this.pendingApiJTKData);
-    this.currentActionApi = null;
-    this.pendingApiJTKCallback = null;
-    this.pendingApiJTKData = null;
+    // get the anode.
+    const aNode = this.getANode(this.editNode.id);
+
+    if (aNode != null) {
+      aNode.data.argument = $event.argument;
+      // TODO: update text.
+      aNode.text = $event.api.api + '(' +  args + ')';
+      this.editNode.text = aNode.text;
+
+      // In case gotoState api called then trigger event. and do handling for edges at sd. 
+      if ($event.api.id === 'gotoState') {
+        console.log("on goto", $event.api.id);
+        this.cdService.broadcast('refreshSDEdge', $event.argument.stateName);
+      }
+    }
+
+    this.editNode = null;
     this.showApiDialog = false;
+    this.currentActionApi = null;
+    this.currentActionApiArgs = null;
+  }
 
-    let apiNodeData = new ActionApiCallingNodes();
-    apiNodeData.id = 'api_' + this.action.data.aNOdes.length;
-    apiNodeData.text = $event.api.api;
-    apiNodeData.data = {api: $event.api.api, id: $event.api.id, argument: $event.arguments};
-    this.action.data.aNOdes.push(apiNodeData);
-
-    console.log("actual flowchart data", this.flowChartData, $event, apiNodeData);
-
-    // In case gotoState api called then trigger event. and do handling for edges at sd. 
-    if ($event.api.id === 'gotoState') {
-      console.log("on goto", $event.api.id);
-      this.cdService.broadcast('refreshSDEdge', $event.argument.stateName);
+  editConditionNode(data) {
+    const cNode = this.getCNode(data.id);
+    if (cNode !== null) {
+      this.editNode = data;
+      this.showConditionDialog = true;
+      this.currentConditionArg = cNode.data;
     }
   }
 
@@ -816,27 +894,17 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
     const data = $event;
     // TODO: instead of showing name for operator, better to show sign eg. >=
     const text = `'${data.lhs}' ${data.operator.name} ${data.rhs}`;
-    this.pendingConditionJTKData.id = 'condition_' + this.action.data.cNodes.length;
-    this.pendingConditionJTKData.text = text;
-    this.pendingConditionJTKCallback(this.pendingConditionJTKData);
 
-    this.pendingConditionJTKCallback = null;
-    this.pendingConditionJTKData = null;
+    const cNode = this.getCNode(this.editNode.id);
+    if (cNode !== null) {
+      cNode.data = $event;
+      cNode.text = text;
+      this.editNode.text = text;
+    }
+
+    this.editNode = null;
     this.showConditionDialog = false;
-
-
-    let conditionNodeData = new ConditionNode();
-    conditionNodeData.id = 'condition_' + this.action.data.cNodes.length;
-    conditionNodeData.text = $event.condition;
-    conditionNodeData.data = $event;
-
-    this.action.data.cNodes.push(conditionNodeData);
-
-
-
-    // TODO: add these two nodes with these placeholder.
-
-
+    this.currentConditionArg = null;
 
     console.log('handleConditionAdded completed', this.flowChartData, $event);
   }

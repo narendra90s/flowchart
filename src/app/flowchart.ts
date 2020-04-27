@@ -53,12 +53,28 @@ class BaseEditableNodeComponent extends BaseNodeComponent {
 // ----------------- question node -------------------------------
 
 @Component({ templateUrl:"templates/question.html" })
-export class QuestionNodeComponent extends BaseEditableNodeComponent { }
+export class QuestionNodeComponent extends BaseEditableNodeComponent {
+  constructor(private cbService: CallbackDataServiceService) {
+    super();
+  }
+
+  editNode(data) {
+    this.cbService.broadcast('editQuestionNode', data);
+  }
+ }
 
 // ----------------- action node -------------------------------
 
 @Component({ templateUrl:"templates/action.html" })
-export class ActionNodeComponent extends BaseEditableNodeComponent  { }
+export class ActionNodeComponent extends BaseEditableNodeComponent  { 
+  constructor(private cbService: CallbackDataServiceService) {
+    super();
+  }
+
+  editNode(data) {
+    this.cbService.broadcast('editActionNode', data);
+  }
+}
 
 @Component({ templateUrl:"templates/SDAction.html" })
 export class SDActionNodeComponent extends BaseEditableNodeComponent  { 

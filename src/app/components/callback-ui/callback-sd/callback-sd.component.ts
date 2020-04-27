@@ -103,7 +103,7 @@ export class CallbackSdComponent implements OnInit, OnChanges {
     let edges = [];
     this.callback.actions.forEach(action => {
       action.data.aNOdes.forEach(node => {
-        if (node.data.api === 'CAVNV.sb.gotoState') {
+        if (node.data.api.api === 'CAVNV.sb.gotoState') {
           let srcState = action.stateId;
           let dstState;
           if (node.data.argument["stateName"] === 'start') {
