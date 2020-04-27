@@ -278,7 +278,7 @@ export class CallbackDesignerComponent implements OnInit {
   selectedCallback(callbackEntry) {
     console.log('select Called', callbackEntry);
     // Check if current callback is dirty then first ask to save.
-    if (this.callbackEntry && this.callbackEntry !== callbackEntry.id && this.callback.dirty) {
+    if (this.callbackEntry && this.callbackEntry.name !== callbackEntry.name && this.callback.dirty) {
       alert('First save current callback - \'' + this.callbackEntry.name +'\'');
       return;
     }
@@ -305,21 +305,23 @@ export class CallbackDesignerComponent implements OnInit {
   // TODO: acknowledge by message that successfully saved.
   saveCallback() {
     if (this.callbackEntry) {
-      // Check if current action having some dirty nodes, then prompt error. 
-      let dirtyNodesPresent = this.currentAction.data.aNOdes.some(node => node.dirty);
+      if (this.currentAction != null) {
+        // Check if current action having some dirty nodes, then prompt error. 
+        let dirtyNodesPresent = this.currentAction.data.aNOdes.some(node => node.dirty);
 
-      dirtyNodesPresent = dirtyNodesPresent || this.currentAction.data.cNodes.some(node => node.dirty);
+        dirtyNodesPresent = dirtyNodesPresent || this.currentAction.data.cNodes.some(node => node.dirty);
 
-      if (dirtyNodesPresent) {
-        alert('Can not save, First correct error in current action');
-        return;
-      }
-
-      // Check if any placeholder left then show warning. 
-      if (this.currentAction.placeHolderNodes > 0) {
-        const yes = confirm('Placeholder nodes will be removed. Do you want to continue ?');
-        if (!yes) {
+        if (dirtyNodesPresent) {
+          alert('Can not save, First correct error in current action');
           return;
+        }
+
+        // Check if any placeholder left then show warning. 
+        if (this.currentAction.placeHolderNodes > 0) {
+          const yes = confirm('Placeholder nodes will be removed. Do you want to continue ?');
+          if (!yes) {
+            return;
+          }
         }
       }
 
