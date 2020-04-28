@@ -320,13 +320,14 @@ export class CallbackSidebarMenuComponent implements OnInit, OnDestroy {
     const items = document.querySelectorAll('.dragcbitem');
 
     items.forEach(item => {
-      item.setAttribute('draggable', 'true');
-      item.addEventListener('dragstart', (ev: DragEvent) => {
-        const id = item.querySelector('a').getAttribute('id');
-        
-        console.log('condition-dd, dragging element - ' + id);
-        ev.dataTransfer.setData('text', id);
-      });
+      if (item.getAttribute('draggable') !== 'true') {
+        item.setAttribute('draggable', 'true');
+        item.addEventListener('dragstart', (ev: DragEvent) => {
+          const id = item.querySelector('a').getAttribute('id');
+          console.log('condition-dd, dragging element - ' + id);
+          ev.dataTransfer.setData('text', id);
+        });
+      }
     });
   }
 

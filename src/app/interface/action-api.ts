@@ -89,24 +89,8 @@ export class ActionApiList {
             }, {
                 category: 'SPA',
                 label: 'Transaction Start',
-                id: 'cav_nv_ajax_start',
-                api: 'cav_nv_ajax_start',
-                arguments: [{
-                    label: 'Txn Name',
-                    name: 'txn_name',
-                    type: ApiArgumentType.STRING,
-                    required: true
-                }, {
-                    label: 'Data',
-                    name: 'data',
-                    type: ApiArgumentType.STRING,
-                    required: true
-                }]
-            }, {
-                category: 'SPA',
-                label: 'Transaction Report',
-                id: 'cav_nv_ajax_report',
-                api: 'cav_nv_ajax_report',
+                id: 'startTransaction',
+                api: 'CAVNV.startTransaction',
                 arguments: [{
                     label: 'Txn Name',
                     name: 'txn_name',
@@ -121,8 +105,8 @@ export class ActionApiList {
             }, {
                 category: 'SPA',
                 label: 'Transaction End',
-                id: 'cav_nv_ajax_end',
-                api: 'cav_nv_ajax_end',
+                id: 'endTransaction',
+                api: 'CAVNV.endTransaction',
                 arguments: [{
                     label: 'Txn Name',
                     name: 'txn_name',
@@ -271,8 +255,8 @@ export class ActionApiList {
             {
                 category: 'Session_Data',
                 label: 'Set Session Data',
-                id: 'setSessionData',
-                api: 'CAVNV.utils.setSessionData',
+                id: 'cav_nv_set_session_data',
+                api: 'cav_nv_set_session_data',
                 arguments: [{
                     label: 'Key',
                     name: 'key',
@@ -291,7 +275,7 @@ export class ActionApiList {
                 category: 'LoginId',
                 label: 'Set LoginId',
                 id: 'setLoginId',
-                api: 'CAVNV.utils.setLoginId',
+                api: 'cav_nv_set_loginid',
                 arguments: [{
                     label: 'LoginId',
                     name: 'loginid',
@@ -304,8 +288,8 @@ export class ActionApiList {
             {
                 category: 'SessionId',
                 label: 'Set SessionId',
-                id: 'setSessionId',
-                api: 'CAVNV.utils.setSessionId',
+                id: 'cav_nv_set_sessionid',
+                api: 'cav_nv_set_sessionid',
                 arguments: [{
                     label: 'SessionId',
                     name: 'SessionId',
@@ -319,7 +303,7 @@ export class ActionApiList {
                 category: 'LogEvent',
                 label: 'Log Event',
                 id: 'eventName',
-                api: 'CAVNV.utils.eventName',
+                api: 'CAVNV.cav_nv_log_event',
                 arguments: [{
                     label: 'Event Name',
                     name: 'eventName',
@@ -338,7 +322,7 @@ export class ActionApiList {
                 category: 'UserSegment',
                 label: 'Set User Segment',
                 id: 'userSegment',
-                api: 'CAVNV.userSegment',
+                api: 'cav_nv_set_userSegment',
                 arguments: [{
                     label: 'User Segment',
                     name: 'name',
@@ -351,8 +335,8 @@ export class ActionApiList {
             {
                 category: 'CustomMetric',
                 label: 'Custom Metric',
-                id: 'customMetric',
-                api: 'CAVNV.customMetric',
+                id: 'cav_nv_log_customMetrics',
+                api: 'cav_nv_log_customMetrics',
                 arguments: [{
                     label: 'Name',
                     name: 'customMatricName',
@@ -371,7 +355,7 @@ export class ActionApiList {
                 category: 'OrderTotal',
                 label: 'Order Total',
                 id: 'orderTotal',
-                api: 'CAVNV.orderTotal',
+                api: 'cav_nv_set_orderTotal',
                 arguments: [{
                     label: 'Order Total',
                     name: 'oederTotal',
@@ -384,8 +368,8 @@ export class ActionApiList {
             {
                 category: 'Session_State',
                 label: 'Set Session State',
-                id: 'setSessionState',
-                api: 'CAVNV.sb.setSessionState',
+                id: 'set_session_state',
+                api: 'CAVNV.set_session_state',
                 arguments: [{
                     label: 'Session State',
                     name: 'sessionState',

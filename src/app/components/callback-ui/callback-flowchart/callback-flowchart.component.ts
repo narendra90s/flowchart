@@ -303,7 +303,12 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
           let parentId = data.id.replace(/_left_ph$/, '').replace(/_right_ph$/, '');
           this.toolkit.addEdge({
             source: parentId,
-            target: data.id
+            target: data.id,
+            data: {
+              type: 'connection',
+              label: data.id.endsWith('_left_ph') ? 'yes': 'no',
+              id: jsPlumbToolkitUtil.uuid()
+            }
           });
 
           // make these node droppable. 
