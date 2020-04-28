@@ -40,6 +40,7 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
 
 
   lastPlaceHolderSource: string = null;
+  lastPlaceHolderLabel: string = null;
 
   @ViewChild(jsPlumbSurfaceComponent) surfaceComponent: jsPlumbSurfaceComponent;
 
@@ -240,7 +241,11 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
           if (this.lastPlaceHolderSource != null) {
             this.toolkit.addEdge({
               source: this.lastPlaceHolderSource,
-              target: data.id
+              target: data.id,
+              data: {
+                label: this.lastPlaceHolderLabel,
+                type: 'connection'
+              }
             });
           } else {
             // Add the edge with previous node.
@@ -258,6 +263,7 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
         }
 
         this.lastPlaceHolderSource = null;
+        this.lastPlaceHolderLabel = null;
 
         // check if condition node added then add another two nodes.
         if (data.type === 'question') {
@@ -536,6 +542,7 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
               let edges = node['getAllEdges']();
               if (edges.length ) {
                 this.lastPlaceHolderSource = edges[0].source.id;
+                this.lastPlaceHolderLabel = !!edges[0].data ? edges[0].data.label : null;
               }
 
               console.log('last placeholder source - ' +  this.lastPlaceHolderSource);
