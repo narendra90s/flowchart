@@ -493,8 +493,8 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
 
     this.updateBTInfo(tempToolkitData);
 
-    this.callback.dirty = true;
-    this.action.dirty = true;
+    // this.callback.dirty = true;
+    // this.action.dirty = true;
 
 
     console.log("toolKitData on refresh", tempToolkitData, this.callback);

@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter, Output, AfterViewInit, AfterContentInit, Input } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output, AfterViewInit, AfterContentInit, Input, OnDestroy } from '@angular/core';
 import { ActionApi, ActionApiList } from 'src/app/interface/action-api';
 import { TreeNode, MenuItem } from 'primeng/api/public_api';
 import { trigger } from '@angular/animations';
@@ -10,7 +10,7 @@ import { CallbackDataServiceService } from 'src/app/service/callback-data-servic
   templateUrl: './callback-sidebar-menu.component.html',
   styleUrls: ['./callback-sidebar-menu.component.css']
 })
-export class CallbackSidebarMenuComponent implements OnInit {
+export class CallbackSidebarMenuComponent implements OnInit, OnDestroy {
 
   @Output() loaded: EventEmitter<any> = new EventEmitter();
   @Input() selectedTabIndex: number;
@@ -25,6 +25,8 @@ export class CallbackSidebarMenuComponent implements OnInit {
   apiCount = 0;
   timer: any = null;
   items: MenuItem[];
+  dummyItems: MenuItem[] = [];
+  dragItemCheckInterval = null;
 
   constructor(private cbData: CallbackDataServiceService) {
 
@@ -32,6 +34,7 @@ export class CallbackSidebarMenuComponent implements OnInit {
 
     
     this.actionApiList = ActionApiList.apiList;
+
 
     this.items = [{
       label: 'Condition', 
@@ -293,8 +296,90 @@ export class CallbackSidebarMenuComponent implements OnInit {
         clearInterval(this.timer);
       }
     }, 100);
+
+    // get the draggable items
+    setTimeout(() => {
+      this.getDraggableItem();
+    }, Math.random() * 1000);
+
+    // set a timer to check if all draggable items are done.
+     this.dragItemCheckInterval = setInterval(() => {
+      // Check if drag items are populatted. 
+      const items = document.querySelectorAll('.dragcbitem');
+      if (items.length > 0) {
+        clearInterval(this.dragItemCheckInterval);
+
+        // Note: Assuming that all the items will be loaded in once. Otherwise we can put a small delay too. 
+        this.markItemsDraggable();
+      } 
+
+    }, 100);
   }
 
+  markItemsDraggable() {
+    const items = document.querySelectorAll('.dragcbitem');
+
+    items.forEach(item => {
+      item.setAttribute('draggable', 'true');
+      item.addEventListener('dragstart', (ev: DragEvent) => {
+        const id = item.querySelector('a').getAttribute('id');
+        
+        console.log('condition-dd, dragging element - ' + id);
+        ev.dataTransfer.setData('text', id);
+      });
+    });
+  }
+
+  getDraggableItem() {
+    const items = [
+      {
+        label: 'Group 1',
+        icon: 'fa fa-folder',
+        styleClass: '',
+        items: [{
+          label: 'Item1',
+          icon: 'fa fa-file',
+          title: 'drag item1',
+          styleClass: 'dragcbitem',
+          id: 'dragitem11',
+          data: 'dragitem1'
+        }, {
+          label: 'Item2',
+          icon: 'fa fa-file',
+          styleClass: 'dragcbitem',
+          title: 'drag item2',
+          id: 'dragitem12',
+          data: 'dragitem1'
+        }]
+      }, {
+        label: 'Group 2',
+        icon: 'fa fa-folder',
+        styleClass: '',
+        items: [{
+          label: 'Item1',
+          icon: 'fa fa-file',
+          styleClass: 'dragcbitem',
+          title: 'drag item1',
+          id: 'dragitem11',
+          data: 'dragitem1'
+        }, {
+          label: 'Item2',
+          icon: 'fa fa-file',
+          styleClass: 'dragcbitem',
+          title: 'drag item2',
+          id: 'dragitem12',
+          data: 'dragitem2'
+        }]
+      }
+    ];
+
+    items.forEach(item => {
+      this.dummyItems.push(item);
+    });
+
+
+    console.log('dummyItems loaded  - ' +  this.dummyItems.length);
+  }
 
   onDrag($event) {
     console.log('onDrag fired for event - ', $event);
@@ -383,5 +468,11 @@ export class CallbackSidebarMenuComponent implements OnInit {
 
     console.log('tree data for apis - ', apis);
     return apis;
+  }
+  ngOnDestroy() {
+    // clear all timeres which are running. 
+    if (this.dragItemCheckInterval) {
+      clearInterval(this.dragItemCheckInterval);
+    }
   }
 }

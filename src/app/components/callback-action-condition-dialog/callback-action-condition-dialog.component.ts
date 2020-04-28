@@ -121,4 +121,19 @@ export class CallbackActionConditionDialogComponent implements OnInit, OnChanges
     this.dpData.addLocalVar({name: this.localVar});
     this.showLocalVarDialog = false;
   }
+
+  allowDrop(ev) {
+    console.log('condition-dd: allowDrop called');
+    ev.preventDefault();
+  }
+
+  drop(ev, target) {
+    const value = ev.dataTransfer.getData('text');
+    console.log('condition-dd: drop with value - ' +  value);
+    // set the value.
+    switch(target) {
+      case 'lhs' : 
+        this.form.controls['lhs'].patchValue(value);
+    }
+  }
 }

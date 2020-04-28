@@ -6,7 +6,7 @@
         <span>LHS</span>
       </div>
       <div class="ui-g-8" style="float: left">
-        <p-dropdown [group]="true" [filter]="true" [options]="groupedVariableList" [showClear]="true"
+        <p-dropdown (dragover)="allowDrop($event)"  (drop)="drop($event, 'lhs')" [group]="true" [filter]="true" [options]="groupedVariableList" [showClear]="true"
           [formControlName]="'lhs'" placeholder="Select LHS">
           <ng-template let-group pTemplate="group">
             <i [class]="group.value" style="width:20px;vertical-align:middle"></i>

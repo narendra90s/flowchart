@@ -263,7 +263,7 @@ export class CallbackSdComponent implements OnInit, OnChanges {
     this.updateBTInfo(tempToolkitData);
 
 
-    this.callback.dirty = true;
+    // this.callback.dirty = true;
 
     console.log("State Data on callback", this.callback, tempToolkitData, this.stateEdge);
   }

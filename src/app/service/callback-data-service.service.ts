@@ -26,6 +26,7 @@ export class CallbackDataServiceService {
 
    setCallback(cb: Callback) {
      this.currentCallback = cb;
+     this.currentCallback.dirty = false;
      console.log('setCallback called for - ', cb);
    }
 
