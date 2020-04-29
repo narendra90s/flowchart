@@ -26,7 +26,19 @@ export class CallbackDataServiceService {
 
    setCallback(cb: Callback) {
      this.currentCallback = cb;
-     this.currentCallback.dirty = false;
+     if (this.currentCallback) {
+      this.currentCallback.dirty = false;
+      this.currentCallback.counter = this.currentCallback.counter || {
+        'api': 100,
+        'action': 100,
+        'condition': 100,
+        'trigger': 100
+      };
+     }
+     
+
+
+     // Check for counter if not there then add that. 
      console.log('setCallback called for - ', cb);
    }
 

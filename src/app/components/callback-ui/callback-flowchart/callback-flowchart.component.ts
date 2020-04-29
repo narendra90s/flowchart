@@ -564,7 +564,8 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
 
         // add node.
         data.text = api.api + '(...)';
-        data.id = 'api_' + this.action.data.aNOdes.length;
+        //data.id = 'api_' + this.action.data.aNOdes.length;
+        data.id = 'api_' +  this.callback.counter['api']++;
 
         // add aNodes.
         const apiNodeData = new ActionApiCallingNodes();
@@ -593,7 +594,8 @@ export class CallbackFlowchartComponent implements OnInit, OnChanges {
         return;
       } else if (type === 'question') {
         data.text = '...';
-        data.id = 'condition_' + this.action.data.cNodes.length;
+        //data.id = 'condition_' + this.action.data.cNodes.length;
+        data.id = 'condition_' +  this.callback.counter['condition']++;
 
         const conditionNodeData = new ConditionNode();
         conditionNodeData.id = data.id;

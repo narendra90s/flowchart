@@ -154,6 +154,12 @@ export class CallBackData {
 
 export class Callback {
     dirty: boolean = false;
+    counter: any = {
+        trigger: 0,
+        action: 0,
+        condition: 0,
+        api: 0
+    };
     states: State[] = [];
     triggers: Trigger[] = [];
     actions: Action[] = [];
